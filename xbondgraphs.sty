@@ -79,7 +79,8 @@
 		\pgfpathlineto{\pgfpointdecoratedinputsegmentlast}
 	}
 	\state{final}{
-		\pgfmathparse{int((\pgfdecoratedangle+\xbondgraphs@bond@normangle)/90)}
+		% 
+		\pgfmathparse{int((\pgfdecoratedangle+\xbondgraphs@bond@barbdirectionflipangle)/90)}
 		\ifcase\pgfmathresult
 			\pgfkeys{/xbondgraphs/bond/barb direction=right}
 		\or
@@ -110,9 +111,11 @@
 \newif\ifxbondgraphs@element@word
 \newif\ifxbondgraphs@element@multiport
 
+% Define 'xbondgraphs' as key family for this package
 \pgfkeys{
 	xbondgraphs/.is family,
 	xbondgraphs,
+		% Two key families are mainly used, first is 'bond':
 		bond/.is family,
 		bond,
 			template/.style={
@@ -122,7 +125,7 @@
 				line width = \xbondgraphs@singlebondwidth,
 			},
 			barb direction/.store in=\xbondgraphs@bond@barbdirection,
-			normalization angle/.store in=\xbondgraphs@bond@normangle,
+			barb direction flip angle/.store in=\xbondgraphs@bond@barbdirectionflipangle,
 			eout/.is if=xbondgraphs@bond@causality@eout,
 			eout=false,
 			fout/.is if=xbondgraphs@bond@causality@fout,
@@ -157,6 +160,7 @@
 				\xbondgraphs@bondlabelcolor,
 			},
 	/xbondgraphs,
+		% Second key family is 'element':
 		element/.is family,
 		element,
 			n/.store in=\xbondgraphs@element@n,
@@ -171,6 +175,7 @@
 			label/.style={
 				\xbondgraphs@bgelementlabelcolor,
 			},
+	% The 'XBG' keys are used as package options
 	/XBG/.cd,
 		barbangle/.store in=\xbondgraphs@barbangle,
 		barbangle=40,
@@ -189,9 +194,10 @@
 			\colorlet{diff}{white!60!black}
 			\colorlet{error}{white!30!black}
 		},
-		leftbelow/.code={\pgfkeys{/xbondgraphs/bond/normalization angle=45}},
-		alwaysbelow/.code={\pgfkeys{/xbondgraphs/bond/normalization angle=-1}},
-		alwaysbelow,
+		barbdirection/.is choice,
+		barbdirection/leftbelow/.code={\pgfkeys{/xbondgraphs/bond/barb direction flip angle=45}},
+		barbdirection/alwaysbelow/.code={\pgfkeys{/xbondgraphs/bond/barb direction flip angle=-1}},
+		barbdirection/alwaysbelow,
 	/tikz/.cd,
 		bond/.style={
 			/xbondgraphs/bond,
@@ -365,6 +371,7 @@
 \colorlet{diff}{orange}
 \colorlet{error}{red}
 
+% Proces all /XBG keys as package options
 \ProcessPgfPackageOptions{/XBG}
 
 \endinput
