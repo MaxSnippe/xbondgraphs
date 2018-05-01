@@ -12,26 +12,24 @@
 	name = {Single Bond Barb},
 	setup code = {
 		% Line widths and barb angle used in the path calculations
-		\pgfmathsetlengthmacro{\singlebondwidth}{\pgflinewidth}
-		\pgfmathsetlengthmacro{\multibondwidth}{\xbondgraphs@multibondwidth}
-		\pgfmathsetlengthmacro{\barbangle}{\xbondgraphs@barbangle}
-		
+			\pgfmathsetlengthmacro{\singlebondwidth}{\pgflinewidth}
+			\pgfmathsetlengthmacro{\multibondwidth}{\xbondgraphs@multibondwidth}
+			\pgfmathsetlengthmacro{\barbangle}{\xbondgraphs@barbangle}
 		% Calculate actual path points
-		\pgfmathsetlengthmacro{\tipx}{\singlebondwidth}
-		\pgfmathsetlengthmacro{\tipy}{0pt}
-		\pgfmathsetlengthmacro{\backx}{-1/tan(\barbangle)*(\multibondwidth-0.5*cos(\barbangle)*\singlebondwidth) + \singlebondwidth}
-		\pgfmathsetlengthmacro{\backy}{\multibondwidth - 0.5*cos(\barbangle)*\singlebondwidth}
-		
+			\pgfmathsetlengthmacro{\tipx}{\singlebondwidth}
+			\pgfmathsetlengthmacro{\tipy}{0pt}
+			\pgfmathsetlengthmacro{\backx}{-1/tan(\barbangle)*(\multibondwidth-0.5*cos(\barbangle)*\singlebondwidth) + \singlebondwidth}
+			\pgfmathsetlengthmacro{\backy}{\multibondwidth - 0.5*cos(\barbangle)*\singlebondwidth}
 		% Calculate points of outer dimensions as needed by pgf
-		\pgfmathsetlengthmacro{\hullpointx}{\backx + 0.5*\singlebondwidth*sin(\barbangle)}
-		\pgfmathsetlengthmacro{\hullpointy}{\multibondwidth}
-		\pgfmathsetlengthmacro{\tipendx}{0.5*\singlebondwidth/tan(\barbangle/2) + \tipx}
-		% \pgfmathsetlengthmacro{\tipendy}{-0.5*\singlebondwidth} % Not really needed
-		
+			\pgfmathsetlengthmacro{\hullpointx}{\backx + 0.5*\singlebondwidth*sin(\barbangle)}
+			\pgfmathsetlengthmacro{\hullpointy}{\multibondwidth}
+			\pgfmathsetlengthmacro{\tipendx}{0.5*\singlebondwidth/tan(\barbangle/2) + \tipx}
+			\pgfmathsetlengthmacro{\tipendy}{-0.5*\singlebondwidth}
 		% Set dimensions needed by pgf for outer dimensions of the arrow tip
-		\pgfarrowssettipend{\tipendx}
-		\pgfarrowssetbackend{\backx}
-		\pgfarrowshullpoint{\hullpointx}{\hullpointy}
+			\pgfarrowssettipend{\tipendx}
+			\pgfarrowssetbackend{\backx}
+			\pgfarrowshullpoint{\hullpointx}{\hullpointy}
+			\pgfarrowshullpoint{\tipendx}{\tipendy}
 	},
 	drawing code = {
 		\pgfpathmoveto{\pgfpointorigin}
@@ -44,26 +42,33 @@
 \pgfdeclarearrow{
 	name = {Multi Bond Barb},
 	setup code = {
-		\pgfmathsetmacro\tanangleinv{1/tan(\xbondgraphs@barbangle)}
-		\pgfmathsetmacro\outerlinewidth{(\pgflinewidth - \pgfinnerlinewidth)/2}
-		\pgfarrowssettipend{\tanangleinv\pgflinewidth}
-		\pgfarrowssetbackend{-\tanangleinv\pgflinewidth + 0.5*\outerlinewidth*sin(\xbondgraphs@barbangle)}
-		\pgfarrowshullpoint{-\tanangleinv\pgflinewidth - 0.5*\outerlinewidth*sin(\xbondgraphs@barbangle)}{1.5\pgflinewidth}
-		\pgfarrowshullpoint{-\tanangleinv\pgflinewidth + 0.5*\outerlinewidth*sin(\xbondgraphs@barbangle)}{1.5\pgflinewidth - 0.5\outerlinewidth*cos(\xbondgraphs@barbangle)}
+		% Line widths and barb angle used in the path calculations
+			\pgfmathsetlengthmacro{\singlebondwidth}{\xbondgraphs@singlebondwidth}
+			\pgfmathsetlengthmacro{\multibondwidth}{\pgflinewidth}
+			\pgfmathsetlengthmacro{\barbangle}{\xbondgraphs@barbangle}
+		% Calculate actual path points
+			\pgfmathsetlengthmacro{\startx}{0pt}
+			\pgfmathsetlengthmacro{\starty}{-0.5*\multibondwidth+0.5*\singlebondwidth}
+			\pgfmathsetlengthmacro{\tipx}{(\multibondwidth-\singlebondwidth)/tan(\barbangle)}
+			\pgfmathsetlengthmacro{\tipy}{-0.5*\multibondwidth + 0.5*\singlebondwidth}
+			\pgfmathsetlengthmacro{\backy}{1.5*\multibondwidth - 0.5*\singlebondwidth*cos(\barbangle)}
+			\pgfmathsetlengthmacro{\backx}{-(\backy+\tipy)/tan(\barbangle)}
+		% Calculate points of outer dimensions as needed by pgf
+			\pgfmathsetlengthmacro{\hullpointx}{\backx + 0.5*\singlebondwidth*sin(\barbangle)}
+			\pgfmathsetlengthmacro{\hullpointy}{1.5*\multibondwidth}
+			\pgfmathsetlengthmacro{\tipendx}{0.5*\singlebondwidth/tan(\barbangle/2) + \tipx}
+			\pgfmathsetlengthmacro{\tipendy}{-0.5*\multibondwidth}
+		% Set dimensions needed by pgf for outer dimensions of the arrow tip
+			\pgfarrowssettipend{\tipendx}
+			\pgfarrowssetbackend{\backx}
+			\pgfarrowshullpoint{\hullpointx}{\hullpointy}
+			\pgfarrowshullpoint{\tipendx}{\tipendy}
 	},
 	drawing code = {
-		\pgfpathmoveto{\pgfpoint{0pt}{-0.5*\pgflinewidth+0.5*\outerlinewidth}}
-		\pgfpathlineto{\pgfpoint{%
-				\pgflinewidth/tan(\xbondgraphs@barbangle) - 0.5*\outerlinewidth/tan(\xbondgraphs@barbangle/2)%
-			}{%
-				-0.5*\pgflinewidth + 0.5*\outerlinewidth%
-		}}%
-		\pgfpathlineto{\pgfpoint{%
-				-\pgflinewidth/tan(\xbondgraphs@barbangle) - 0.5*\outerlinewidth*sin(\xbondgraphs@barbangle)%
-			}{%
-				1.5*\pgflinewidth - 0.5*\outerlinewidth*cos(\xbondgraphs@barbangle)%
-		}}%
-		\pgfsetlinewidth{\outerlinewidth}%
+		\pgfpathmoveto{\pgfpoint{\startx}{\starty}}
+		\pgfpathlineto{\pgfpoint{\tipx}{\tipy}}
+		\pgfpathlineto{\pgfpoint{\backx}{\backy}}
+		\pgfsetlinewidth{\singlebondwidth}%
 		\pgfusepathqstroke%
 	}
 }
@@ -114,7 +119,7 @@
 				shorten < = 3pt,
 				shorten > = 3pt,
 				draw,
-				line width = \xbondgraphs@bondwidth,
+				line width = \xbondgraphs@singlebondwidth,
 			},
 			barb direction/.store in=\xbondgraphs@bond@barbdirection,
 			normalization angle/.store in=\xbondgraphs@bond@normangle,
@@ -140,7 +145,7 @@
 				/xbondgraphs/bond/causality stroke scale=3,
 				/xbondgraphs/bond/barb arrow head={Multi Bond Barb},
 				/xbondgraphs/bond/template/.append style={
-					double,double distance={\xbondgraphs@multibondwidth-2*\xbondgraphs@bondwidth}
+					double,double distance={\xbondgraphs@multibondwidth-2*\xbondgraphs@singlebondwidth}
 				},
 				/tikz/line width = \xbondgraphs@multibondwidth,
 			},
@@ -169,8 +174,8 @@
 	/XBG/.cd,
 		barbangle/.store in=\xbondgraphs@barbangle,
 		barbangle=40,
-		bondwidth/.store in=\xbondgraphs@bondwidth,
-		bondwidth=1pt,
+		singlebondwidth/.store in=\xbondgraphs@singlebondwidth,
+		singlebondwidth=1pt,
 		multibondwidth/.store in=\xbondgraphs@multibondwidth,
 		multibondwidth=4pt,
 		bgelementlabelcolor/.store in=\xbondgraphs@bgelementlabelcolor,
@@ -244,7 +249,7 @@
 				},
 			}
 			\ifxbondgraphs@element@word
-				\tikzset{draw,line width = 0.75\xbondgraphs@bondwidth,shape=ellipse}
+				\tikzset{draw,line width = 0.75\xbondgraphs@singlebondwidth,shape=ellipse}
 			\fi
 		},
 		bond label/.style={
