@@ -11,21 +11,32 @@
 \pgfdeclarearrow{
 	name = {Single Bond Barb},
 	setup code = {
-		\pgfmathsetmacro\tanangleinv{1/tan(\xbondgraphs@barbangle)}
-		\pgfmathsetlengthmacro{\multibondtotalwidth}{\xbondgraphs@multibondwidth}
-		\pgfmathsetlengthmacro{\tiplocation}{0.5\pgflinewidth/tan(\xbondgraphs@barbangle/2) + \pgflinewidth}
-		\pgfmathsetlengthmacro{\backendlocationx}{-\tanangleinv*(\multibondtotalwidth-0.5*cos(\xbondgraphs@barbangle)*\pgflinewidth) + \pgflinewidth}
-		\pgfmathsetlengthmacro{\backendlocationy}{\multibondtotalwidth - 0.5*cos(\xbondgraphs@barbangle)*\pgflinewidth}
-		\pgfmathsetlengthmacro{\mostleftpointy}{\multibondtotalwidth}
-		\pgfmathsetlengthmacro{\mostleftpointx}{\backendlocationx + 0.5\pgflinewidth*sin(\xbondgraphs@barbangle)}
-		\pgfarrowssettipend{\tiplocation}
-		\pgfarrowssetbackend{\backendlocationx}
-		\pgfarrowshullpoint{\mostleftpointx}{\mostleftpointy}
+		% Line widths and barb angle used in the path calculations
+		\pgfmathsetlengthmacro{\singlebondwidth}{\pgflinewidth}
+		\pgfmathsetlengthmacro{\multibondwidth}{\xbondgraphs@multibondwidth}
+		\pgfmathsetlengthmacro{\barbangle}{\xbondgraphs@barbangle}
+		
+		% Calculate actual path points
+		\pgfmathsetlengthmacro{\tipx}{\singlebondwidth}
+		\pgfmathsetlengthmacro{\tipy}{0pt}
+		\pgfmathsetlengthmacro{\backx}{-1/tan(\barbangle)*(\multibondwidth-0.5*cos(\barbangle)*\singlebondwidth) + \singlebondwidth}
+		\pgfmathsetlengthmacro{\backy}{\multibondwidth - 0.5*cos(\barbangle)*\singlebondwidth}
+		
+		% Calculate points of outer dimensions as needed by pgf
+		\pgfmathsetlengthmacro{\hullpointx}{\backx + 0.5*\singlebondwidth*sin(\barbangle)}
+		\pgfmathsetlengthmacro{\hullpointy}{\multibondwidth}
+		\pgfmathsetlengthmacro{\tipendx}{0.5*\singlebondwidth/tan(\barbangle/2) + \tipx}
+		% \pgfmathsetlengthmacro{\tipendy}{-0.5*\singlebondwidth} % Not really needed
+		
+		% Set dimensions needed by pgf for outer dimensions of the arrow tip
+		\pgfarrowssettipend{\tipendx}
+		\pgfarrowssetbackend{\backx}
+		\pgfarrowshullpoint{\hullpointx}{\hullpointy}
 	},
 	drawing code = {
 		\pgfpathmoveto{\pgfpointorigin}
-		\pgfpathlineto{\pgfpoint{\pgflinewidth}{0pt}}
-		\pgfpathlineto{\pgfpoint{\backendlocationx}{\backendlocationy}}
+		\pgfpathlineto{\pgfpoint{\tipx}{\tipy}}
+		\pgfpathlineto{\pgfpoint{\backx}{\backy}}
 		\pgfusepathqstroke%
 	},
 }
