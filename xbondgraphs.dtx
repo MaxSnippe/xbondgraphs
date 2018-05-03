@@ -22,4 +22,100 @@
 % \fi
 % 
 % \iffalse
-%<package>\NeedsTeXFormat{LaTeX2e}
+%<package>\NeedsTeXFormat{LaTeX2e}[2018/04/01]
+%<package>\ProvidesPackage{xbondgraphs}
+%<package>    [2018/05/02 v0.0.1 Bond graph drawing using TikZ]
+% 
+%<*driver>
+\documentclass{ltxdoc}
+\usepackage{xbondgraphs}
+\usepackage{xspace}
+\usepackage{mathpazo}
+\usepackage{pifont}
+\usepackage{iconix}
+\usepackage{booktabs}
+\usepackage{tabu}
+\usepackage{longtable}
+\usepackage{footnote}
+\usepackage{subcaption}
+\usepackage{listings}
+\usepackage[numbered]{hypdoc}
+\usepackage[noabbrev]{cleveref}
+\usepackage{lstautogobble}
+% 
+\pgfmathsetlengthmacro{\multibondwidth}{30mm}
+\pgfmathsetlengthmacro{\singlebondwidth}{12.5mm}
+\pgfmathsetmacro{\barbangle}{40}
+%
+\hyphenation{bond-graphs x-bond-graphs}
+\newcommand\textvtt[1]{{\normalfont\fontfamily{cmvtt}\selectfont #1}}
+%
+\makesavenoteenv{table}
+%
+\lstset{
+	autogobble,
+	tabsize=4,
+	breaklines=true,
+	basicstyle=\ttfamily\small,
+	language=[LaTeX]Tex,
+}
+%
+\usetikzlibrary{positioning}
+%
+\newcommand{\Tikz}{Ti\textit{k}Z\xspace}
+\newcommand{\pgf}{PGF\xspace}
+\newcommand{\xbondgraphs}{\textsf{xbondgraphs}\xspace}
+\newcommand{\bondgraphs}{\textsf{bondgraphs}\xspace}
+\let\origLaTeX\LaTeX
+\def\LaTeX{\origLaTeX\xspace}
+\def\cmark{\ding{51}}
+\def\xmark{\ding{55}}
+%
+\captionsetup{labelfont=bf,font=small,labelsep=endash}
+\captionsetup[subfigure]{font=footnotesize}
+%
+\tikzset{
+	> = stealth,
+	arrow tip demonstration/.style={red,opacity=.75},
+	arrow tip line style/.style={gray!40!black,line width = 0.5pt},
+	annotation style/.style={line width = .4pt,gray,text=black,<->},
+}
+%
+\EnableCrossrefs
+\CodelineIndex
+\RecordChanges
+\begin{document}
+	\DocInput{xbondgraphs.dtx}
+\end{document}
+%</driver>
+% \fi
+%
+% \CheckSum{0}
+%
+% \CharacterTable
+%  {Upper-case \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
+%   Lower-case \a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z
+%   Digits \0\1\2\3\4\5\6\7\8\9
+%   Exclamation \! Double quote \" Hash (number) \#
+%   Dollar \$ Percent \% Ampersand \&
+%   Acute accent \’ Left paren \( Right paren \)
+%   Asterisk \* Plus \+ Comma \,
+%   Minus \- Point \. Solidus \/
+%   Colon \: Semicolon \; Less than \<
+%   Equals \= Greater than \> Question mark \?
+%   Commercial at \@ Left bracket \[ Backslash \\
+%   Right bracket \] Circumflex \^ Underscore \_
+%   Grave accent \‘ Left brace \{ Vertical bar \|
+%   Right brace \} Tilde \~}
+%
+% \changes{v0.0.1}{2018/05/02}{Initial version}
+%
+% \GetFileInfo{xbondgraphs.sty}
+%
+% \DoNotIndex{\#,\$,\%,\&,\@,\\,\{,\},\^,\_,\~,\ }
+% \DoNotIndex{\if,\else,\fi,\def,\ifcase,\or}
+%
+% \title{\xbondgraphs\thanks{This document corresponds to \xbondgraphs{}\space\fileversion, dated\space\filedate.} -- drawing bond graphs using \Tikz}
+% \author{Marcus J.W. Snippe\thanks{E-mail: \href{mailto:m.j.w.snippe@saxion.nl}{m.j.w.snippe@saxion.nl}}}
+%
+% \maketitle
