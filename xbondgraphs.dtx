@@ -377,7 +377,7 @@
 %<*package>
 \NeedsTeXFormat{LaTeX2e}[2017/04/15]
 \ProvidesPackage{xbondgraphs}
-    [2018/05/02 v0.0.1 Bond graph drawing using TikZ]
+    [2018/05/04 v0.0.1 Bond graph drawing using TikZ]
 %    \end{macrocode}
 % 	\subsection{Required packages and libraries}
 % 		This package uses the \textsf{pgfopts} package to be able to use |pgfkeys| as package options. All the actual drawing is done by \Tikz. The \textsf{amsfonts} package is used for the |\mathbb| font.
@@ -486,37 +486,39 @@
 }
 %    \end{macrocode}
 % \end{macro}
+%
+% \begin{macro}{bond decoration}
 %    \begin{macrocode}
-
-% BOND DECORATION
 \pgfdeclaredecoration{bond}{initial}{
   \state{initial}[width=\pgfdecoratedinputsegmentlength+1pt]{
     \pgfpathlineto{\pgfpointdecoratedinputsegmentlast}
   }
   \state{final}{
-    % 
     \pgfmathparse{int((\pgfdecoratedangle+\xbondgraphs@bond@barbdirectionflipangle)/90)}
     \ifcase\pgfmathresult
-    \pgfkeys{/xbondgraphs/bond/barb direction=right}
+      \pgfkeys{/xbondgraphs/bond/barb direction=right}
     \or
-    \pgfkeys{/xbondgraphs/bond/barb direction=left}
+      \pgfkeys{/xbondgraphs/bond/barb direction=left}
     \or
-    \pgfkeys{/xbondgraphs/bond/barb direction=left}
+      \pgfkeys{/xbondgraphs/bond/barb direction=left}
     \else
-    \pgfkeys{/xbondgraphs/bond/barb direction=right}
+      \pgfkeys{/xbondgraphs/bond/barb direction=right}
     \fi
     \ifxbondgraphs@bond@causality@eout
-    \tikzset{-{\xbondgraphs@bond@barbarrowhead[\xbondgraphs@bond@barbdirection].|[/tikz/causal stroke style]}}
+      \tikzset{-{\xbondgraphs@bond@barbarrowhead[\xbondgraphs@bond@barbdirection].|[/tikz/causal stroke style]}}
     \else
-    \ifxbondgraphs@bond@causality@fout
-    \tikzset{{|[/tikz/causal stroke style]}-{\xbondgraphs@bond@barbarrowhead[\xbondgraphs@bond@barbdirection]}}
-    \else
-    \tikzset{-{\xbondgraphs@bond@barbarrowhead[\xbondgraphs@bond@barbdirection]}}
-    \fi
+      \ifxbondgraphs@bond@causality@fout
+        \tikzset{{|[/tikz/causal stroke style]}-{\xbondgraphs@bond@barbarrowhead[\xbondgraphs@bond@barbdirection]}}
+      \else
+        \tikzset{-{\xbondgraphs@bond@barbarrowhead[\xbondgraphs@bond@barbdirection]}}
+      \fi
     \fi
     \path[/xbondgraphs/bond/template]\pgfextra{\pgfpathlineto{\pgfpointdecoratedinputsegmentlast}};
   }
 }
+%    \end{macrocode}
+% \end{macro}
+%    \begin{macrocode}
 
 % ifs for the bond options
 \newif\ifxbondgraphs@bond@causality@eout
