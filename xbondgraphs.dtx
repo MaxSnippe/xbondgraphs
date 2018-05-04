@@ -22,9 +22,6 @@
 % \fi
 % 
 % \iffalse
-%<package>\NeedsTeXFormat{LaTeX2e}[2018/04/01]
-%<package>\ProvidesPackage{xbondgraphs}
-%<package>    [2018/05/02 v0.0.1 Bond graph drawing using TikZ]
 % 
 %<*driver>
 \documentclass{ltxdoc}
@@ -98,14 +95,14 @@
 %   Digits \0\1\2\3\4\5\6\7\8\9
 %   Exclamation \! Double quote \" Hash (number) \#
 %   Dollar \$ Percent \% Ampersand \&
-%   Acute accent \’ Left paren \( Right paren \)
+%   Acute accent \' Left paren \( Right paren \)
 %   Asterisk \* Plus \+ Comma \,
 %   Minus \- Point \. Solidus \/
 %   Colon \: Semicolon \; Less than \<
 %   Equals \= Greater than \> Question mark \?
 %   Commercial at \@ Left bracket \[ Backslash \\
 %   Right bracket \] Circumflex \^ Underscore \_
-%   Grave accent \‘ Left brace \{ Vertical bar \|
+%   Grave accent \` Left brace \{ Vertical bar \|
 %   Right brace \} Tilde \~}
 %
 % \changes{v0.0.1}{2018/05/02}{Initial version}
@@ -130,22 +127,20 @@
 %		This package is a by-product of a project in which I was in need of a convenient way to draw bond graphs. At first, the \bondgraphs package was sufficient, but as the delivery date of the final report approached, I became less and less satisfied by the aesthetic end result of my bond graphs, especially when using multi-bonds. \Cref{fig:comparisonmultibonds} shows a simple comparison between the \bondgraphs- and the \xbondgraphs package.
 %		
 %		\begin{figure}[htbp]
-	%			\centering
-	%			\begin{subfigure}{.45\linewidth}
-		%				\centering
-		%				\includegraphics[scale=1.5]{src/bondgraphs_example.pdf}
-		%				\caption{Using the \bondgraphs package}
-		%				\label{fig:comparisonmultibonds-bondgraphs}
-		%			\end{subfigure}
-	%			\begin{subfigure}{.45\linewidth}
-		%				\centering
-		%				\includegraphics[scale=1.5]{src/xbondgraphs_example.pdf}
-		%				\caption{Using the \xbondgraphs package}
-		%				\label{fig:comparisonmultibonds-xbondgraphs}
-		%			\end{subfigure}
-	%			\caption{Comparison of multi bond graph drawing.}
-	%			\label{fig:comparisonmultibonds}
-	%		\end{figure}
+%			\centering
+%			\begin{subfigure}{.45\linewidth}
+%				\centering
+%				\caption{Using the \bondgraphs package}
+%				\label{fig:comparisonmultibonds-bondgraphs}
+%			\end{subfigure}
+%			\begin{subfigure}{.45\linewidth}
+%				\centering
+%				\caption{Using the \xbondgraphs package}
+%				\label{fig:comparisonmultibonds-xbondgraphs}
+%			\end{subfigure}
+%			\caption{Comparison of multi bond graph drawing.}
+%			\label{fig:comparisonmultibonds}
+%		\end{figure}
 %		
 %		\Cref{fig:comparisonmultibonds} shows the main motivation for this package. Although of course subjective, most of the differences between the \bondgraphs- and the \xbondgraphs package can be argued to be improvements. The drawing in \cref{fig:comparisonmultibonds-xbondgraphs} is overall more consistent. %The causality stroke of \cref{fig:comparisonmultibonds-bondgraphs} with flow-out causality is overdrawn by the inner line of the multi bond. This is fixed in \cref{fig:comparisonmultibonds-xbondgraphs}.
 %		Most flaws of the drawing in \cref{fig:comparisonmultibonds-bondgraphs} can be traced back to the decoration being a \texttt{postaction}. This however is needed to inherit other options from the \verb|\draw|-command, e.g. color.
@@ -186,7 +181,6 @@
 %		This package has not yet been included in popular \LaTeX distributions, and therefore can be installed only by downloading the source (\texttt{xbondgraphs.sty}) from \href{https://github.com/MaxSnippe/xbondgraphs}{the GitHub repository}\footnote{\url{https://github.com/MaxSnippe/xbondgraphs}} to your local TEXMF tree. It should be placed under \textvtt{\$TEXMF\$/tex/latex/local}.
 %	
 %	\subsection{Including the package}
-%	\DescribeMacro{\usepackage\oarg{options}\marg{xbondgraphs}}
 %		The package can be included with the well-known \lstinline|\usepackage[<options>]{xbondgraphs}|, where \meta{options} can be any of the options mentioned in \cref{sec:globaloptions}. Options that set the same keys to different values are treated in the order in which they are provided. The package works fine straight-out-of-the-box without setting any options.
 %		
 %	\subsection{Simple example}
@@ -223,16 +217,17 @@
 %				\end{tikzpicture}
 %				\caption{}
 %			\end{subfigure}
-%%			\begin{subfigure}{.31\linewidth}
-%%				\begin{tikzpicture}[line width=1pt]
-%%					\node[mechanical earth,minimum height = 3cm] at (0,-1){};
-%%					\draw (0,0) -- ++(1.5,0) node[spring,label={above:$ \frac{1}{C} $}]{};
-%%					\draw (0,-1) -- ++(1.5,0) node[damper,label={above:$ R $}]{};
-%%					\draw (0,-2) -- ++(1.5,0) node[forcesource2,label={above:$ u $}]{};
-%%					\node[mass2,minimum height = 3cm, minimum width = 2cm,label={south:$ L $}](m) at (2.5,-1){};
-%%					\draw[->>,>=stealth] (m.north) -- ++(0,.5) -- ++(.5,0) node[component,label={east:$ i $}]{};
-%%				\end{tikzpicture}
-%%			\end{subfigure}
+%			\begin{subfigure}{.31\linewidth}
+%				\begin{tikzpicture}[line width=1pt]
+%					\node[mechanical earth,minimum height = 3cm] at (0,-1){};
+%					\draw (0,0) -- ++(1.5,0) node[spring,label={above:$ \frac{1}{C} $}]{};
+%					\draw (0,-1) -- ++(1.5,0) node[damper,label={above:$ R $}]{};
+%					\draw (0,-2) -- ++(1.5,0) node[forcesource2,label={above:$ u $}]{};
+%					\node[mass2,minimum height = 3cm, minimum width = 2cm,label={south:$ L $}](m) at (2.5,-1){};
+%					\draw[->>,>=stealth] (m.north) -- ++(0,.5) -- ++(.5,0) node[component,label={east:$ i $}]{};
+%				\end{tikzpicture}
+%				\caption{}
+%			\end{subfigure}
 %			\caption{Electric domain dynamic model and its bond graph representation.}
 %		\end{figure}
 %\section{Options}
@@ -256,6 +251,7 @@
 %\section{Arrow tips}
 %	
 %	\subsection{Single bond arrow tip}
+%		\label{sec:singlebondarrowtip}
 %		
 %		\begin{tikzpicture}
 %			
@@ -303,6 +299,7 @@
 %		\end{tikzpicture}
 %		
 %	\subsection{Multi bond arrow tip}
+%		\label{sec:multibondarrowtip}
 %		
 %		\begin{tikzpicture}
 %			
@@ -353,7 +350,6 @@
 %		\node (omegam) [right=of 1overp,bond graph element={1}{},label={300:$ \omega_m $}];
 %		\node (Dr) [above=of omegam,bond graph element={R}{},pin={north:$ D_r $}];
 %		\node (Jr) [below=of omegam,bond graph element={I}{},pin={south:$ J_r $}];
-%	%			\node (taum) [right=of omegam,bond graph element={p}{},label={east:$ \tau_m $}];
 %		
 %		\begin{scope}[bond={multi}]
 %			\draw[bond={effort out}] (Vabc) -- (iabc);
@@ -370,5 +366,429 @@
 %		\draw[bond={effort out}] (1overp) -- (omegam);
 %		\draw[bond={effort out}] (omegam) -- (Jr);
 %		\draw[bond={effort in}] (omegam) -- (Dr);
-%	%			\draw[bond={effort in}] (omegam) -- (taum);
 %	\end{tikzpicture}
+% 
+% \StopEventually{\PrintChanges \PrintIndex}
+% 
+% \clearpage
+% \section{Implementation}
+% 	\subsection{Package definition}
+%    \begin{macrocode}
+%<*package>
+\NeedsTeXFormat{LaTeX2e}[2017/04/15]
+\ProvidesPackage{xbondgraphs}
+    [2018/05/02 v0.0.1 Bond graph drawing using TikZ]
+%    \end{macrocode}
+% 	\subsection{Required packages and libraries}
+% 		This package uses the \textsf{pgfopts} package to be able to use |pgfkeys| as package options. All the actual drawing is done by \Tikz. The \textsf{amsfonts} package is used for the |\mathbb| font.
+%    \begin{macrocode}
+\RequirePackage{pgfopts}
+\RequirePackage{tikz}
+\RequirePackage{amsfonts}
+
+\usetikzlibrary{arrows.meta,decorations.markings,shapes}
+%    \end{macrocode}
+% 	\subsection{Arrow tip definitions}
+% 		The arrow tips are defined using |\pgfdeclarearrow|. 
+% \begin{macro}{Single Bond Barb}
+% 	First the single bond barb is defined. The definition of this arrow is elaborated in \cref{sec:singlebondarrowtip}.
+%    \begin{macrocode}
+\pgfdeclarearrow{
+  name = {Single Bond Barb},
+  setup code = {
+%    \end{macrocode}
+%		First locally define the line width of a single bond, a multibond, and the (absolute) angle the barb makes with the bond. 
+%    \begin{macrocode}
+    \pgfmathsetlengthmacro{\sbw}{\pgflinewidth}
+    \pgfmathsetlengthmacro{\mbw}{\xbondgraphs@multibondwidth}
+    \pgfmathsetlengthmacro{\ba}{\xbondgraphs@barbangle}
+%    \end{macrocode}
+% 		Calculate the $ x $- and $ y $ position of the points that the barb will follow. If one was walking along the bond from startpoint to endpoint, the origin of this scope would be the endpoint, the $ x $ direction would be forward, and the $ y $ direction would be leftward.
+%    \begin{macrocode}
+    \pgfmathsetlengthmacro{\tipx}{\sbw}
+    \pgfmathsetlengthmacro{\tipy}{0pt}
+    \pgfmathsetlengthmacro{\backx}{-1/tan(\ba)*(\mbw-0.5*cos(\ba)*\sbw)%
+      + \sbw}
+    \pgfmathsetlengthmacro{\backy}{\mbw - 0.5*cos(\ba)*\sbw}
+%    \end{macrocode}
+% 		\pgf needs the outer points of the arrow tip to accurately determine the bounding box. Also, the actual tip of the arrow is needed, so the drawn bond will end exactly at the endpoint (the bond \Tikz styles use a |shorten > = |\meta{dimen} and |shorten > = |\meta{dimen} so they will not end exactly at the endpoint).
+%    \begin{macrocode}
+    \pgfmathsetlengthmacro{\hullpointx}{\backx + 0.5*\sbw*sin(\ba)}
+    \pgfmathsetlengthmacro{\hullpointy}{\mbw}
+    \pgfmathsetlengthmacro{\tipendx}{0.5*\sbw/tan(\ba/2) + \tipx}
+    \pgfmathsetlengthmacro{\tipendy}{-0.5*\sbw}
+%    \end{macrocode}
+% 		These commands are used to set the outer dimensions that \Tikz/\pgf needs.
+%    \begin{macrocode}
+    \pgfarrowssettipend{\tipendx}
+    \pgfarrowssetbackend{\backx}
+    \pgfarrowshullpoint{\hullpointx}{\hullpointy}
+    \pgfarrowshullpoint{\tipendx}{\tipendy}
+  },
+  drawing code = {
+%    \end{macrocode}
+% 		The actual drawing of the arrow.
+%    \begin{macrocode}
+    \pgfpathmoveto{\pgfpointorigin}
+    \pgfpathlineto{\pgfpoint{\tipx}{\tipy}}
+    \pgfpathlineto{\pgfpoint{\backx}{\backy}}
+    \pgfusepathqstroke
+  },
+}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{Multi Bond Barb}
+%	Repeat all for the multi bond barb. The definition of this arrow is elaborated in \cref{sec:multibondarrowtip}.
+%    \begin{macrocode}
+\pgfdeclarearrow{
+  name = {Multi Bond Barb},
+  setup code = {
+%    \end{macrocode}
+% 		Note that the single bond line width is now read from its \pgf key and not from |\pgflinewidth|. The latter now holds the multi bond line width.
+%    \begin{macrocode}
+    \pgfmathsetlengthmacro{\sbw}{\xbondgraphs@singlebondwidth}
+    \pgfmathsetlengthmacro{\mbw}{\pgflinewidth}
+    \pgfmathsetlengthmacro{\ba}{\xbondgraphs@barbangle}
+%    \end{macrocode}
+% 		The starting point of the drawing of the actual arrow tip is now were the `bottom' line ends. The tip end location is calculated such that the centerline of the barb passes through the endpoint of the `top' double line.
+%    \begin{macrocode}
+    \pgfmathsetlengthmacro{\startx}{0pt}
+    \pgfmathsetlengthmacro{\starty}{-0.5*\mbw+0.5*\sbw}
+    \pgfmathsetlengthmacro{\tipx}{(\mbw-\sbw)/tan(\ba)}
+    \pgfmathsetlengthmacro{\tipy}{-0.5*\mbw + 0.5*\sbw}
+    \pgfmathsetlengthmacro{\backy}{1.5*\mbw - 0.5*\sbw*cos(\ba)}
+    \pgfmathsetlengthmacro{\backx}{-(\backy+\tipy)/tan(\ba)}
+%    \end{macrocode}
+% 		The outer dimensions of the arrow are slightly different than for the |Single Bond Barb|, but not much.
+%    \begin{macrocode}
+    \pgfmathsetlengthmacro{\hullpointx}{\backx + 0.5*\sbw*sin(\ba)}
+    \pgfmathsetlengthmacro{\hullpointy}{1.5*\mbw}
+    \pgfmathsetlengthmacro{\tipendx}{0.5*\sbw/tan(\ba/2) + \tipx}
+    \pgfmathsetlengthmacro{\tipendy}{-0.5*\mbw}
+%    \end{macrocode}
+% 		Again set the \pgf dimensions needed for the definition of the arrow tip.
+%    \begin{macrocode}
+    \pgfarrowssettipend{\tipendx}
+    \pgfarrowssetbackend{\backx}
+    \pgfarrowshullpoint{\hullpointx}{\hullpointy}
+    \pgfarrowshullpoint{\tipendx}{\tipendy}
+  },
+  drawing code = {
+%    \end{macrocode}
+% 		The drawing is the same as for the |Single Bond Barb|, except for the |\pgfsetlinewidth| that sets the line width to the single bond line width. 
+%    \begin{macrocode}
+    \pgfpathmoveto{\pgfpoint{\startx}{\starty}}
+    \pgfpathlineto{\pgfpoint{\tipx}{\tipy}}
+    \pgfpathlineto{\pgfpoint{\backx}{\backy}}
+    \pgfsetlinewidth{\sbw}
+    \pgfusepathqstroke
+  }
+}
+%    \end{macrocode}
+% \end{macro}
+%    \begin{macrocode}
+
+% BOND DECORATION
+\pgfdeclaredecoration{bond}{initial}{
+  \state{initial}[width=\pgfdecoratedinputsegmentlength+1pt]{
+    \pgfpathlineto{\pgfpointdecoratedinputsegmentlast}
+  }
+  \state{final}{
+    % 
+    \pgfmathparse{int((\pgfdecoratedangle+\xbondgraphs@bond@barbdirectionflipangle)/90)}
+    \ifcase\pgfmathresult
+    \pgfkeys{/xbondgraphs/bond/barb direction=right}
+    \or
+    \pgfkeys{/xbondgraphs/bond/barb direction=left}
+    \or
+    \pgfkeys{/xbondgraphs/bond/barb direction=left}
+    \else
+    \pgfkeys{/xbondgraphs/bond/barb direction=right}
+    \fi
+    \ifxbondgraphs@bond@causality@eout
+    \tikzset{-{\xbondgraphs@bond@barbarrowhead[\xbondgraphs@bond@barbdirection].|[/tikz/causal stroke style]}}
+    \else
+    \ifxbondgraphs@bond@causality@fout
+    \tikzset{{|[/tikz/causal stroke style]}-{\xbondgraphs@bond@barbarrowhead[\xbondgraphs@bond@barbdirection]}}
+    \else
+    \tikzset{-{\xbondgraphs@bond@barbarrowhead[\xbondgraphs@bond@barbdirection]}}
+    \fi
+    \fi
+    \path[/xbondgraphs/bond/template]\pgfextra{\pgfpathlineto{\pgfpointdecoratedinputsegmentlast}};
+  }
+}
+
+% ifs for the bond options
+\newif\ifxbondgraphs@bond@causality@eout
+\newif\ifxbondgraphs@bond@causality@fout
+
+% ifs for the element options
+\newif\ifxbondgraphs@element@word
+\newif\ifxbondgraphs@element@multiport
+
+% Define 'xbondgraphs' as key family for this package
+\pgfkeys{
+  xbondgraphs/.is family,
+  xbondgraphs,
+  % Two key families are mainly used, first is 'bond':
+  bond/.is family,
+  bond,
+  template/.style={
+    shorten < = 3pt,
+    shorten > = 3pt,
+    draw,
+    line width = \xbondgraphs@singlebondwidth,
+  },
+  barb direction/.store in=\xbondgraphs@bond@barbdirection,
+  barb direction flip angle/.store in=\xbondgraphs@bond@barbdirectionflipangle,
+  eout/.is if=xbondgraphs@bond@causality@eout,
+  eout=false,
+  fout/.is if=xbondgraphs@bond@causality@fout,
+  fout=false,
+  effort out/.code=\pgfkeys{
+    /xbondgraphs/bond/.cd,
+    eout=true,
+    fout=false,
+    /tikz/causal stroke style/.append style={#1}
+  },
+  flow out/.code=\pgfkeys{
+    /xbondgraphs/bond/.cd,
+    eout=false,
+    fout=true,
+    /tikz/causal stroke style/.append style={#1}
+  },
+  effort in/.code=\pgfkeys{/xbondgraphs/bond/flow out={#1}},
+  flow in/.code=\pgfkeys{/xbondgraphs/bond/effort out={#1}},
+  multi/.code=\pgfkeys{
+    /xbondgraphs/bond/causality stroke scale=3,
+    /xbondgraphs/bond/barb arrow head={Multi Bond Barb},
+    /xbondgraphs/bond/template/.append style={
+      double,double distance={\xbondgraphs@multibondwidth-2*\xbondgraphs@singlebondwidth}
+    },
+    /tikz/line width = \xbondgraphs@multibondwidth,
+  },
+  causality stroke scale/.store in=\xbondgraphs@causalitystrokescale,
+  causality stroke scale=2,
+  barb arrow head/.store in=\xbondgraphs@bond@barbarrowhead,
+  barb arrow head={Single Bond Barb},
+  label/.style = {
+    \xbondgraphs@bondlabelcolor,
+  },
+  /xbondgraphs,
+  % Second key family is 'element':
+  element/.is family,
+  element,
+  n/.store in=\xbondgraphs@element@n,
+  n=1,
+  word/.is if=xbondgraphs@element@word,
+  word=false,
+  multiport boolean/.is if=xbondgraphs@element@multiport,
+  multiport boolean=false,
+  multiport/.code=\pgfkeys{
+    /xbondgraphs/element/multiport boolean=true,
+  },
+  label/.style={
+    \xbondgraphs@bgelementlabelcolor,
+  },
+  % The 'XBG' keys are used as package options
+  /XBG/.cd,
+  barbangle/.store in=\xbondgraphs@barbangle,
+  barbangle=40,
+  singlebondwidth/.store in=\xbondgraphs@singlebondwidth,
+  singlebondwidth=1pt,
+  multibondwidth/.store in=\xbondgraphs@multibondwidth,
+  multibondwidth=4pt,
+  bgelementlabelcolor/.store in=\xbondgraphs@bgelementlabelcolor,
+  bgelementlabelcolor=blue,
+  bondlabelcolor/.store in=\xbondgraphs@bondlabelcolor,
+  bondlabelcolor=green!50!black,
+  gray/.code={
+    \pgfkeys{
+      /XBG/.cd, bondlabelcolor=gray, bgelementlabelcolor=gray
+    }
+    \colorlet{diff}{white!60!black}
+    \colorlet{error}{white!30!black}
+  },
+  barbdirection/.is choice,
+  barbdirection/leftbelow/.code={\pgfkeys{/xbondgraphs/bond/barb direction flip angle=45}},
+  barbdirection/alwaysbelow/.code={\pgfkeys{/xbondgraphs/bond/barb direction flip angle=-1}},
+  barbdirection/alwaysbelow,
+  /tikz/.cd,
+  bond/.style={
+    /xbondgraphs/bond,
+    #1,
+    /tikz,
+    draw = none,
+    decoration={bond},
+    postaction=decorate,
+  },
+  bond graph element/.code 2 args={
+    \pgfkeys{
+      /xbondgraphs/element,
+      #2
+    }
+    \tikzset{
+      shape=rounded rectangle,
+      inner sep = 1.5pt,
+      node contents = {%
+        \ifxbondgraphs@element@multiport%
+        \ifnum\xbondgraphs@element@n=1
+        \ensuremath{\mathbb{#1}}%
+        \else
+        \ensuremath{\mathbb{#1}_{\xbondgraphs@element@n}}
+        \fi
+        \else%
+        \ifnum\xbondgraphs@element@n=1
+        \ensuremath{\mathbf{#1}}%
+        \else
+        \ensuremath{\mathbf{#1}_{\xbondgraphs@element@n}}%
+        \fi
+        \fi%
+      },
+      prefix after command={
+        \pgfextra{
+          \tikzset{
+            every pin/.style={
+              /xbondgraphs/element/label,
+              pin distance = 2pt,
+              pin edge={
+                draw = none,
+                decoration={
+                  markings,
+                  mark = at position 0.5 with {
+                    \node[rotate=\pgfdecoratedangle,inner sep = 0pt,/xbondgraphs/element/label]{:};
+                  },
+                },
+                decorate,
+              },
+            },
+            every label/.style={
+              /xbondgraphs/element/label,
+            },
+          },
+        }
+      },
+    }
+    \ifxbondgraphs@element@word
+    \tikzset{draw,line width = 0.75\xbondgraphs@singlebondwidth,shape=ellipse}
+    \fi
+  },
+  bond label/.style={
+    font=\small,
+    /xbondgraphs/bond/label,
+    sloped,
+  },
+  effort/.style={
+    edge node={node [bond label,above]{#1}}
+  },
+  flow/.style={
+    edge node={node [bond label,below]{#1}}
+  },
+  causal stroke style/.style={
+    width=\xbondgraphs@causalitystrokescale*\xbondgraphs@multibondwidth,
+  },
+}
+
+% MUX SHAPE
+\pgfkeys{
+  /tikz/mux/.code={
+    \pgfkeys{
+      %      /tikz/shape=mux,
+      /mux/.cd,
+      #1
+    }
+    \tikzset{
+      outer sep = 0pt,
+      inner sep = 0pt,
+      minimum width = \pgfkeysvalueof{/mux/width},
+      node contents = {},
+      fill=black,
+      shape=mux,
+    }
+  },
+  /mux/.is family,
+  mux,
+  inputs/.initial=2,
+  outputs/.initial=2,
+  io spacing/.initial=5mm,
+  width/.initial=3pt,
+}
+\pgfdeclareshape{mux}{
+  \savedanchor\centerpoint{%
+    \pgf@x=0%
+    \pgf@y=0%
+  }%
+  \inheritsavedanchors[from=rectangle] 
+  \inheritanchorborder[from=rectangle]
+  \inheritanchor[from=rectangle]{north}
+  \inheritanchor[from=rectangle]{north west}
+  \inheritanchor[from=rectangle]{north east}
+  \inheritanchor[from=rectangle]{center}
+  \inheritanchor[from=rectangle]{west}
+  \inheritanchor[from=rectangle]{east}
+  \inheritanchor[from=rectangle]{mid}
+  \inheritanchor[from=rectangle]{mid west}
+  \inheritanchor[from=rectangle]{mid east}
+  \inheritanchor[from=rectangle]{south}
+  \inheritanchor[from=rectangle]{south west}
+  \inheritanchor[from=rectangle]{south east}
+  \savedmacro\inputs{\pgfmathtruncatemacro\inputs{\pgfkeysvalueof{/mux/inputs}}}%
+  \savedmacro\outputs{\pgfmathtruncatemacro\outputs{\pgfkeysvalueof{/mux/outputs}}}%
+  \savedmacro\numio{\pgfmathparse{max(\inputs,\outputs)}\pgfmathtruncatemacro\numio\pgfmathresult}
+  \saveddimen\height{%
+    \pgfmathparse{max(\pgfkeysvalueof{/mux/inputs},\pgfkeysvalueof{/mux/outputs})}
+    \pgfmathparse{(\pgfmathresult) * \pgfkeysvalueof{/mux/io spacing}}
+    \pgfmathsetlength\pgf@x{\pgfmathresult}
+  }
+  \saveddimen\halfwidth{\pgfmathsetlength\pgf@x{\pgfkeysvalueof{/mux/width}/2}\pgfmathresult}
+  \saveddimen\iospacing{\pgfmathsetlength\pgf@x{\pgfkeysvalueof{/mux/io spacing}}\pgfmathresult}
+  \backgroundpath{
+    \pgfpathrectanglecorners{
+      \pgfpointadd{\centerpoint}{\pgfpoint{-\halfwidth}{\height/2}}
+    }{
+      \pgfpointadd{\centerpoint}{\pgfpoint{\halfwidth}{-\height/2}}
+    }
+  }
+  \pgfutil@g@addto@macro\pgf@sh@s@mux{%
+    % Start with the maximum input number and go backwards.
+    % If the anchor is undefined, create it. Otherwise stop.
+    \c@pgf@counta=\pgfkeysvalueof{/mux/inputs}\relax%
+    \pgfmathloop%
+    \ifnum\c@pgf@counta>0\relax%
+    \pgfutil@ifundefined{pgf@anchor@mux@input\the\c@pgf@counta}{%
+      \expandafter\xdef\csname pgf@anchor@mux@input\the\c@pgf@counta\endcsname{%
+        \noexpand\ioanchor{\the\c@pgf@counta}{-1}{((\inputs-\numio)/2+0.5)}%
+      }%
+    }{\c@pgf@counta=0\relax}%
+    \advance\c@pgf@counta-1\relax%
+    \repeatpgfmathloop%  
+  }%
+  \pgfutil@g@addto@macro\pgf@sh@s@mux{%
+    % Start with the maximum output number and go backwards.
+    % If the anchor is undefined, create it. Otherwise stop.
+    \c@pgf@counta=\pgfkeysvalueof{/mux/outputs}\relax%
+    \pgfmathloop%
+    \ifnum\c@pgf@counta>0\relax%
+    \pgfutil@ifundefined{pgf@anchor@mux@output\the\c@pgf@counta}{%
+      \expandafter\xdef\csname pgf@anchor@mux@output\the\c@pgf@counta\endcsname{%
+        \noexpand\ioanchor{\the\c@pgf@counta}{1}{((\outputs-\numio)/2+0.5)}%
+      }%
+    }{\c@pgf@counta=0\relax}%
+    \advance\c@pgf@counta-1\relax%
+    \repeatpgfmathloop%  
+  }%
+}
+
+\def\ioanchor#1#2#3{%
+  \pgfpointadd{\centerpoint}{\pgfpoint{#2*\halfwidth}{\height/2-#1*\iospacing+#3*\iospacing}}%
+}
+
+\colorlet{diff}{orange}
+\colorlet{error}{red}
+
+% Proces all /XBG keys as package options
+\ProcessPgfPackageOptions{/XBG}
+%</package>
+%    \end{macrocode}
+% \Finale
+\endinput
