@@ -112,7 +112,7 @@
 % \DoNotIndex{\#,\$,\%,\&,\@,\\,\{,\},\^,\_,\~,\ }
 % \DoNotIndex{\if,\else,\fi,\def,\ifcase,\or}
 %
-% \title{\xbondgraphs\thanks{This document corresponds to \xbondgraphs{}\space\fileversion, dated\space\filedate.} -- drawing bond graphs using \Tikz}
+% \title{{\Huge\xbondgraphs}\thanks{This document corresponds to \xbondgraphs{}\space\fileversion, dated\space\filedate.}\\drawing bond graphs using \Tikz}
 % \author{Marcus J.W. Snippe\thanks{E-mail: \href{mailto:m.j.w.snippe@saxion.nl}{m.j.w.snippe@saxion.nl}}}
 %
 % \maketitle
@@ -236,6 +236,7 @@
 %		\label{sec:globaloptions}
 %		
 %		\DescribeMacro{barbdirection}
+% 			\label{opt:barbdirection}
 %		
 %		\begin{tikzpicture}
 %			\foreach \angle in {0,30,...,359}{
@@ -400,8 +401,8 @@
 %		First locally define the line width of a single bond, a multibond, and the (absolute) angle the barb makes with the bond. 
 %    \begin{macrocode}
     \pgfmathsetlengthmacro{\sbw}{\pgflinewidth}
-    \pgfmathsetlengthmacro{\mbw}{\xbondgraphs@multibondwidth}
-    \pgfmathsetlengthmacro{\ba}{\xbondgraphs@barbangle}
+    \pgfmathsetlengthmacro{\mbw}{\xbg@multibondwidth}
+    \pgfmathsetlengthmacro{\ba}{\xbg@barbangle}
 %    \end{macrocode}
 % 		Calculate the $ x $- and $ y $ position of the points that the barb will follow. If one was walking along the bond from startpoint to endpoint, the origin of this scope would be the endpoint, the $ x $ direction would be forward, and the $ y $ direction would be leftward.
 %    \begin{macrocode}
@@ -446,11 +447,11 @@
 %    \end{macrocode}
 % 		Note that the single bond line width is now read from its \pgf key and not from |\pgflinewidth|. The latter now holds the multi bond line width.
 %    \begin{macrocode}
-    \pgfmathsetlengthmacro{\sbw}{\xbondgraphs@singlebondwidth}
+    \pgfmathsetlengthmacro{\sbw}{\xbg@singlebondwidth}
     \pgfmathsetlengthmacro{\mbw}{\pgflinewidth}
-    \pgfmathsetlengthmacro{\ba}{\xbondgraphs@barbangle}
+    \pgfmathsetlengthmacro{\ba}{\xbg@barbangle}
 %    \end{macrocode}
-% 		The starting point of the drawing of the actual arrow tip is now were the `bottom' line ends. The tip end location is calculated such that the centerline of the barb passes through the endpoint of the `top' double line.
+% 		The starting point of the drawing of the actual arrow tip is now were the `bottom' line ends. The tip end location is calculated such that the centerline of the barb passes through the endpoint of the `top' double line. This is also described in \cref{sec:multibondarrowtip}.
 %    \begin{macrocode}
     \pgfmathsetlengthmacro{\startx}{0pt}
     \pgfmathsetlengthmacro{\starty}{-0.5*\mbw+0.5*\sbw}
@@ -486,15 +487,20 @@
 }
 %    \end{macrocode}
 % \end{macro}
-%
 % \begin{macro}{bond decoration}
+% 		The |bond| decoration is used to determine the direction of the barb. It starts with an |initial| state, which only draws a line from the current point to the next segment end. The width expected by \pgf for this decoration is an arbitrary length longer than the segment length, such that only one state per segment can be used.
 %    \begin{macrocode}
 \pgfdeclaredecoration{bond}{initial}{
   \state{initial}[width=\pgfdecoratedinputsegmentlength+1pt]{
     \pgfpathlineto{\pgfpointdecoratedinputsegmentlast}
   }
   \state{final}{
-    \pgfmathparse{int((\pgfdecoratedangle+\xbondgraphs@bond@barbdirectionflipangle)/90)}
+%    \end{macrocode}
+% 		With this |\ifcase| the direction of the arrow tip is determined, and stored in a \pgf key. This code is partly taken from the \bondgraphs package, so credits go to Geert Folkertsma, and Mark Wibrow for his answer at \href{https://tex.stackexchange.com/a/208393/74459}{tex.stackexchange.com}. 
+% 
+% The value of the macro 
+%    \begin{macrocode}
+    \pgfmathparse{int((\pgfdecoratedangle+\xbg@bond@barbflipang)/90)}
     \ifcase\pgfmathresult
       \pgfkeys{/xbondgraphs/bond/barb direction=right}
     \or
@@ -504,13 +510,16 @@
     \else
       \pgfkeys{/xbondgraphs/bond/barb direction=right}
     \fi
+%    \end{macrocode}
+% 		If the causality of the bond is determined, it is either effort out or flow out. The corresponding arrow definition is set here. If no causality is determined, the arrow definition is either the |Single Bond Barb| or the |Multi Bond Barb|, depending if the |multi| key of the bond has been set to true. The direction is read from the bond's |barb direction| key.
+%    \begin{macrocode}
     \ifxbondgraphs@bond@causality@eout
-      \tikzset{-{\xbondgraphs@bond@barbarrowhead[\xbondgraphs@bond@barbdirection].|[/tikz/causal stroke style]}}
+      \tikzset{-{\xbg@bond@barbarrowhead[\xbg@bond@barbdir].|[/tikz/causal stroke style]}}
     \else
       \ifxbondgraphs@bond@causality@fout
-        \tikzset{{|[/tikz/causal stroke style]}-{\xbondgraphs@bond@barbarrowhead[\xbondgraphs@bond@barbdirection]}}
+        \tikzset{{|[/tikz/causal stroke style]}-{\xbg@bond@barbarrowhead[\xbg@bond@barbdir]}}
       \else
-        \tikzset{-{\xbondgraphs@bond@barbarrowhead[\xbondgraphs@bond@barbdirection]}}
+        \tikzset{-{\xbg@bond@barbarrowhead[\xbg@bond@barbdir]}}
       \fi
     \fi
     \path[/xbondgraphs/bond/template]\pgfextra{\pgfpathlineto{\pgfpointdecoratedinputsegmentlast}};
@@ -539,10 +548,10 @@
     shorten < = 3pt,
     shorten > = 3pt,
     draw,
-    line width = \xbondgraphs@singlebondwidth,
+    line width = \xbg@singlebondwidth,
   },
-  barb direction/.store in=\xbondgraphs@bond@barbdirection,
-  barb direction flip angle/.store in=\xbondgraphs@bond@barbdirectionflipangle,
+  barb direction/.store in=\xbg@bond@barbdir,
+  barb direction flip angle/.store in=\xbg@bond@barbflipang,
   eout/.is if=xbondgraphs@bond@causality@eout,
   eout=false,
   fout/.is if=xbondgraphs@bond@causality@fout,
@@ -565,22 +574,22 @@
     /xbondgraphs/bond/causality stroke scale=3,
     /xbondgraphs/bond/barb arrow head={Multi Bond Barb},
     /xbondgraphs/bond/template/.append style={
-      double,double distance={\xbondgraphs@multibondwidth-2*\xbondgraphs@singlebondwidth}
+      double,double distance={\xbg@multibondwidth-2*\xbg@singlebondwidth}
     },
-    /tikz/line width = \xbondgraphs@multibondwidth,
+    /tikz/line width = \xbg@multibondwidth,
   },
-  causality stroke scale/.store in=\xbondgraphs@causalitystrokescale,
+  causality stroke scale/.store in=\xbg@causalitystrokescale,
   causality stroke scale=2,
-  barb arrow head/.store in=\xbondgraphs@bond@barbarrowhead,
+  barb arrow head/.store in=\xbg@bond@barbarrowhead,
   barb arrow head={Single Bond Barb},
   label/.style = {
-    \xbondgraphs@bondlabelcolor,
+    \xbg@bondlabelcolor,
   },
   /xbondgraphs,
   % Second key family is 'element':
   element/.is family,
   element,
-  n/.store in=\xbondgraphs@element@n,
+  n/.store in=\xbg@element@n,
   n=1,
   word/.is if=xbondgraphs@element@word,
   word=false,
@@ -590,19 +599,19 @@
     /xbondgraphs/element/multiport boolean=true,
   },
   label/.style={
-    \xbondgraphs@bgelementlabelcolor,
+    \xbg@bgelementlabelcolor,
   },
   % The 'XBG' keys are used as package options
   /XBG/.cd,
-  barbangle/.store in=\xbondgraphs@barbangle,
+  barbangle/.store in=\xbg@barbangle,
   barbangle=40,
-  singlebondwidth/.store in=\xbondgraphs@singlebondwidth,
+  singlebondwidth/.store in=\xbg@singlebondwidth,
   singlebondwidth=1pt,
-  multibondwidth/.store in=\xbondgraphs@multibondwidth,
+  multibondwidth/.store in=\xbg@multibondwidth,
   multibondwidth=4pt,
-  bgelementlabelcolor/.store in=\xbondgraphs@bgelementlabelcolor,
+  bgelementlabelcolor/.store in=\xbg@bgelementlabelcolor,
   bgelementlabelcolor=blue,
-  bondlabelcolor/.store in=\xbondgraphs@bondlabelcolor,
+  bondlabelcolor/.store in=\xbg@bondlabelcolor,
   bondlabelcolor=green!50!black,
   gray/.code={
     \pgfkeys{
@@ -634,16 +643,16 @@
       inner sep = 1.5pt,
       node contents = {%
         \ifxbondgraphs@element@multiport%
-        \ifnum\xbondgraphs@element@n=1
+        \ifnum\xbg@element@n=1
         \ensuremath{\mathbb{#1}}%
         \else
-        \ensuremath{\mathbb{#1}_{\xbondgraphs@element@n}}
+        \ensuremath{\mathbb{#1}_{\xbg@element@n}}
         \fi
         \else%
-        \ifnum\xbondgraphs@element@n=1
+        \ifnum\xbg@element@n=1
         \ensuremath{\mathbf{#1}}%
         \else
-        \ensuremath{\mathbf{#1}_{\xbondgraphs@element@n}}%
+        \ensuremath{\mathbf{#1}_{\xbg@element@n}}%
         \fi
         \fi%
       },
@@ -672,7 +681,7 @@
       },
     }
     \ifxbondgraphs@element@word
-    \tikzset{draw,line width = 0.75\xbondgraphs@singlebondwidth,shape=ellipse}
+    \tikzset{draw,line width = 0.75\xbg@singlebondwidth,shape=ellipse}
     \fi
   },
   bond label/.style={
@@ -687,7 +696,7 @@
     edge node={node [bond label,below]{#1}}
   },
   causal stroke style/.style={
-    width=\xbondgraphs@causalitystrokescale*\xbondgraphs@multibondwidth,
+    width=\xbg@causalitystrokescale*\xbg@multibondwidth,
   },
 }
 
