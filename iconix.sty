@@ -1,0 +1,721 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{iconix}[2018/04/27 v0.01 Numerous iconic diagram icons of various power domains]
+
+\RequirePackage{pgfopts}
+\RequirePackage{tikz}
+\RequirePackage{xparse}
+
+\usetikzlibrary{decorations.pathreplacing,decorations.pathmorphing,patterns}
+
+\pgfkeys{
+	/iconix/.is family,
+	/iconix,
+		iconiclabelcolor/.store in=\iconix@iconic@labelcolor,
+		iconiclabelcolor=blue,
+}
+
+% Signals
+\tikzset{
+	signal/.style args = {#1}{
+		-{Latex[length=6pt,width=6pt]},
+		thick,
+		#1,
+	},
+	signal/.default = {},
+	msignal/.style args = {#1}{
+		double,
+		double distance = 2.5pt,
+		-{Latex[length=7pt,width=7pt]},
+		thick,
+		#1,
+	},
+	msignal/.default = {},
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% BLOCK DIAGRAMS 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\tikzset{
+	block/.style args = {#1}{
+		draw,
+		thick,
+		minimum height = 1cm,
+		minimum width = 1cm,
+		text = \bondgraphs@blockcontentscolour,
+		prefix after command= {
+			\pgfextra{
+				\tikzset{
+					every label/.style={
+						% Element label style
+						\iconix@iconic@labelcolor,
+						font={\mdseries}
+					}
+				}
+			}
+		},
+		#1
+	},
+	block/.default = {},
+}
+
+\tikzset{
+	splitter/.style args = {#1}{
+		fill,
+		inner sep = 0pt,
+		minimum width = 1.5mm,
+		circle,
+		#1
+	}
+}
+
+\tikzset{
+	sinewavegen/.style args = {#1}{
+		block,
+		path picture = {
+			\begin{scope}[x=1mm,y=2.5mm]
+				\draw (-4mm,3.5mm) -- (-4mm,-3.5mm);
+				\draw (-4.5mm,0mm) -- (4.5mm,0mm);
+				\draw[\bondgraphs@blockcontentscolour,thick] (-4mm,0) sin ++(1,1) cos ++(1,-1) sin ++(1,-1) cos ++(1,1) sin ++(1,1) cos ++(1,-1) sin ++(1,-1) cos ++(1,1);
+			\end{scope}
+		}
+	},
+	motionprofilegen/.style args = {#1}{
+		block,
+		path picture = {
+			\draw (-4mm,3.5mm) -- (-4mm,-3.5mm);
+			\draw (-4.5mm,-3mm) -- (4.5mm,-3mm);
+			\begin{scope}[\bondgraphs@blockcontentscolour,thick,smooth,variable=\t,x=1cm,y=1cm]
+				\pgfmathsetmacro{\hm}{0.5}
+				\pgfmathsetmacro{\tm}{0.7}
+				\pgfmathsetmacro{\ts}{-0.4}
+				\pgfmathsetmacro{\ofs}{-0.3}
+				\draw[domain=\ts:\ts+\tm/4] plot ({\t},{\ofs + 16/3*\hm*((\t-\ts)/\tm)^3});
+				\draw[domain=\ts+\tm/4:\ts+3*\tm/4] plot ({\t},{\ofs + 32*\hm/(\tm)^3*(\tm*(\t-\ts)^2/4 - (\t-\ts)^3/6 - (\tm)^2*(\t-\ts)/16 + (\tm)^3/192)});
+				\draw[domain= \ts+3*\tm/4:\ts+\tm]  plot ({\t},{\ofs + 32*\hm/(\tm)^3*(-\tm*(\t-\ts)^2/2+(\t-\ts)^3/6+(\tm)^2*(\t-\ts)/2-13*(\tm)^3/96)});
+				\draw[domain=\ts+\tm:\ts+\tm+0.1] plot ({\t},{\ofs+\hm});
+			\end{scope}
+		}
+	}
+}
+
+\tikzset{
+	integrator/.style args = {#1}{
+		block,
+		path picture = {
+			\node[\bondgraphs@blockcontentscolour]{\ensuremath{\int}};
+		}
+	}
+}
+
+\tikzset{
+	sum/.style n args = {4}{draw,circle,minimum width = 4mm,fill=white,
+		append after command={
+			\pgfextra{
+				\begin{scope}%[every node/.style={inner sep = 0pt, minimum width = 5mm, draw, circle,font=\tiny}]
+					\ifthenelse{\equal{#1}{+}}{
+						\begin{scope}[shift={(\tikzlastnode.north)},shift={(-2mm,1.5mm)},line width = .8pt]
+							\draw (-0.75mm,0mm) -- (0.75mm,0mm);
+							\draw (0mm,-0.75mm) -- (0mm,0.75mm);
+						\end{scope}
+					}{
+					\ifthenelse{\equal{#1}{-}}{
+						\begin{scope}[shift={(\tikzlastnode.north)},shift={(-2mm,1.5mm)},line width = .8pt]
+							\draw (-0.75mm,0mm) -- (0.75mm,0mm);
+						\end{scope}
+					}{}
+				}
+				\ifthenelse{\equal{#2}{+}}{
+					\begin{scope}[shift={(\tikzlastnode.south)},shift={(2mm,-1.5mm)},line width = .8pt]
+						\draw (-0.75mm,0mm) -- (0.75mm,0mm);
+						\draw (0mm,-0.75mm) -- (0mm,0.75mm);
+					\end{scope}
+				}{
+				\ifthenelse{\equal{#2}{-}}{
+					\begin{scope}[shift={(\tikzlastnode.south)},shift={(2mm,-1.5mm)},line width = .8pt]
+						\draw (-0.75mm,0mm) -- (0.75mm,0mm);
+					\end{scope}
+				}{}
+			}
+			\ifthenelse{\equal{#3}{+}}{
+				\begin{scope}[shift={(\tikzlastnode.west)},shift={(-1.5mm,-2mm)},line width = .8pt]
+					\draw (-0.75mm,0mm) -- (0.75mm,0mm);
+					\draw (0mm,-0.75mm) -- (0mm,0.75mm);
+				\end{scope}
+			}{
+			\ifthenelse{\equal{#3}{-}}{
+				\begin{scope}[shift={(\tikzlastnode.west)},shift={(-1.5mm,-2mm)},line width = .8pt]
+					\draw (-0.75mm,0mm) -- (0.75mm,0mm);
+				\end{scope}
+			}{}
+		}
+		\ifthenelse{\equal{#4}{+}}{
+			\begin{scope}[shift={(\tikzlastnode.east)},shift={(1.5mm,2mm)},line width = .8pt]
+				\draw (-0.75mm,0mm) -- (0.75mm,0mm);
+				\draw (0mm,-0.75mm) -- (0mm,0.75mm);
+			\end{scope}
+		}{
+		\ifthenelse{\equal{#4}{-}}{
+			\begin{scope}[shift={(\tikzlastnode.east)},shift={(1.5mm,2mm)},line width = .8pt]
+				\draw (-0.75mm,0mm) -- (0.75mm,0mm);
+			\end{scope}
+		}{}
+	}
+\end{scope}
+}
+},
+},
+sum/.default = {}{-}{}{+},
+signalname/.style={},
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ICONIC DIAGRAMS 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\tikzset{
+	component/.style={
+%		line width=1pt,
+		inner sep = 0pt,
+		prefix after command= {
+			\pgfextra{
+				\tikzset{
+					every label/.style={
+						% Element label style
+						text=\iconix@iconic@labelcolor,
+						label distance = 0pt
+						%						font={\mdseries}
+					}
+				}
+			}
+		},
+	},
+	node component/.style={
+		component
+	},
+	line component/.style={
+		component,
+		sloped,
+		allow upside down,
+		pos = .5,
+	},
+	hydrline/.style={
+		draw,
+		line width = 1pt,
+		double,
+		double distance between line centers=3mm,
+	},
+	flowsource/.style 2 args={
+		component,
+		minimum height = 1cm,
+		minimum width = 1.5cm,
+		label={#2:#1},
+		path picture={%
+			\draw[hydrline] (-.5,0)--(.5,0);
+			\draw[fill=white] (0,.15) circle (.15);
+			\draw[fill=white] (0,-.15) circle (.15);
+		}
+	},
+	flowresistance/.style 2 args={
+		component,
+		minimum height = 1cm,
+		minimum width = 1.5cm,
+		label={#2:#1},
+		path picture={%
+			\draw[hydrline] (-.5,0)--(.5,0);
+			\draw (1/3+.1,.1) -- (1/3-.1,-.1)
+			(1/3-.1,+.1) -- (1/3+.1,-.1);
+			\draw (-1/3+.1,.1) -- (-1/3-.1,-.1)
+			(-1/3-.1,+.1) -- (-1/3+.1,-.1);
+			\draw (.1,.1) -- (-.1,-.1)
+			(-.1,+.1) -- (.1,-.1);
+		}
+	},
+	hydrinertia/.style 2 args={
+		component,
+		minimum height = 1cm,
+		minimum width = 1.5cm,
+		label={#2:#1},
+		path picture={%
+			\draw[hydrline] (-.5,0)--(.5,0);
+			\fill[white!80!black] (-.4,-.1) rectangle (.4,.1);
+		}
+	},
+	battery/.style={
+		line component,
+		minimum height = 1cm, 
+		minimum width = 6mm+4\pgflinewidth,
+		path picture={%
+			\fill[white] (-3mm,-0.6*\pgflinewidth) rectangle (3mm,0.6*\pgflinewidth);
+			\draw (3mm,-5mm) -- ++(0,10mm);
+			\draw (-3mm/3,-5mm) -- ++(0,10mm);
+			\pgfmathparse{min(2.5*\pgflinewidth,5pt)}
+			\begin{scope}[line width = \pgfmathresult pt]
+				\draw (3mm/3,-2.5mm) -- ++(0,5mm);
+				\draw (-3mm,-2.5mm) -- ++(0,5mm);
+			\end{scope}
+		},
+	},
+	voltage source/.style={
+		line component,
+		minimum height = 1cm, 
+		minimum width=1cm,
+		path picture={%
+			\fill[white] (-0.4,-0.6*\pgflinewidth) rectangle (0.4,0.6*\pgflinewidth);
+			\draw (0,0) circle (.4);
+			\draw (-.4,0) -- (.4,0);
+			\node[path picture={
+				\draw(0,-.75mm) -- (0,.75mm);
+				\draw(-.75mm,0) -- (.75mm,0);
+			}] at (.4,.4){};
+			\node[path picture={
+				\draw(-.75mm,0) -- (.75mm,0);
+			}] at (-.4,.4){};
+		},
+	},
+	currentsensor/.style args={#1}{
+		line component,
+		minimum height = 1cm, 
+		minimum width=1cm,
+		path picture={%
+			\draw[fill=white] (0,0) circle (.4);
+			\node {A};
+			%			\node at (.4,.4){\tikz[line width=1pt]{\draw(0,-.75mm) -- (0,.75mm);\draw(-.75mm,0) -- (.75mm,0);}};
+			%			\node at (-.4,.4){\tikz[line width=1pt]{\draw(-.75mm,0) -- (.75mm,0);}};
+		},
+		#1,
+	},
+	current/.style args={#1}{
+		line component,
+		minimum height = 2mm,
+		minimum width = 2mm,
+		path picture = {
+			\fill (-1mm,1mm) -- (1mm,0) -- (-1mm,-1mm) -- cycle;
+		},
+		#1,
+	},
+	voltagesensor/.style args={#1}{
+		line component,
+		minimum height = 1cm, 
+		minimum width=1cm,
+		path picture={%
+			\draw[fill=white] (0,0) circle (.4);
+			\node {V};
+			%			\node at (.4,.4){\tikz[line width=1pt]{\draw(0,-.75mm) -- (0,.75mm);\draw(-.75mm,0) -- (.75mm,0);}};
+			%			\node at (-.4,.4){\tikz[line width=1pt]{\draw(-.75mm,0) -- (.75mm,0);}};
+		},
+		#1,
+	},
+	oscilloscope/.style args={#1}{
+		node component,
+		minimum height = 1cm, 
+		minimum width=1cm,
+		path picture={%
+			\draw[fill=white] (0,0) circle (.4);
+			\draw (-.25,-.1) -- (0,.1) -- (0,-.1) -- (.25,.1) -- (.25,-.1);
+		},
+		#1,
+	},
+	functiongenerator/.style args={#1}{
+		node component,
+		minimum height = 1cm, 
+		minimum width=1cm,
+		path picture={%
+			\draw[fill=white] (0,0) circle (.4);
+			\draw[line width = 1pt] (-0.3,0) arc (180:0:.15) arc (-180:0:.15);
+		},
+		#1,
+	},
+	gyrator/.style 2 args={
+		component,
+		minimum height=1.5cm, 
+		minimum width=1cm,
+		label={[label distance = 0cm]#2:#1},
+		path picture={%
+			\draw[fill=white] (-.2,-.5) rectangle (.2,.5);
+			\draw[fill=white] (0,0) circle (.4);
+		}
+	},
+	resistor/.style={
+		line component,
+		minimum height=1cm,
+		minimum width = 1.5cm,
+		path picture={%
+			\fill[white] (-0.5,-0.6*\pgflinewidth) rectangle (0.5,0.6*\pgflinewidth);
+			\draw (-.5,-.2) rectangle (.5,.2);
+		},
+	},
+	resistor2/.style={
+		line component,
+		minimum height = 4mm,
+		minimum width = 1.5cm,
+		path picture = {
+			\fill[white] (-0.5,-0.6*\pgflinewidth) rectangle (0.5,0.6*\pgflinewidth);
+			\draw[decoration={
+				aspect=.4,
+				segment length=2mm,
+				amplitude=1.5mm,
+				zigzag,
+				pre length=1mm,
+				post length=1mm,
+			},decorate] (-.5,0) -- (.5,0);
+		},
+	},
+	inductor/.style={
+		line component,
+		minimum height=4mm,
+		minimum width=10mm,
+		path picture={%
+			\fill[white] (-0.5,-0.6*\pgflinewidth) rectangle (0.5,0.6*\pgflinewidth);
+			\draw (-5mm,0) -- (-4mm,0) arc (180:0:1mm) -- ++(0,-0.5*\pgflinewidth)
+				(-2mm,0) arc (180:0:1mm) -- ++(0,-0.5*\pgflinewidth)
+				(0,0) arc (180:0:1mm) -- ++(0,-0.5*\pgflinewidth)
+				( 2mm,0) arc (180:0:1mm) -- (5mm,0);
+		},
+	},
+	inductor2/.style args={#1}{
+		line width = 0.4pt,
+		sloped,
+		allow upside down,
+		pos = .5,
+		minimum height=1cm,
+		minimum width=1.5cm,
+		path picture={%
+			\pgfmathsetmacro{\extraangle}{40}
+			\pgfmathsetmacro{\radius}{.8/(2+6*cos(\extraangle))}
+			\fill[white] (-5mm+.5pt,-.1) rectangle (5mm-.5pt,.1);
+			\draw (-5mm,0)-- (-4mm,0)
+			arc (180:-\extraangle:\radius)
+			arc (180+\extraangle:-\extraangle:\radius)
+			arc (180+\extraangle:-\extraangle:\radius)
+			arc (180+\extraangle:0:\radius)
+			-- (5mm,0);
+		},
+		#1
+	},
+	capacitor/.style={
+		line component,
+		minimum height = 1cm,
+		minimum width = 1.5cm,
+		path picture={%
+			\pgfmathparse{max(1.5*\pgflinewidth,2pt)}
+			\pgfmathsetlengthmacro{\halfwidth}{\pgfmathresult pt}
+			\fill[white] (-\halfwidth,-0.6*\pgflinewidth) rectangle (\halfwidth,0.6*\pgflinewidth);
+			\draw (-\halfwidth,-0.3) -- ++(0,0.6);
+			\draw (\halfwidth,-0.3) -- ++(0,0.6);
+		},
+	},
+	switch/.style args={#1}{
+		line component,
+		minimum height = 7mm,
+		minimum width = 15mm,
+		path picture={%
+			\draw[white,line width=3pt] (-.4,0) -- (.4,0);
+			\fill (-.4,0) circle (.5mm);
+			\fill (.4,0) circle (.5mm);
+			\draw (-.4,0) -- ++(25:.8);
+		},
+		#1
+	},
+	elecearth/.style 2 args={
+		component,
+		minimum height = 1cm,
+		minimum width=1.5cm,
+		label={[label distance = 0cm]#2:#1},
+		path picture={%
+			\draw (0,0) --++(0,-.1)
+			(-.3,-.1) -- (.3,-.1)
+			(-.2,-.2) -- (.2,-.2)
+			(-.1,-.3) -- (.1,-.3);
+		}
+	},
+	mechanical earth/.style args={#1}{
+		node component,
+		minimum width = .5cm,
+		path picture={%
+			\fill[pattern = north east lines] (path picture bounding box.north west) rectangle (path picture bounding box.south);
+			\draw(path picture bounding box.north) -- (path picture bounding box.south);
+		},
+		#1
+	},
+	spring/.style args={#1}{
+		line component,
+		minimum height = 0.5cm,
+		minimum width=1.5cm,
+		path picture={%
+			\fill[white] (-0.5,-0.6*\pgflinewidth) rectangle (0.5,0.6*\pgflinewidth);
+			\draw(-0.5,0) -- (-0.4,0) decorate[decoration={aspect=.5,segment length=1mm,amplitude=1mm,coil}]{ -- (0.4,0)} -- (0.5,0);
+		},
+		#1
+	},
+	spring2/.style args={#1}{
+		resistor2={#1},
+		%		line component,
+		%		minimum height = 1cm,
+		%		minimum width=1.5cm,
+		%		label={[label distance = 0cm]#2:#1},
+		%		path picture={%
+		%			\fill[white] (-.5cm+.5pt,-.1) rectangle (.5cm-.5pt,.1);
+		%			\draw[decoration={segment length=3.2mm,amplitude=2mm,zigzag,pre length = .2mm, post length = .2mm},decorate] (-.5,0) -- (.5,0);
+		%		}
+	},
+	damper/.style={
+		line component,
+		minimum height = 0.5cm,
+		minimum width=4mm,
+		path picture={%
+			\pgfmathparse{max(4pt,2.5*\pgflinewidth)}
+			\pgfmathsetlengthmacro{\iconix@damper@width}{\pgfmathresult pt}
+			\fill[white] (-0.5*\iconix@damper@width,-0.6*\pgflinewidth) rectangle (0,0.6*\pgflinewidth);
+			\draw (0.5*\iconix@damper@width,-0.2) -- (-0.5*\iconix@damper@width,-0.2) -- (-0.5*\iconix@damper@width,0.2) -- (0.5*\iconix@damper@width,0.2);
+			\draw (0,0.125) -- (0,-0.125);
+		},
+	},
+	friction/.style 2 args={
+		line component,
+		minimum height = 1cm,
+		minimum width = 1.5cm,
+		label={[label distance = 0cm]#2:#1},
+		path picture={%
+			\fill[pattern = north east lines] (-.5,1/3) rectangle (.5,1/2);
+			\fill[pattern = north east lines] (-.5,-1/3) rectangle (.5,-1/2);
+			\draw (-.5,1/3) -- (.5,1/3);
+			\draw (-.5,-1/3) -- (.5,-1/3);
+			\draw (-1/3+.1,1/6+.1) -- (-1/3-.1,1/6-.1)
+			(-1/3-.1,1/6+.1) -- (-1/3+.1,1/6-.1);
+			\draw (.1,1/6+.1) -- (-.1,1/6-.1)
+			(-.1,1/6+.1) -- (.1,1/6-.1);
+			\draw (1/3+.1,1/6+.1) -- (1/3-.1,1/6-.1)
+			(1/3-.1,1/6+.1) -- (1/3+.1,1/6-.1);
+			\draw (-1/3+.1,-1/6+.1) -- (-1/3-.1,-1/6-.1)
+			(-1/3-.1,-1/6+.1) -- (-1/3+.1,-1/6-.1);
+			\draw (.1,-1/6+.1) -- (-.1,-1/6-.1)
+			(-.1,-1/6+.1) -- (.1,-1/6-.1);
+			\draw (1/3+.1,-1/6+.1) -- (1/3-.1,-1/6-.1)
+			(1/3-.1,-1/6+.1) -- (1/3+.1,-1/6-.1);
+		}
+	},
+	mass/.style args={#1}{
+		node component,
+		minimum height = 1.1cm,
+		minimum width = 1.5cm,
+		path picture={%
+			\draw[fill=white,#1] (-.5,-.5) rectangle (.5,.5);
+		},
+	},
+	mass2/.style args={#1}{
+		node component,
+		minimum height = 1.1cm,
+		minimum width = 1.5cm,
+		draw,
+		path picture={%
+			%			\draw[fill=white,#1] (path picture bounding box.north west) rectangle (path picture bounding box.south east);
+			\node{$ m $};
+		}
+	},
+	inertia/.style 2 args={
+		component,
+		minimum height = 1.5cm,
+		minimum width = 1.5cm,
+		label={[label distance = 0cm]#2:#1},
+		path picture={%
+			\draw[fill=white!80!black] (-.2,-.7) rectangle (.2,.7);
+		}
+	},
+	inertia2/.style 2 args={
+		mass={#1}{#2},
+		path picture={%
+			\draw[fill=white] (-.5,-.5) rectangle (.5,.5);
+			\node{$ J $};
+		}
+	},
+	rpossource/.style 2 args={
+		component,
+		minimum height = 1cm,
+		minimum width = 1.5cm,
+		label={#2:#1},
+		path picture={%
+			\draw[line width = 1mm,white, shorten > = .5pt, shorten < = .5pt] (-.75,0) -- (.75,0);
+			\draw[<<->>,>=stealth, shorten > = .5pt, shorten < = .5pt] (-.75,0) -- (.75,0);
+			\node[fill=white,minimum width = .4cm]{$ \varphi $};
+		}
+	},
+	tpossource/.style 2 args={
+		component,
+		minimum height = 1cm,
+		minimum width = 1.5cm,
+		label={#2:#1},
+		path picture={%
+			\draw[line width = 1mm,white, shorten > = .5pt, shorten < = .5pt] (-.75,0) -- (.75,0);
+			\draw[<->,>=stealth, shorten > = .5pt, shorten < = .5pt] (-.75,0) -- (.75,0);
+			\node[fill=white,minimum width = .4cm]{$ x $};
+		}
+	},
+	transmissionl1/.style 2 args={
+		component,
+		yshift=-1cm,
+		minimum height = 2.5cm,
+		minimum width = 1cm,
+		label={#2:#1},pos=1,
+		path picture={%
+			\draw[fill=white] (0,.1) arc (90:-90:.1);
+			\draw (0,1) -- ++ (0,-2);
+			\draw (0,-1) -- ++ (-.25,.125) -- ++ (0, -.25) -- cycle;
+			\draw (-.25,-.8) -- ++(0,-.4);
+			\fill[pattern=north east lines] (-.25,-.8) rectangle ++(-.15,-.4);
+			\draw[fill=white] (0,1) circle (.1);
+			\draw[fill=white] (0,-1) circle (.1);
+		}
+	},
+	transmissiong1/.style 2 args={
+		component,
+		yshift=-1cm,
+		minimum height = 2.5cm,
+		minimum width = 1cm,
+		label={#2:#1},
+		pos=0,
+		path picture={%
+			\draw[fill=white] (0,.1) arc (-270:-90:.1);
+			\draw (0,1) -- ++ (0,-2);
+			\draw (0,-1) -- ++ (-.25,.125) -- ++ (0, -.25) -- cycle;
+			\draw (-.25,-.8) -- ++(0,-.4);
+			\fill[pattern=north east lines] (-.25,-.8) rectangle ++(-.15,-.4);
+			\draw[fill=white] (0,1) circle (.1);
+			\draw[fill=white] (0,-1) circle (.1);
+		}
+	},
+	cabledrumr/.style 2 args={
+		component,
+		yshift=-.5cm,
+		minimum height = 2cm,
+		minimum width = 1.5cm,
+		label={#2:#1},
+		pos = 1,
+		path picture={%
+			\draw[fill=white] (-.3,.6) rectangle (.3,-.5);
+			\draw (-.3,.5) --++ (.6,-.05)
+			++(-.6,-.05) --++ (.6,-.05)
+			++(-.6,-.05) --++ (.6,-.05)
+			++(-.6,-.05) --++ (.6,-.05);
+		}
+	},
+	cabledruml/.style 2 args={
+		component,
+		yshift=-.5cm,
+		minimum height = 2cm,
+		minimum width = 1.5cm,
+		label={#2:#1},
+		pos = 1,
+		path picture={%
+			\draw[fill=white] (-.3,.6) rectangle (.3,-.5);
+			\draw (.3,.5) --++ (-.6,-.05)
+			++(.6,-.05) --++ (-.6,-.05)
+			++(.6,-.05) --++ (-.6,-.05)
+			++(.6,-.05) --++ (-.6,-.05);
+		}
+	},
+	forcesource/.style 2 args={
+		line component,
+		minimum height = 1cm,
+		minimum width = 1.5cm,
+		label={#2:#1},
+		path picture={%
+			\draw (-0.2,.15) -- (0.2,0) -- (-0.2,-.15);
+		}
+	},
+	torquesource/.style 2 args={
+		component,
+		minimum height = 1cm,
+		minimum width = 1.5cm,
+		label={#2:#1},
+		path picture={%
+			\draw (-0.35,.15) -- (0.05,0) -- (-0.35,-.15);
+			\draw (-0.05,.15) -- (0.35,0) -- (-0.05,-.15);
+		}
+	},
+	forcesource2/.style args={#1}{
+		line component,
+		minimum height = 0.35cm,
+		minimum width = 1.5cm,
+		path picture={%
+			\fill[white] (-7.5mm+0.5\pgflinewidth,-0.6*\pgflinewidth) rectangle (7.5mm-0.5*\pgflinewidth,0.6*\pgflinewidth);
+%			\draw[<->,>=stealth, shorten > = 0.5\pgflinewidth, shorten < = 0.5\pgflinewidth] (-.75,0) -- (.75,0);
+			\node[minimum width = .4cm,minimum height = .3cm](F){$ F $};
+			\begin{scope}[-stealth, shorten > = 0.5\pgflinewidth]
+				\draw (F) -- (path picture bounding box.west);
+				\draw (F) -- (path picture bounding box.east);
+			\end{scope}
+		},
+		#1
+	},
+	torquesource2/.style 2 args={
+		component,
+		minimum height = 1cm,
+		minimum width = 1.5cm,
+		label={#2:#1},
+		path picture={%
+			\draw[line width = 1mm,white, shorten > = .5pt, shorten < = .5pt] (-.75,0) -- (.75,0);
+			\draw[<<->>,>=stealth, shorten > = .5pt, shorten < = .5pt] (-.75,0) -- (.75,0);
+			\node[fill=white,minimum width = .4cm]{$ T $};
+		}
+	},
+	centerofmass/.style={
+		line width = 1pt,
+		minimum size = #1+1pt,
+		circle,
+		draw,
+		path picture={%
+			\draw[black,line width=1pt] (0,0) circle (.5*#1-.5pt);
+			\fill[white] (#1,#1) rectangle (-#1,-#1);
+			\fill[] (0,0) rectangle (-#1,-#1);
+			\fill[] (0,0) rectangle (#1,#1);
+		}
+	},
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ADDITIONAL COMMANDS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\tikzset{
+	numberedgridlabel/.style={
+		black,
+		font=\tiny,
+		text width=0.6cm,
+		align=right,
+	}
+}
+
+\NewDocumentCommand{\numberedgrid}{o o m m o}{%
+	\IfValueTF{#1}{%
+		\pgfmathsetmacro\xmin{#1}%
+	}{%
+		\pgfmathsetmacro\xmin{0}%
+	}
+	\IfValueTF{#2}{%
+		\pgfmathsetmacro\ymin{#2}%
+	}{%
+		\pgfmathsetmacro\ymin{0}%
+	}
+	\pgfmathsetmacro\xmax{#3}%
+	\pgfmathsetmacro\ymax{#4}%
+	\IfValueTF{#5}{%
+		\pgfmathsetmacro\xstep{\xmin + #5}%
+		\pgfmathsetmacro\ystep{\ymin + #5}%
+	}{%
+		\pgfmathsetmacro\xstep{\xmin + 1}%
+		\pgfmathsetmacro\ystep{\ymin + 1}%
+	}
+	\foreach \x in {\xmin,\xstep,...,\xmax}{
+		\draw[help lines,dotted] (\x,\ymin) -- (\x,\ymax) 
+		node[numberedgridlabel,pos=0, left,rotate=90]{\pgfmathprintnumber[assume math mode=true,fixed,fixed zerofill=true,precision=2]{\x}} 
+		node[numberedgridlabel,pos=1,right,rotate=90]{\pgfmathprintnumber[assume math mode=true,fixed,fixed zerofill=true,precision=2]{\x}};
+	}
+	\foreach \y in {\ymin,\ystep,...,\ymax}{
+		\draw[help lines,dotted] (\xmin,\y) -- (\xmax,\y) 
+		node[numberedgridlabel,pos=0,  left]{\pgfmathprintnumber[assume math mode=true,fixed,fixed zerofill=true,precision=2]{\y}} 
+		node[numberedgridlabel,pos=1, right]{\pgfmathprintnumber[assume math mode=true,fixed,fixed zerofill=true,precision=2]{\y}};
+	}
+}
+
+\ProcessPgfPackageOptions{/iconix}

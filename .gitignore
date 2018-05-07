@@ -11,13 +11,16 @@
 *.cb
 *.cb2
 
+## Package file
+*.sty
+
 ## Intermediate documents:
 *.dvi
 *-converted-to.*
 # these rules might exclude image files for figures etc.
 # *.ps
 # *.eps
-# *.pdf
+*.pdf
 
 ## Generated if empty string is given at "Please type another file name for output:"
 .pdf
@@ -110,6 +113,9 @@ acs-*.bib
 
 # hyperref
 *.brf
+
+# hypdoc
+*.hd
 
 # knitr
 *-concordance.tex
