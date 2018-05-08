@@ -46,6 +46,15 @@
 %
 \hyphenation{bond-graphs x-bond-graphs}
 \newcommand\textvtt[1]{{\normalfont\fontfamily{cmvtt}\selectfont #1}}
+\renewcommand{\MacroFont}{\color{black!70!blue}\small\ttfamily}
+%
+\newcommand{\todolabel}{\textcolor{black}{\textbf{To do}}\xspace}
+\newcommand{\todo}[1]{\marginpar{\todolabel: \protect{#1}}\phantomsection\addcontentsline{tdo}{subsection}{#1}}
+\makeatletter
+\newcommand{\listoftodos}{\section{To-do list} \@starttoc{tdo}}
+\makeatother
+%
+\hypersetup{hidelinks}
 %
 \makesavenoteenv{table}
 %
@@ -59,7 +68,7 @@
 %
 \usetikzlibrary{positioning}
 %
-\newcommand{\Tikz}{Ti\textit{k}Z\xspace}
+\newcommand{\Tikz}{\normalfont Ti\textit{k}Z\xspace}
 \newcommand{\pgf}{PGF\xspace}
 \newcommand{\xbondgraphs}{\textsf{xbondgraphs}\xspace}
 \newcommand{\bondgraphs}{\textsf{bondgraphs}\xspace}
@@ -112,13 +121,15 @@
 % \DoNotIndex{\#,\$,\%,\&,\@,\\,\{,\},\^,\_,\~,\ }
 % \DoNotIndex{\if,\else,\fi,\def,\ifcase,\or}
 %
-% \title{{\Huge\xbondgraphs}\thanks{This document corresponds to \xbondgraphs{}\space\fileversion, dated\space\filedate.}\\drawing bond graphs using \Tikz}
-% \author{Marcus J.W. Snippe\thanks{E-mail: \href{mailto:m.j.w.snippe@saxion.nl}{m.j.w.snippe@saxion.nl}}}
+% \title{The \xbondgraphs package\thanks{This document corresponds to \xbondgraphs\space\fileversion, dated\space\filedate.}\\[0.5em]
+% 	\large Drawing bond graphs using \Tikz}
+% \author{Marcus J.W. Snippe\\
+%	\normalsize\href{mailto:m.j.w.snippe@saxion.nl}{\textvtt{\textless m.j.w.snippe@saxion.nl\textgreater}}}
 %
 % \maketitle
 %
 % \begin{abstract}
-%	When using the \xbondgraphs-package, the user is able to draw visually pleasing bond graphs\footnote{\url{https://en.wikipedia.org/wiki/Bond_graph}}, while mostly maintaining the standard notation of \Tikz drawings. It defines two new \pgf arrows, an accompanying decoration to ensure the direction of the barb, as well as a \pgf shape for power (de-)mux elements. This package is based on the \bondgraphs package by G. Folkertsma\footnote{\url{https://ctan.org/pkg/bondgraphs}}, but does not (yet) cover all its functions. It \emph{might} result in more appealing bond graphs.
+%	When using the \xbondgraphs-package, the user can draw visually pleasing bond graphs, while mostly maintaining the standard notation of \Tikz drawings. It defines two new \pgf arrows, a \pgf decoration to ensure the direction of the barb, as well as a \pgf shape for power (de-)mux elements. This package is based on the \bondgraphs package by Geert Folkertsma\footnote{\url{https://ctan.org/pkg/bondgraphs}}, but does not (yet) cover all its functions. It \emph{might} result in more appealing bond graphs, but this of course is subjective.
 % \end{abstract}
 % \tableofcontents
 %\section{Introduction}
@@ -175,6 +186,7 @@
 %		\begin{itemize}
 %			\item None yet, but please submit issues to \url{https://github.com/MaxSnippe/xbondgraphs/issues}.
 %		\end{itemize}
+%
 %\section{Basic usage}
 %	
 %	\subsection{Installation}
@@ -340,7 +352,7 @@
 %\section{Examples}
 %	
 %	\begin{tikzpicture}
-%		\node (Vabc) at (0,0) [bond graph element={MSe}{},label={west:$ V_{abc} $}];
+%		\node (Vabc) at (0,0) [bond graph element={MSe}{multiport,n=3},label={west:$ V_{abc} $}];
 %		\node (iabc) [right=of Vabc,bond graph element={1}{},label={300:$ i_{abc} $}];
 %		\node (Rs) [above=of iabc,bond graph element={R}{},pin={north:$ R_s $}];
 %		\node (Ls) [below=of iabc,bond graph element={L}{},pin={south:$ L_s $}];
@@ -369,7 +381,7 @@
 %		\draw[bond={effort in}] (omegam) -- (Dr);
 %	\end{tikzpicture}
 % 
-% \StopEventually{\PrintChanges \PrintIndex}
+% \StopEventually{\PrintChanges \PrintIndex \listoftodos}
 % 
 % \clearpage
 % \section{Implementation}
@@ -389,219 +401,104 @@
 
 \usetikzlibrary{arrows.meta,decorations.markings,shapes}
 %    \end{macrocode}
-% 	\subsection{Arrow tip definitions}
-% 		The arrow tips are defined using |\pgfdeclarearrow|. 
-% \begin{macro}{Single Bond Barb}
-% 	First the single bond barb is defined. The definition of this arrow is elaborated in \cref{sec:singlebondarrowtip}.
+%		\subsection{\pgf keys}
+%		First define a few |\ifs| used for boolean \pgf keys.
 %    \begin{macrocode}
-\pgfdeclarearrow{
-  name = {Single Bond Barb},
-  setup code = {
-%    \end{macrocode}
-%		First locally define the line width of a single bond, a multibond, and the (absolute) angle the barb makes with the bond. 
-%    \begin{macrocode}
-    \pgfmathsetlengthmacro{\sbw}{\pgflinewidth}
-    \pgfmathsetlengthmacro{\mbw}{\xbg@multibondwidth}
-    \pgfmathsetlengthmacro{\ba}{\xbg@barbangle}
-%    \end{macrocode}
-% 		Calculate the $ x $- and $ y $ position of the points that the barb will follow. If one was walking along the bond from startpoint to endpoint, the origin of this scope would be the endpoint, the $ x $ direction would be forward, and the $ y $ direction would be leftward.
-%    \begin{macrocode}
-    \pgfmathsetlengthmacro{\tipx}{\sbw}
-    \pgfmathsetlengthmacro{\tipy}{0pt}
-    \pgfmathsetlengthmacro{\backx}{-1/tan(\ba)*(\mbw-0.5*cos(\ba)*\sbw)%
-      + \sbw}
-    \pgfmathsetlengthmacro{\backy}{\mbw - 0.5*cos(\ba)*\sbw}
-%    \end{macrocode}
-% 		\pgf needs the outer points of the arrow tip to accurately determine the bounding box. Also, the actual tip of the arrow is needed, so the drawn bond will end exactly at the endpoint (the bond \Tikz styles use a |shorten > = |\meta{dimen} and |shorten > = |\meta{dimen} so they will not end exactly at the endpoint).
-%    \begin{macrocode}
-    \pgfmathsetlengthmacro{\hullpointx}{\backx + 0.5*\sbw*sin(\ba)}
-    \pgfmathsetlengthmacro{\hullpointy}{\mbw}
-    \pgfmathsetlengthmacro{\tipendx}{0.5*\sbw/tan(\ba/2) + \tipx}
-    \pgfmathsetlengthmacro{\tipendy}{-0.5*\sbw}
-%    \end{macrocode}
-% 		These commands are used to set the outer dimensions that \Tikz/\pgf needs.
-%    \begin{macrocode}
-    \pgfarrowssettipend{\tipendx}
-    \pgfarrowssetbackend{\backx}
-    \pgfarrowshullpoint{\hullpointx}{\hullpointy}
-    \pgfarrowshullpoint{\tipendx}{\tipendy}
-  },
-  drawing code = {
-%    \end{macrocode}
-% 		The actual drawing of the arrow.
-%    \begin{macrocode}
-    \pgfpathmoveto{\pgfpointorigin}
-    \pgfpathlineto{\pgfpoint{\tipx}{\tipy}}
-    \pgfpathlineto{\pgfpoint{\backx}{\backy}}
-    \pgfusepathqstroke
-  },
-}
-%    \end{macrocode}
-% \end{macro}
-% \begin{macro}{Multi Bond Barb}
-%	Repeat all for the multi bond barb. The definition of this arrow is elaborated in \cref{sec:multibondarrowtip}.
-%    \begin{macrocode}
-\pgfdeclarearrow{
-  name = {Multi Bond Barb},
-  setup code = {
-%    \end{macrocode}
-% 		Note that the single bond line width is now read from its \pgf key and not from |\pgflinewidth|. The latter now holds the multi bond line width.
-%    \begin{macrocode}
-    \pgfmathsetlengthmacro{\sbw}{\xbg@singlebondwidth}
-    \pgfmathsetlengthmacro{\mbw}{\pgflinewidth}
-    \pgfmathsetlengthmacro{\ba}{\xbg@barbangle}
-%    \end{macrocode}
-% 		The starting point of the drawing of the actual arrow tip is now were the `bottom' line ends. The tip end location is calculated such that the centerline of the barb passes through the endpoint of the `top' double line. This is also described in \cref{sec:multibondarrowtip}.
-%    \begin{macrocode}
-    \pgfmathsetlengthmacro{\startx}{0pt}
-    \pgfmathsetlengthmacro{\starty}{-0.5*\mbw+0.5*\sbw}
-    \pgfmathsetlengthmacro{\tipx}{(\mbw-\sbw)/tan(\ba)}
-    \pgfmathsetlengthmacro{\tipy}{-0.5*\mbw + 0.5*\sbw}
-    \pgfmathsetlengthmacro{\backy}{1.5*\mbw - 0.5*\sbw*cos(\ba)}
-    \pgfmathsetlengthmacro{\backx}{-(\backy+\tipy)/tan(\ba)}
-%    \end{macrocode}
-% 		The outer dimensions of the arrow are slightly different than for the |Single Bond Barb|, but not much.
-%    \begin{macrocode}
-    \pgfmathsetlengthmacro{\hullpointx}{\backx + 0.5*\sbw*sin(\ba)}
-    \pgfmathsetlengthmacro{\hullpointy}{1.5*\mbw}
-    \pgfmathsetlengthmacro{\tipendx}{0.5*\sbw/tan(\ba/2) + \tipx}
-    \pgfmathsetlengthmacro{\tipendy}{-0.5*\mbw}
-%    \end{macrocode}
-% 		Again set the \pgf dimensions needed for the definition of the arrow tip.
-%    \begin{macrocode}
-    \pgfarrowssettipend{\tipendx}
-    \pgfarrowssetbackend{\backx}
-    \pgfarrowshullpoint{\hullpointx}{\hullpointy}
-    \pgfarrowshullpoint{\tipendx}{\tipendy}
-  },
-  drawing code = {
-%    \end{macrocode}
-% 		The drawing is the same as for the |Single Bond Barb|, except for the |\pgfsetlinewidth| that sets the line width to the single bond line width. 
-%    \begin{macrocode}
-    \pgfpathmoveto{\pgfpoint{\startx}{\starty}}
-    \pgfpathlineto{\pgfpoint{\tipx}{\tipy}}
-    \pgfpathlineto{\pgfpoint{\backx}{\backy}}
-    \pgfsetlinewidth{\sbw}
-    \pgfusepathqstroke
-  }
-}
-%    \end{macrocode}
-% \end{macro}
-% \begin{macro}{bond decoration}
-% 		The |bond| decoration is used to determine the direction of the barb. It starts with an |initial| state, which only draws a line from the current point to the next segment end. The width expected by \pgf for this decoration is an arbitrary length longer than the segment length, such that only one state per segment can be used.
-%    \begin{macrocode}
-\pgfdeclaredecoration{bond}{initial}{
-  \state{initial}[width=\pgfdecoratedinputsegmentlength+1pt]{
-    \pgfpathlineto{\pgfpointdecoratedinputsegmentlast}
-  }
-  \state{final}{
-%    \end{macrocode}
-% 		With this |\ifcase| the direction of the arrow tip is determined, and stored in a \pgf key. This code is partly taken from the \bondgraphs package, so credits go to Geert Folkertsma, and Mark Wibrow for his answer at \href{https://tex.stackexchange.com/a/208393/74459}{tex.stackexchange.com}. 
-% 
-% The value of the macro 
-%    \begin{macrocode}
-    \pgfmathparse{int((\pgfdecoratedangle+\xbg@bond@barbflipang)/90)}
-    \ifcase\pgfmathresult
-      \pgfkeys{/xbondgraphs/bond/barb direction=right}
-    \or
-      \pgfkeys{/xbondgraphs/bond/barb direction=left}
-    \or
-      \pgfkeys{/xbondgraphs/bond/barb direction=left}
-    \else
-      \pgfkeys{/xbondgraphs/bond/barb direction=right}
-    \fi
-%    \end{macrocode}
-% 		If the causality of the bond is determined, it is either effort out or flow out. The corresponding arrow definition is set here. If no causality is determined, the arrow definition is either the |Single Bond Barb| or the |Multi Bond Barb|, depending if the |multi| key of the bond has been set to true. The direction is read from the bond's |barb direction| key.
-%    \begin{macrocode}
-    \ifxbondgraphs@bond@causality@eout
-      \tikzset{-{\xbg@bond@barbarrowhead[\xbg@bond@barbdir].|[/tikz/causal stroke style]}}
-    \else
-      \ifxbondgraphs@bond@causality@fout
-        \tikzset{{|[/tikz/causal stroke style]}-{\xbg@bond@barbarrowhead[\xbg@bond@barbdir]}}
-      \else
-        \tikzset{-{\xbg@bond@barbarrowhead[\xbg@bond@barbdir]}}
-      \fi
-    \fi
-    \path[/xbondgraphs/bond/template]\pgfextra{\pgfpathlineto{\pgfpointdecoratedinputsegmentlast}};
-  }
-}
-%    \end{macrocode}
-% \end{macro}
-%    \begin{macrocode}
-
-% ifs for the bond options
-\newif\ifxbondgraphs@bond@causality@eout
-\newif\ifxbondgraphs@bond@causality@fout
-
-% ifs for the element options
-\newif\ifxbondgraphs@element@word
-\newif\ifxbondgraphs@element@multiport
-
-% Define 'xbondgraphs' as key family for this package
+\newif\ifxbg@bond@causality@eout
+\newif\ifxbg@bond@causality@fout
+\newif\ifxbg@element@word
+\newif\ifxbg@element@multiport
 \pgfkeys{
+%    \end{macrocode}
+%	\begin{macro}{/xbondgraphs}
+%		The main family of \pgf keys is the |xbondgraphs| family.
+%    \begin{macrocode}
   xbondgraphs/.is family,
   xbondgraphs,
-  % Two key families are mainly used, first is 'bond':
-  bond/.is family,
-  bond,
-  template/.style={
-    shorten < = 3pt,
-    shorten > = 3pt,
-    draw,
-    line width = \xbg@singlebondwidth,
-  },
-  barb direction/.store in=\xbg@bond@barbdir,
-  barb direction flip angle/.store in=\xbg@bond@barbflipang,
-  eout/.is if=xbondgraphs@bond@causality@eout,
-  eout=false,
-  fout/.is if=xbondgraphs@bond@causality@fout,
-  fout=false,
-  effort out/.code=\pgfkeys{
-    /xbondgraphs/bond/.cd,
-    eout=true,
-    fout=false,
-    /tikz/causal stroke style/.append style={#1}
-  },
-  flow out/.code=\pgfkeys{
-    /xbondgraphs/bond/.cd,
-    eout=false,
-    fout=true,
-    /tikz/causal stroke style/.append style={#1}
-  },
-  effort in/.code=\pgfkeys{/xbondgraphs/bond/flow out={#1}},
-  flow in/.code=\pgfkeys{/xbondgraphs/bond/effort out={#1}},
-  multi/.code=\pgfkeys{
-    /xbondgraphs/bond/causality stroke scale=3,
-    /xbondgraphs/bond/barb arrow head={Multi Bond Barb},
-    /xbondgraphs/bond/template/.append style={
-      double,double distance={\xbg@multibondwidth-2*\xbg@singlebondwidth}
-    },
-    /tikz/line width = \xbg@multibondwidth,
-  },
-  causality stroke scale/.store in=\xbg@causalitystrokescale,
-  causality stroke scale=2,
-  barb arrow head/.store in=\xbg@bond@barbarrowhead,
-  barb arrow head={Single Bond Barb},
-  label/.style = {
-    \xbg@bondlabelcolor,
-  },
+%    \end{macrocode}
+%	\end{macro}
+%	\begin{macro}{/xbondgraphs/bond}
+% 		The |bond| family holds all the keys for the bonds in the bond graphs, e.g. the |template| style used in the decoration.
+%    \begin{macrocode}
+    bond/.is family,
+    bond,
+      template/.style={
+        shorten < = 3pt,
+        shorten > = 3pt,
+        draw,
+        line width = \xbg@singlebondwidth,
+      },
+      barb direction/.store in=\xbg@bond@barbdir,
+      barb direction flip angle/.store in=\xbg@bond@barbflipang,
+%    \end{macrocode}
+% 		The causality of the bond can be set with four different keys, of which |effort in| and |flow out| are aliases, and |effort out| and |flow in| too. Initially the |eout| and |fout| keys are false, but these are set accordingly when using the |effort in/out| and |flow in/out| keys.
+%    \begin{macrocode}
+      eout/.is if=xbg@bond@causality@eout,
+      eout/.initial=false,
+      fout/.is if=xbg@bond@causality@fout,
+      fout/.initial=false,
+      effort out/.code=\pgfkeys{
+        /xbondgraphs/bond/.cd,
+        eout=true,
+        fout=false,
+        /tikz/causal stroke/.append style={#1}
+      },
+      flow out/.code=\pgfkeys{
+        /xbondgraphs/bond/.cd,
+        eout=false,
+        fout=true,
+        /tikz/causal stroke/.append style={#1}
+      },
+      effort in/.code=\pgfkeys{/xbondgraphs/bond/flow out={#1}},
+      flow in/.code=\pgfkeys{/xbondgraphs/bond/effort out={#1}},
+%    \end{macrocode}
+% 		By using the |multi| key, some other |bond| keys are set differently, and the |template| style is appended accordingly.
+%    \begin{macrocode}
+      multi/.code=\pgfkeys{
+        /xbondgraphs/bond/causality stroke scale=3,
+        /xbondgraphs/bond/barb arrow head={Multi Bond Barb},
+        /xbondgraphs/bond/template/.append style={
+          double,double distance={\xbg@multibondwidth-2*\xbg@singlebondwidth}
+        },
+%    \end{macrocode}
+% 		The line width is also changed when |multi| is used, such that the nodes placed along the paths must be placed slightly further from the path center.
+%    \begin{macrocode}
+        /tikz/line width = \xbg@multibondwidth,
+      },
+      causality stroke scale/.store in=\xbg@causalitystrokescale,
+      causality stroke scale=2,
+      barb arrow head/.store in=\xbg@bond@barbtip,
+      barb arrow head={Single Bond Barb},
+      label/.style = {
+        \xbg@bondlabelcolor,
+      },
   /xbondgraphs,
-  % Second key family is 'element':
-  element/.is family,
-  element,
-  n/.store in=\xbg@element@n,
-  n=1,
-  word/.is if=xbondgraphs@element@word,
-  word=false,
-  multiport boolean/.is if=xbondgraphs@element@multiport,
-  multiport boolean=false,
-  multiport/.code=\pgfkeys{
-    /xbondgraphs/element/multiport boolean=true,
-  },
-  label/.style={
-    \xbg@bgelementlabelcolor,
-  },
-  % The 'XBG' keys are used as package options
+%    \end{macrocode}
+%	\end{macro}
+%	\begin{macro}{/xbondgraphs/element}
+% 		The |element| family holds all the keys for the elements in the bond graphs, e.g. the order |n|.
+%    \begin{macrocode}
+    element/.is family,
+    element,
+      n/.store in=\xbg@element@n,
+      n=1,
+      word/.is if=xbg@element@word,
+      word/.default=true,
+      word/.initial=false,
+      multiport/.is if=xbg@element@multiport,
+      multiport/.default=true,
+      multiport/.initial=false,
+%    \end{macrocode}
+% 		The |label| style is used later in the \Tikz family tree.
+%    \begin{macrocode}
+      label/.style={
+        \xbg@bgelementlabelcolor,
+      },
+%    \end{macrocode}
+%	\end{macro}
+%	\begin{macro}{/XBG}
+% 		The |XBG| keys are used as package options
+%    \begin{macrocode}
   /XBG/.cd,
   barbangle/.store in=\xbg@barbangle,
   barbangle=40,
@@ -624,7 +521,14 @@
   barbdirection/leftbelow/.code={\pgfkeys{/xbondgraphs/bond/barb direction flip angle=45}},
   barbdirection/alwaysbelow/.code={\pgfkeys{/xbondgraphs/bond/barb direction flip angle=-1}},
   barbdirection/alwaysbelow,
+%    \end{macrocode}
+%	\end{macro}
+%	To make styles directly accesible inside |\node|\oarg{options} and |\draw|\oarg{options}, the styles are defined inside the |tikz| family.
+%    \begin{macrocode}
   /tikz/.cd,
+%    \end{macrocode}
+%	\begin{macro}{/tikz/bond}
+%    \begin{macrocode}
   bond/.style={
     /xbondgraphs/bond,
     #1,
@@ -633,6 +537,10 @@
     decoration={bond},
     postaction=decorate,
   },
+%    \end{macrocode}
+%	\end{macro}
+%	\begin{macro}{/tikz/bond graph element}
+%    \begin{macrocode}
   bond graph element/.code 2 args={
     \pgfkeys{
       /xbondgraphs/element,
@@ -642,18 +550,18 @@
       shape=rounded rectangle,
       inner sep = 1.5pt,
       node contents = {%
-        \ifxbondgraphs@element@multiport%
-        \ifnum\xbg@element@n=1
-        \ensuremath{\mathbb{#1}}%
-        \else
-        \ensuremath{\mathbb{#1}_{\xbg@element@n}}
-        \fi
+        \ifxbg@element@multiport%
+          \ifnum\xbg@element@n=1%
+            \ensuremath{\mathbb{#1}}%
+          \else%
+            \ensuremath{\mathbb{#1}_{\xbg@element@n}}%
+          \fi%
         \else%
-        \ifnum\xbg@element@n=1
-        \ensuremath{\mathbf{#1}}%
-        \else
-        \ensuremath{\mathbf{#1}_{\xbg@element@n}}%
-        \fi
+          \ifnum\xbg@element@n=1%
+            \ensuremath{\mathbf{#1}}%
+          \else%
+            \ensuremath{\mathbf{#1}_{\xbg@element@n}}%
+          \fi%
         \fi%
       },
       prefix after command={
@@ -680,10 +588,13 @@
         }
       },
     }
-    \ifxbondgraphs@element@word
-    \tikzset{draw,line width = 0.75\xbg@singlebondwidth,shape=ellipse}
+    \ifxbg@element@word
+      \tikzset{draw,line width = 0.75\xbg@singlebondwidth,shape=ellipse}
     \fi
   },
+%    \end{macrocode}
+%	\end{macro}
+%    \begin{macrocode}
   bond label/.style={
     font=\small,
     /xbondgraphs/bond/label,
@@ -695,7 +606,7 @@
   flow/.style={
     edge node={node [bond label,below]{#1}}
   },
-  causal stroke style/.style={
+  causal stroke/.style={
     width=\xbg@causalitystrokescale*\xbg@multibondwidth,
   },
 }
@@ -793,11 +704,160 @@
 \def\ioanchor#1#2#3{%
   \pgfpointadd{\centerpoint}{\pgfpoint{#2*\halfwidth}{\height/2-#1*\iospacing+#3*\iospacing}}%
 }
-
+%    \end{macrocode}
+% 	\subsection{Arrow tip definitions}
+% 		The arrow tips are defined using |\pgfdeclarearrow|. 
+% \begin{macro}{Single Bond Barb}
+% 	First the single bond barb is defined. The definition of this arrow is elaborated in \cref{sec:singlebondarrowtip}.
+%    \begin{macrocode}
+\pgfdeclarearrow{
+  name = {Single Bond Barb},
+  setup code = {
+%    \end{macrocode}
+%		First locally define the line width of a single bond, a multibond, and the (absolute) angle the barb makes with the bond. 
+%    \begin{macrocode}
+    \pgfmathsetlengthmacro{\sbw}{\pgflinewidth}
+    \pgfmathsetlengthmacro{\mbw}{\xbg@multibondwidth}
+    \pgfmathsetlengthmacro{\ba}{\xbg@barbangle}
+%    \end{macrocode}
+% 		Calculate the $ x $- and $ y $ position of the points that the barb will follow. If one was walking along the bond from startpoint to endpoint, the origin of this scope would be the endpoint, the $ x $ direction would be forward, and the $ y $ direction would be leftward.
+%    \begin{macrocode}
+    \pgfmathsetlengthmacro{\tipx}{\sbw}
+    \pgfmathsetlengthmacro{\tipy}{0pt}
+    \pgfmathsetlengthmacro{\backx}{-1/tan(\ba)*(\mbw-0.5*cos(\ba)*\sbw)%
+      + \sbw}
+    \pgfmathsetlengthmacro{\backy}{\mbw - 0.5*cos(\ba)*\sbw}
+%    \end{macrocode}
+% 		\pgf needs the outer points of the arrow tip to accurately determine the bounding box. Also, the actual tip of the arrow is needed, so the drawn bond will end exactly at the endpoint (the bond \Tikz styles use a |shorten > = |\meta{dimen} and |shorten > = |\meta{dimen} so they will not end exactly at the endpoint).
+%    \begin{macrocode}
+    \pgfmathsetlengthmacro{\hullpointx}{\backx + 0.5*\sbw*sin(\ba)}
+    \pgfmathsetlengthmacro{\hullpointy}{\mbw}
+    \pgfmathsetlengthmacro{\tipendx}{0.5*\sbw/tan(\ba/2) + \tipx}
+    \pgfmathsetlengthmacro{\tipendy}{-0.5*\sbw}
+%    \end{macrocode}
+% 		These commands are used to set the outer dimensions that \Tikz/\pgf needs.
+%    \begin{macrocode}
+    \pgfarrowssettipend{\tipendx}
+    \pgfarrowssetbackend{\backx}
+    \pgfarrowshullpoint{\hullpointx}{\hullpointy}
+    \pgfarrowshullpoint{\tipendx}{\tipendy}
+  },
+  drawing code = {
+%    \end{macrocode}
+% 		The actual drawing of the arrow.
+%    \begin{macrocode}
+    \pgfpathmoveto{\pgfpointorigin}
+    \pgfpathlineto{\pgfpoint{\tipx}{\tipy}}
+    \pgfpathlineto{\pgfpoint{\backx}{\backy}}
+    \pgfusepathqstroke
+  },
+}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{Multi Bond Barb}
+%	Repeat all for the multi bond barb. The definition of this arrow is elaborated in \cref{sec:multibondarrowtip}.
+%    \begin{macrocode}
+\pgfdeclarearrow{
+  name = {Multi Bond Barb},
+  setup code = {
+%    \end{macrocode}
+% 		Note that the single bond line width is now read from its \pgf key and not from |\pgflinewidth|. The latter now holds the multi bond line width.
+%    \begin{macrocode}
+    \pgfmathsetlengthmacro{\sbw}{\xbg@singlebondwidth}
+    \pgfmathsetlengthmacro{\mbw}{\pgflinewidth}
+    \pgfmathsetlengthmacro{\ba}{\xbg@barbangle}
+%    \end{macrocode}
+% 		The starting point of the drawing of the actual arrow tip is now were the `bottom' line ends. The tip end location is calculated such that the centerline of the barb passes through the endpoint of the `top' double line. This is also described in \cref{sec:multibondarrowtip}.
+%    \begin{macrocode}
+    \pgfmathsetlengthmacro{\startx}{0pt}
+    \pgfmathsetlengthmacro{\starty}{-0.5*\mbw+0.5*\sbw}
+    \pgfmathsetlengthmacro{\tipx}{(\mbw-\sbw)/tan(\ba)}
+    \pgfmathsetlengthmacro{\tipy}{-0.5*\mbw + 0.5*\sbw}
+    \pgfmathsetlengthmacro{\backy}{1.5*\mbw - 0.5*\sbw*cos(\ba)}
+    \pgfmathsetlengthmacro{\backx}{-(\backy+\tipy)/tan(\ba)}
+%    \end{macrocode}
+% 		The outer dimensions of the arrow are slightly different than for the |Single Bond Barb|, but not much.
+%    \begin{macrocode}
+    \pgfmathsetlengthmacro{\hullpointx}{\backx + 0.5*\sbw*sin(\ba)}
+    \pgfmathsetlengthmacro{\hullpointy}{1.5*\mbw}
+    \pgfmathsetlengthmacro{\tipendx}{0.5*\sbw/tan(\ba/2) + \tipx}
+    \pgfmathsetlengthmacro{\tipendy}{-0.5*\mbw}
+%    \end{macrocode}
+% 		Again set the \pgf dimensions needed for the definition of the arrow tip.
+%    \begin{macrocode}
+    \pgfarrowssettipend{\tipendx}
+    \pgfarrowssetbackend{\backx}
+    \pgfarrowshullpoint{\hullpointx}{\hullpointy}
+    \pgfarrowshullpoint{\tipendx}{\tipendy}
+  },
+  drawing code = {
+%    \end{macrocode}
+% 		The drawing is the same as for the |Single Bond Barb|, except for the setting the line width to the width of a single bond.
+%    \begin{macrocode}
+    \pgfpathmoveto{\pgfpoint{\startx}{\starty}}
+    \pgfpathlineto{\pgfpoint{\tipx}{\tipy}}
+    \pgfpathlineto{\pgfpoint{\backx}{\backy}}
+    \pgfsetlinewidth{\sbw}
+    \pgfusepathqstroke
+  }
+}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{bond decoration}
+% 		The |bond| decoration is used to determine the direction of the barb. It starts with an |initial| state, which only draws a line from the current point to the next segment end. The width expected by \pgf for this decoration is an arbitrary length longer than the segment length, such that only one state per segment is used.
+%    \begin{macrocode}
+\pgfdeclaredecoration{bond}{initial}{
+  \state{initial}[width=\pgfdecoratedinputsegmentlength+1pt]{
+    \pgfpathlineto{\pgfpointdecoratedinputsegmentlast}
+  }
+  \state{final}{
+%    \end{macrocode}
+% 		With this |\ifcase| the direction of the arrow tip is determined, and stored in a \pgf key. This code is partly taken from the \bondgraphs package, so credits go to Geert Folkertsma, and Mark Wibrow for his answer at \href{https://tex.stackexchange.com/a/208393/74459}{tex.stackexchange.com}. 
+% 
+% The value of the macro |\xbg@bond@barbflipang| is set to either -1, or 90, with the |barbdirection| option, treated in \cref{opt:barbdirection}.
+%    \begin{macrocode}
+    \pgfmathparse{int((\pgfdecoratedangle+\xbg@bond@barbflipang)/90)}
+    \ifcase\pgfmathresult
+      \pgfkeys{/xbondgraphs/bond/barb direction=right}
+    \or
+      \pgfkeys{/xbondgraphs/bond/barb direction=left}
+    \or
+      \pgfkeys{/xbondgraphs/bond/barb direction=left}
+    \else
+      \pgfkeys{/xbondgraphs/bond/barb direction=right}
+    \fi
+%    \end{macrocode}
+%     If the causality of the bond is determined, it is either effort out or flow out. The corresponding arrow definition is set here. If no causality is determined, the arrow definition is either the |Single Bond Barb| or the |Multi Bond Barb|, depending if the |multi| key of the bond has been set to true. The direction is read from the bond's |barb direction| key.
+%
+%     The causal stroke is drawn as a arrow tip, using the |causal stroke| style, which is defined in the \Tikz family.
+%    \begin{macrocode}
+    \ifxbg@bond@causality@eout
+      \tikzset{-{\xbg@bond@barbtip[\xbg@bond@barbdir]%
+        .|[/tikz/causal stroke]}}
+    \else
+      \ifxbg@bond@causality@fout
+        \tikzset{{|[/tikz/causal stroke]}-{\xbg@bond@barbtip%
+          [\xbg@bond@barbdir]}}
+      \else
+        \tikzset{-{\xbg@bond@barbtip[\xbg@bond@barbdir]}}
+      \fi
+    \fi
+%    \end{macrocode}
+%    After determining if and where the causality stroke should be drawn, and determining the direction of the barb, a path is drawn using the |template| style of the |bond| family.
+%    \begin{macrocode}
+    \path[/xbondgraphs/bond/template]\pgfextra{\pgfpathlineto{%
+        \pgfpointdecoratedinputsegmentlast}};
+  }
+}
+%    \end{macrocode}
+% \end{macro}
+%		Some colors are defined that are used for the |error| and |diff| options.\todo{Should change these from colors to \pgf keys to be more consistent.}
+%    \begin{macrocode}
 \colorlet{diff}{orange}
 \colorlet{error}{red}
-
-% Proces all /XBG keys as package options
+%    \end{macrocode}
+%		And finally, the package options are processed using the |pgfopts| package.
+%    \begin{macrocode}
 \ProcessPgfPackageOptions{/XBG}
 %</package>
 %    \end{macrocode}
