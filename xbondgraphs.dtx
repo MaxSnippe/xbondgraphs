@@ -51,7 +51,7 @@
 \newcommand{\todolabel}{\textcolor{black}{\textbf{To do}}\xspace}
 \newcommand{\todo}[1]{\marginpar{\todolabel: \protect{#1}}\phantomsection\addcontentsline{tdo}{subsection}{#1}}
 \makeatletter
-\newcommand{\listoftodos}{\section{To-do list} \@starttoc{tdo}}
+\newcommand{\listoftodos}{\section{To-do list}\label{sec:todolist}\@starttoc{tdo}}
 \makeatother
 %
 \hypersetup{hidelinks}
@@ -68,10 +68,12 @@
 %
 \usetikzlibrary{positioning}
 %
-\newcommand{\Tikz}{\normalfont Ti\textit{k}Z\xspace}
-\newcommand{\pgf}{PGF\xspace}
-\newcommand{\xbondgraphs}{\textsf{xbondgraphs}\xspace}
-\newcommand{\bondgraphs}{\textsf{bondgraphs}\xspace}
+\newcommand\Tikz{\normalfont Ti\textit{k}Z\xspace}
+\newcommand\pgf{PGF\xspace}
+\newcommand\xbondgraphs{\textsf{xbondgraphs}\xspace}
+\newcommand\bondgraphs{\textsf{bondgraphs}\xspace}
+\newcommand\pgfopts{\textsf{pgfopts}\xspace}
+\newcommand\amsfonts{\textsf{amsfonts}\xspace}
 \let\origLaTeX\LaTeX
 \def\LaTeX{\origLaTeX\xspace}
 \def\cmark{\ding{51}}
@@ -120,11 +122,31 @@
 %
 % \DoNotIndex{\#,\$,\%,\&,\@,\\,\{,\},\^,\_,\~,\ }
 % \DoNotIndex{\if,\else,\fi,\def,\ifcase,\or}
+% \DoNotIndex{\ba,\backgroundpath,\backx,\backy,\centerpoint,\colorlet}
+% \DoNotIndex{\csname,\endcsname,\expandafter,\halfheight,\halfwidth}
+% \DoNotIndex{\hullpointx,\hullpointy,\ifnum,\ifxbg@bond@causality@eout}
+% \DoNotIndex{\ifxbg@bond@causality@fout,\ifxbg@element@multiport}
+% \DoNotIndex{\ifxbg@element@word,\inheritanchor,\inheritanchorborder}
+% \DoNotIndex{\inheritsavedanchors,\ensuremath,\let,\mathbb,\mathbf,\mbw}
+% \DoNotIndex{\muxinputs,\muxoutputs,\NeedsTeXFormat,\newif,\nodeparts}
+% \DoNotIndex{\noexpand,\path,\pgf@sh@lib@mux@in@anchor,\pgf@sh@lib@mux@out@anchor}
+% \DoNotIndex{\pgf@sh@s@mux,\pgf@x,\pgfarrowshullpoint,\pgfarrowssetbackend}
+% \DoNotIndex{\pgfarrowssettipend,\pgfdeclarearrow,\pgfdeclaredecoration}
+% \DoNotIndex{\pgfdeclareshape,\pgfdecoratedangle,\pgfdecoratedinputsegmentlength}
+% \DoNotIndex{\pgfextra,\pgfkeys,\pgfkeysvalueof,\pgflinewidth,\pgfmathcounter}
+% \DoNotIndex{\pgfmathloop,\pgfmathparse,\pgfmathresult,\pgfmathsetlengthmacro,\pgfmathsetlength}
+% \DoNotIndex{\pgfpathlineto,\pgfpathmoveto,\pgfpathrectanglecorners,\pgfpoint}
+% \DoNotIndex{\pgfpointdecoratedinputsegmentlast,\pgfpointorigin,\pgfsetlinewidth}
+% \DoNotIndex{\pgfusepathqstroke,\pgfutil@g@addto@macro,\pgfutil@ifundefined}
+% \DoNotIndex{\ProcessPgfPackageOptions,\ProvidesPackage,\relax,\repeatpgfmathloop}
+% \DoNotIndex{\RequirePackage,\savedanchor,\saveddimen,\savedmacro,\sbw,\small}
+% \DoNotIndex{\startx,\starty,\state,\tikzset,\tipendx,\tipendy,\tipx,\tipy}
+% \DoNotIndex{\usetikzlibrary,\xdef}
 %
 % \title{The \xbondgraphs package\thanks{This document corresponds to \xbondgraphs\space\fileversion, dated\space\filedate.}\\[0.5em]
 % 	\large Drawing bond graphs using \Tikz}
 % \author{Marcus J.W. Snippe\\
-%	\normalsize\href{mailto:m.j.w.snippe@saxion.nl}{\textvtt{\textless m.j.w.snippe@saxion.nl\textgreater}}}
+%	\normalsize\href{mailto:m.j.w.snippe@saxion.nl}{\texttt{\textless m.j.w.snippe@saxion.nl\textgreater}}}
 %
 % \maketitle
 %
@@ -154,7 +176,7 @@
 %		\end{figure}
 %		
 %		\Cref{fig:comparisonmultibonds} shows the main motivation for this package. Although of course subjective, most of the differences between the \bondgraphs- and the \xbondgraphs package can be argued to be improvements. The drawing in \cref{fig:comparisonmultibonds-xbondgraphs} is overall more consistent. %The causality stroke of \cref{fig:comparisonmultibonds-bondgraphs} with flow-out causality is overdrawn by the inner line of the multi bond. This is fixed in \cref{fig:comparisonmultibonds-xbondgraphs}.
-%		Most flaws of the drawing in \cref{fig:comparisonmultibonds-bondgraphs} can be traced back to the decoration being a \texttt{postaction}. This however is needed to inherit other options from the \verb|\draw|-command, e.g. color.
+%		Most flaws of the drawing in \cref{fig:comparisonmultibonds-bondgraphs} can be traced back to the decoration being a \texttt{postaction}. This however is needed to inherit other options from the |\draw|-command, e.g. color.
 %		
 %		Due to these reasons, I wrote the \xbondgraphs package from scratch, re-using some parts but in a completely different setup.
 %		
@@ -184,7 +206,7 @@
 %	\subsection{Known issues}
 %		
 %		\begin{itemize}
-%			\item None yet, but please submit issues to \url{https://github.com/MaxSnippe/xbondgraphs/issues}.
+%			\item None yet, but please submit issues to \url{https://github.com/MaxSnippe/xbondgraphs/issues}. There are however some to-dos, listed in \cref{sec:todolist}.
 %		\end{itemize}
 %
 %\section{Basic usage}
@@ -216,7 +238,7 @@
 %			\begin{subfigure}[t]{.48\linewidth}
 %				\centering
 %				\begin{tikzpicture}
-%					\node (u) at (-1.5, 0.0) [bond graph element={Se}{},pin={left:$ u $}];
+%					\node (u) at (-1.5, 0.0) [bge={Se}{},pin={left:$ u $}];
 %					\node (i) at ( 0.0, 0.0) [bond graph element={1}{},label={300:$ i $}];
 %					\node (c) at ( 0.0, 1.5) [bond graph element={C}{},pin={above:$ C $}];
 %					\node (r) at ( 1.5, 0.0) [bond graph element={R}{},pin={right:$ R $}];
@@ -244,8 +266,20 @@
 %		\end{figure}
 %\section{Options}
 %	
-%	\subsection{Global (package) options}
+%	\subsection{Package options}
 %		\label{sec:globaloptions}
+%		\DescribeMacro{barbangle}
+%			\label{opt:barbangle}
+%			\begin{tikzpicture}
+%				\foreach [count=\i] \ang in {20,30,...,80}{
+%					\begingroup
+%					\makeatletter
+%					\pgfkeys{/XBG/barbangle=\ang}
+%					\draw[bond] (0,-0.5*\i) -- ++ (1,0) node[pos=0,left]{\ang};
+%					\makeatother
+%					\endgroup
+%				}
+%			\end{tikzpicture}
 %		
 %		\DescribeMacro{barbdirection}
 % 			\label{opt:barbdirection}
@@ -259,7 +293,7 @@
 %			}
 %		\end{tikzpicture}
 %		
-%	\subsection{Local (\Tikz) options}
+%	\subsection{Local options}
 %		\label{sec:localoptions}
 %\section{Arrow tips}
 %	
@@ -369,16 +403,41 @@
 %			\draw[bond={effort in}] (iabc) -- (Rs);
 %			\draw[bond={effort out}] (iabc) -- (Ls);
 %			\draw[bond={effort in}] (iabc) -- (Klambda);
-%			\draw[bond={effort out}] (Klambda) -- (mux1);
+%			\draw[bond={effort out}] (Klambda) -- (mux1.input 1);
 %		\end{scope}
 %		
 %		\foreach \i in {1,2,3}{
-%			\draw[bond={effort out}] (mux1.output\i) -- ++ (0.8,0) -- (omegae);
+%			\draw[bond={effort out}] (mux1.output \i) -- ++ (0.8,0) -- (omegae);
 %		}
 %		\draw[bond={effort out}] (omegae) -- (1overp);
 %		\draw[bond={effort out}] (1overp) -- (omegam);
 %		\draw[bond={effort out}] (omegam) -- (Jr);
 %		\draw[bond={effort in}] (omegam) -- (Dr);
+%	\end{tikzpicture}
+%
+%	\begin{tikzpicture}
+%		\node at (1,0) (mux1)[mux={inputs=1,outputs=4}];
+%		\node at (3,0) (mux2)[mux={inputs=4,outputs=3}];
+%		\node at (5,0) (mux3)[mux={inputs=3,outputs=8}];
+%		\node at (7,0) (mux4)[mux={inputs=8,outputs=6}];
+%		\foreach \j in {1,...,1}{
+%			\draw[red] (0,0) -- (mux1.input \j) node[pos=1,fill=red,text=white,font=\tiny,inner sep = 0.5pt]{\j};
+%		}
+%		\foreach \j in {1,...,4}{
+%			\draw[blue] (mux1.output \j) -- (2,0) node[pos=0,fill=red,text=white,font=\tiny,inner sep = 0.5pt]{\j};
+%			\draw[red] (2,0) -- (mux2.input \j)node[pos=1,fill=red,text=white,font=\tiny,inner sep = 0.5pt]{\j};
+%		}
+%		\foreach \j in {1,...,3}{
+%			\draw[blue] (mux2.output \j) -- (4,0) node[pos=0,fill=red,text=white,font=\tiny,inner sep = 0.5pt]{\j};
+%			\draw[red] (4,0) -- (mux3.input \j)node[pos=1,fill=red,text=white,font=\tiny,inner sep = 0.5pt]{\j};
+%		}
+%		\foreach \j in {1,...,8}{
+%			\draw[blue] (mux3.output \j) -- (6,0) node[pos=0,fill=red,text=white,font=\tiny,inner sep = 0.5pt]{\j};
+%			\draw[red] (6,0) -- (mux4.input \j)node[pos=1,fill=red,text=white,font=\tiny,inner sep = 0.5pt]{\j};
+%		}
+%		\foreach \j in {1,...,6}{
+%			\draw[blue] (mux4.output \j) -- (8,0) node[pos=0,fill=red,text=white,font=\tiny,inner sep = 0.5pt]{\j};
+%		}
 %	\end{tikzpicture}
 % 
 % \StopEventually{\PrintChanges \PrintIndex \listoftodos}
@@ -449,8 +508,8 @@
         fout=true,
         /tikz/causal stroke/.append style={#1}
       },
-      effort in/.code=\pgfkeys{/xbondgraphs/bond/flow out={#1}},
-      flow in/.code=\pgfkeys{/xbondgraphs/bond/effort out={#1}},
+      effort in/.forward to=/xbondgraphs/bond/flow out,
+      flow in/.forward to=/xbondgraphs/bond/effort out,
 %    \end{macrocode}
 % 		By using the |multi| key, some other |bond| keys are set differently, and the |template| style is appended accordingly.
 %    \begin{macrocode}
@@ -497,55 +556,65 @@
 %    \end{macrocode}
 %	\end{macro}
 %	\begin{macro}{/XBG}
-% 		The |XBG| keys are used as package options
+% 		The |XBG| keys are used as package options. The options cannot contain spaces, as mentioned in the \pgfopts manual.
 %    \begin{macrocode}
   /XBG/.cd,
-  barbangle/.store in=\xbg@barbangle,
-  barbangle=40,
-  singlebondwidth/.store in=\xbg@singlebondwidth,
-  singlebondwidth=1pt,
-  multibondwidth/.store in=\xbg@multibondwidth,
-  multibondwidth=4pt,
-  bgelementlabelcolor/.store in=\xbg@bgelementlabelcolor,
-  bgelementlabelcolor=blue,
-  bondlabelcolor/.store in=\xbg@bondlabelcolor,
-  bondlabelcolor=green!50!black,
-  gray/.code={
-    \pgfkeys{
-      /XBG/.cd, bondlabelcolor=gray, bgelementlabelcolor=gray
-    }
-    \colorlet{diff}{white!60!black}
-    \colorlet{error}{white!30!black}
-  },
-  barbdirection/.is choice,
-  barbdirection/leftbelow/.code={\pgfkeys{/xbondgraphs/bond/barb direction flip angle=45}},
-  barbdirection/alwaysbelow/.code={\pgfkeys{/xbondgraphs/bond/barb direction flip angle=-1}},
-  barbdirection/alwaysbelow,
+    barbangle/.store in=\xbg@barbangle,
+    barbangle=40,
+    singlebondwidth/.store in=\xbg@singlebondwidth,
+    singlebondwidth=1pt,
+    multibondwidth/.store in=\xbg@multibondwidth,
+    multibondwidth=4pt,
+    bgelementlabelcolor/.store in=\xbg@bgelementlabelcolor,
+    bgelementlabelcolor=blue,
+    bondlabelcolor/.store in=\xbg@bondlabelcolor,
+    bondlabelcolor=green!50!black,
+    gray/.code={
+      \pgfkeys{
+        /XBG/.cd, bondlabelcolor=gray, bgelementlabelcolor=gray
+      }
+      \colorlet{diff}{white!60!black}
+      \colorlet{error}{white!30!black}
+    },
+    barbdirection/.is choice,
+    barbdirection/leftbelow/.code={%
+      \pgfkeys{/xbondgraphs/bond/barb direction flip angle=45}},
+    barbdirection/alwaysbelow/.code={%
+      \pgfkeys{/xbondgraphs/bond/barb direction flip angle=-1}},
+    barbdirection/alwaysbelow,
 %    \end{macrocode}
 %	\end{macro}
-%	To make styles directly accesible inside |\node|\oarg{options} and |\draw|\oarg{options}, the styles are defined inside the |tikz| family.
+%	To make styles directly accesible inside |\node|\oarg{options} and |\draw|\oarg{options}, the styles are defined inside the |/tikz| family.
 %    \begin{macrocode}
   /tikz/.cd,
 %    \end{macrocode}
 %	\begin{macro}{/tikz/bond}
+%	The |bond| style can be used directly in drawing commands. It calls the |bond| decoration, and any options given to the |bond| style, are passed through to the |/bond| family. 
 %    \begin{macrocode}
   bond/.style={
     /xbondgraphs/bond,
-    #1,
+      #1,
     /tikz,
-    draw = none,
-    decoration={bond},
-    postaction=decorate,
+      draw = none,
+      decoration={bond},
+      postaction=decorate,
   },
 %    \end{macrocode}
 %	\end{macro}
 %	\begin{macro}{/tikz/bond graph element}
+%	The |bond graph element| style can be used directly in nodes. Because it uses the |node contents| key, there are some shortcomings on nodes using the |bond graph element| style. The |node contents| key is described on page 215 of the \href{http://ctan.cs.uu.nl/graphics/pgf/base/doc/pgfmanual.pdf}{\pgf manual} (version 3.0.1a).
 %    \begin{macrocode}
   bond graph element/.code 2 args={
+%    \end{macrocode}
+%	The style takes two arguments, of which the second should be optional but when other keys are used after this one, they might be treated as the second optional argument of this style.\todo{The second argument should be optional.} The second argument is passed to the |/xbondgraphs/element| family, and should be used for keys as |multiport| and |n=|\meta{order}.
+%    \begin{macrocode}
     \pgfkeys{
       /xbondgraphs/element,
       #2
     }
+%    \end{macrocode}
+%	The first argument is used as to fill the node contents, but only after some processing. If the |bond graph element| is a |multiport|, the \amsfonts math blackboard bold (|\mathbb|) font is used, if not, ordinary math bold (|\mathbf|) is used. Also, if |n| is anything other than 1, its value is used as subscript.
+%    \begin{macrocode}
     \tikzset{
       shape=rounded rectangle,
       inner sep = 1.5pt,
@@ -564,6 +633,9 @@
           \fi%
         \fi%
       },
+%    \end{macrocode}
+%	The following key is used to adjust |label| and |pin| definitions for |bond graph element|s. The |pin| is used to place a colon between the node and its label.\todo{This might be solved more elegantly with an option.}
+%    \begin{macrocode}
       prefix after command={
         \pgfextra{
           \tikzset{
@@ -571,14 +643,9 @@
               /xbondgraphs/element/label,
               pin distance = 2pt,
               pin edge={
-                draw = none,
-                decoration={
-                  markings,
-                  mark = at position 0.5 with {
-                    \node[rotate=\pgfdecoratedangle,inner sep = 0pt,/xbondgraphs/element/label]{:};
-                  },
-                },
-                decorate,
+              	edge node={node[sloped,inner sep=0pt,%
+              	  /xbondgraphs/element/label]{:}},
+              	draw=none,
               },
             },
             every label/.style={
@@ -588,12 +655,22 @@
         }
       },
     }
+%    \end{macrocode}
+%	All of the before also holds for word elements, but additionally their shape is |ellipse| and the node edge is drawn.
+%    \begin{macrocode}
     \ifxbg@element@word
       \tikzset{draw,line width = 0.75\xbg@singlebondwidth,shape=ellipse}
     \fi
   },
 %    \end{macrocode}
 %	\end{macro}
+%	\begin{macro}{/tikz/bge}
+%	As a shorter alternative, |bge| is provided as alias for the |bond graph element| style.
+%    \begin{macrocode}
+  bge/.forward to=/tikz/bond graph element,
+%    \end{macrocode}
+%	\end{macro}
+%	The following styles are used for `along edge labels' of the effort and flow variables. 
 %    \begin{macrocode}
   bond label/.style={
     font=\small,
@@ -610,36 +687,55 @@
     width=\xbg@causalitystrokescale*\xbg@multibondwidth,
   },
 }
-
-% MUX SHAPE
+%    \end{macrocode}
+%	\subsection{Power (de)mux shape}
+%	\label{imp:mux}
+%	The power (de)mux element is defined as a node style, in the |/tikz| family so it is directly usable in the node.
+%	\begin{macro}{/tikz/mux}
+%	The |/tikz/mux| key passes its argument to the |/mux| family. It sets some node keys and sets the |mux| shape.
+%    \begin{macrocode}
 \pgfkeys{
   /tikz/mux/.code={
     \pgfkeys{
-      %      /tikz/shape=mux,
       /mux/.cd,
       #1
     }
+%    \end{macrocode}
+%	The maximum of the number of inputs and the number of outputs is used to determine the (minimum) height of the node.
+%    \begin{macrocode}
+    \pgfmathparse{int(max(%
+      \pgfkeysvalueof{/mux/inputs},%
+      \pgfkeysvalueof{/mux/outputs}))}
+    \let\xbg@mux@n=\pgfmathresult
     \tikzset{
       outer sep = 0pt,
       inner sep = 0pt,
-      minimum width = \pgfkeysvalueof{/mux/width},
+      minimum width = 2.5pt,
+      minimum height = \xbg@mux@n*\pgfkeysvalueof{/mux/io spacing},
       node contents = {},
       fill=black,
       shape=mux,
     }
   },
+%    \end{macrocode}
+%	\end{macro}
+%	\begin{macro}{/mux}
+%	The |/mux| family holds the options that can be provided to the |/tikz/mux| style. The in- and outputs are used for the final height, and to create the anchors. The |io spacing| key sets the distance between the anchors, and therefore directly influences the height.
+%    \begin{macrocode}
   /mux/.is family,
   mux,
-  inputs/.initial=2,
-  outputs/.initial=2,
-  io spacing/.initial=5mm,
-  width/.initial=3pt,
+    inputs/.initial=1,
+    outputs/.initial=1,
+    io spacing/.initial=5mm,
 }
+%    \end{macrocode}
+%	\end{macro}
+%	\begin{macro}{mux shape}
+%	The shape for the |mux| element inherits most parts of the |rectangle| shape. 
+%    \begin{macrocode}
 \pgfdeclareshape{mux}{
-  \savedanchor\centerpoint{%
-    \pgf@x=0%
-    \pgf@y=0%
-  }%
+  \nodeparts{}
+  \savedanchor\centerpoint{\pgfpointorigin}
   \inheritsavedanchors[from=rectangle] 
   \inheritanchorborder[from=rectangle]
   \inheritanchor[from=rectangle]{north}
@@ -654,58 +750,66 @@
   \inheritanchor[from=rectangle]{south}
   \inheritanchor[from=rectangle]{south west}
   \inheritanchor[from=rectangle]{south east}
-  \savedmacro\inputs{\pgfmathtruncatemacro\inputs{\pgfkeysvalueof{/mux/inputs}}}%
-  \savedmacro\outputs{\pgfmathtruncatemacro\outputs{\pgfkeysvalueof{/mux/outputs}}}%
-  \savedmacro\numio{\pgfmathparse{max(\inputs,\outputs)}\pgfmathtruncatemacro\numio\pgfmathresult}
-  \saveddimen\height{%
-    \pgfmathparse{max(\pgfkeysvalueof{/mux/inputs},\pgfkeysvalueof{/mux/outputs})}
-    \pgfmathparse{(\pgfmathresult) * \pgfkeysvalueof{/mux/io spacing}}
-    \pgfmathsetlength\pgf@x{\pgfmathresult}
-  }
-  \saveddimen\halfwidth{\pgfmathsetlength\pgf@x{\pgfkeysvalueof{/mux/width}/2}\pgfmathresult}
-  \saveddimen\iospacing{\pgfmathsetlength\pgf@x{\pgfkeysvalueof{/mux/io spacing}}\pgfmathresult}
+%    \end{macrocode}
+%	The following macros and dimensions are used for the background path and the placing of the anchors. 
+%    \begin{macrocode}
+  \savedmacro\muxinputs{%
+    \pgfmathparse{int(\pgfkeysvalueof{/mux/inputs})}%
+    \let\muxinputs=\pgfmathresult}%
+  \savedmacro\muxoutputs{%
+    \pgfmathparse{int(\pgfkeysvalueof{/mux/outputs})}%
+    \let\muxoutputs=\pgfmathresult}%
+  \saveddimen\halfwidth{\pgfmathsetlength\pgf@x{%
+    \pgfkeysvalueof{/pgf/minimum width}/2}\pgfmathresult}
+  \saveddimen\halfheight{\pgfmathsetlength\pgf@x{%
+    \pgfkeysvalueof{/pgf/minimum height}/2}\pgfmathresult}
+%    \end{macrocode}
+%	The background path is a simple rectangle.
+%    \begin{macrocode}
   \backgroundpath{
     \pgfpathrectanglecorners{
-      \pgfpointadd{\centerpoint}{\pgfpoint{-\halfwidth}{\height/2}}
+      \pgfpoint{-\halfwidth}{-\halfheight}
     }{
-      \pgfpointadd{\centerpoint}{\pgfpoint{\halfwidth}{-\height/2}}
+      \pgfpoint{\halfwidth}{\halfheight}
     }
   }
+%    \end{macrocode}
+%	The |\pgfutil@g@addto@macro\pgf@sh@s@mux| line enables us to add some code to every instance of the |mux| shape. It will iteratively add anchors for the in- and outputs, until their respective maximum is reached.
+%    \begin{macrocode}
   \pgfutil@g@addto@macro\pgf@sh@s@mux{%
-    % Start with the maximum input number and go backwards.
-    % If the anchor is undefined, create it. Otherwise stop.
-    \c@pgf@counta=\pgfkeysvalueof{/mux/inputs}\relax%
     \pgfmathloop%
-    \ifnum\c@pgf@counta>0\relax%
-    \pgfutil@ifundefined{pgf@anchor@mux@input\the\c@pgf@counta}{%
-      \expandafter\xdef\csname pgf@anchor@mux@input\the\c@pgf@counta\endcsname{%
-        \noexpand\ioanchor{\the\c@pgf@counta}{-1}{((\inputs-\numio)/2+0.5)}%
+    \ifnum\pgfmathcounter>\muxinputs\relax%
+    \else%
+    \pgfutil@ifundefined{pgf@anchor@mux@input \pgfmathcounter}{%
+      \expandafter\xdef\csname pgf@anchor@mux@input \pgfmathcounter\endcsname{%
+        \noexpand\pgf@sh@lib@mux@in@anchor{\pgfmathcounter}%
       }%
-    }{\c@pgf@counta=0\relax}%
-    \advance\c@pgf@counta-1\relax%
+    }{}
+    \repeatpgfmathloop%
+    \pgfmathloop%
+    \ifnum\pgfmathcounter>\muxoutputs\relax%
+    \else%
+    \pgfutil@ifundefined{pgf@anchor@mux@output \pgfmathcounter}{%
+      \expandafter\xdef\csname pgf@anchor@mux@output \pgfmathcounter\endcsname{%
+        \noexpand\pgf@sh@lib@mux@out@anchor{\pgfmathcounter}%
+      }%
+    }{}
     \repeatpgfmathloop%  
   }%
-  \pgfutil@g@addto@macro\pgf@sh@s@mux{%
-    % Start with the maximum output number and go backwards.
-    % If the anchor is undefined, create it. Otherwise stop.
-    \c@pgf@counta=\pgfkeysvalueof{/mux/outputs}\relax%
-    \pgfmathloop%
-    \ifnum\c@pgf@counta>0\relax%
-    \pgfutil@ifundefined{pgf@anchor@mux@output\the\c@pgf@counta}{%
-      \expandafter\xdef\csname pgf@anchor@mux@output\the\c@pgf@counta\endcsname{%
-        \noexpand\ioanchor{\the\c@pgf@counta}{1}{((\outputs-\numio)/2+0.5)}%
-      }%
-    }{\c@pgf@counta=0\relax}%
-    \advance\c@pgf@counta-1\relax%
-    \repeatpgfmathloop%  
-  }%
-}
-
-\def\ioanchor#1#2#3{%
-  \pgfpointadd{\centerpoint}{\pgfpoint{#2*\halfwidth}{\height/2-#1*\iospacing+#3*\iospacing}}%
 }
 %    \end{macrocode}
+%	The following functions are called to add a point for the anchors.
+%    \begin{macrocode}
+\def\pgf@sh@lib@mux@in@anchor#1{%
+  \pgfpoint{-\halfwidth}{-\halfheight*(2/(\muxinputs)*(#1-0.5)-1)}%
+}
+\def\pgf@sh@lib@mux@out@anchor#1{%
+  \pgfpoint{\halfwidth}{-\halfheight*(2/(\muxoutputs)*(#1-0.5)-1)}%
+}
+%    \end{macrocode}
+%	\end{macro}
 % 	\subsection{Arrow tip definitions}
+%	\label{imp:arrowtips}
 % 		The arrow tips are defined using |\pgfdeclarearrow|. 
 % \begin{macro}{Single Bond Barb}
 % 	First the single bond barb is defined. The definition of this arrow is elaborated in \cref{sec:singlebondarrowtip}.
@@ -856,7 +960,7 @@
 \colorlet{diff}{orange}
 \colorlet{error}{red}
 %    \end{macrocode}
-%		And finally, the package options are processed using the |pgfopts| package.
+%		And finally, the package options are processed using the \pgfopts package.
 %    \begin{macrocode}
 \ProcessPgfPackageOptions{/XBG}
 %</package>
