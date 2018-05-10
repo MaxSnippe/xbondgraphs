@@ -251,12 +251,7 @@
 %			\label{opt:barbangle}
 %			\begin{tikzpicture}
 %				\foreach [count=\i] \ang in {20,30,...,80}{
-%					\begingroup
-%					\makeatletter
-%					\pgfkeys{/XBG/barbangle=\ang}
-%					\draw[bond] (0,-0.5*\i) -- ++ (1,0) node[pos=0,left]{\ang};
-%					\makeatother
-%					\endgroup
+%					\draw[bond={barb angle=\ang}] (0,-0.5*\i) -- ++ (1,0) node[pos=0,left]{\ang};
 %				}
 %			\end{tikzpicture}
 %		
@@ -458,6 +453,8 @@
         draw,
         line width = \xbg@singlebondwidth,
       },
+      barb angle/.store in=\xbg@bond@barbangle,
+      barb angle=40,
       barb direction/.store in=\xbg@bond@barbdir,
       barb direction flip angle/.store in=\xbg@bond@barbflipang,
 %    \end{macrocode}
@@ -530,8 +527,7 @@
 % 		The |XBG| keys are used as package options. The options cannot contain spaces, as mentioned in the \pgfopts manual.
 %    \begin{macrocode}
   /XBG/.cd,
-    barbangle/.store in=\xbg@barbangle,
-    barbangle=40,
+    barbangle/.code=\pgfkeys{/xbondgraphs/bond/barb angle=#1},
     singlebondwidth/.store in=\xbg@singlebondwidth,
     singlebondwidth=1pt,
     multibondwidth/.store in=\xbg@multibondwidth,
@@ -800,7 +796,7 @@
 %    \begin{macrocode}
     \pgfmathsetlengthmacro{\sbw}{\pgflinewidth}
     \pgfmathsetlengthmacro{\mbw}{\xbg@multibondwidth}
-    \pgfmathsetlengthmacro{\ba}{\xbg@barbangle}
+    \pgfmathsetlengthmacro{\ba}{\xbg@bond@barbangle}
 %    \end{macrocode}
 % 		Calculate the $ x $- and $ y $ position of the points that the barb will follow. If one was walking along the bond from startpoint to endpoint, the origin of this scope would be the endpoint, the $ x $ direction would be forward, and the $ y $ direction would be leftward.
 %    \begin{macrocode}
@@ -824,6 +820,10 @@
     \pgfarrowshullpoint{\hullpointx}{\hullpointy}
     \pgfarrowshullpoint{\tipendx}{\tipendy}
   },
+%    \end{macrocode}
+% 		\pgf will need to know which macros influence the appearance of the arrow tip. This way it can reuse code if the parameters don't change.
+%    \begin{macrocode}
+  parameters={\xbg@bond@barbangle,\xbg@singlebondwidth,\xbg@multibondwidth},
   drawing code = {
 %    \end{macrocode}
 % 		The actual drawing of the arrow.
@@ -847,7 +847,7 @@
 %    \begin{macrocode}
     \pgfmathsetlengthmacro{\sbw}{\xbg@singlebondwidth}
     \pgfmathsetlengthmacro{\mbw}{\pgflinewidth}
-    \pgfmathsetlengthmacro{\ba}{\xbg@barbangle}
+    \pgfmathsetlengthmacro{\ba}{\xbg@bond@barbangle}
 %    \end{macrocode}
 % 		The starting point of the drawing of the actual arrow tip is now were the `bottom' line ends. The tip end location is calculated such that the centerline of the barb passes through the endpoint of the `top' double line. This is also described in \cref{sec:multibondarrowtip}.
 %    \begin{macrocode}
@@ -872,6 +872,10 @@
     \pgfarrowshullpoint{\hullpointx}{\hullpointy}
     \pgfarrowshullpoint{\tipendx}{\tipendy}
   },
+%    \end{macrocode}
+% 		Again, \pgf will need to know which macros influence the appearance of the arrow tip.
+%    \begin{macrocode}
+  parameters={\xbg@bond@barbangle,\xbg@singlebondwidth,\xbg@multibondwidth},
   drawing code = {
 %    \end{macrocode}
 % 		The drawing is the same as for the |Single Bond Barb|, except for the setting the line width to the width of a single bond.
