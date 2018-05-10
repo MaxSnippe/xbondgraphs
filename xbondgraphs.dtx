@@ -39,6 +39,7 @@
 \usepackage[numbered]{hypdoc}
 \usepackage[noabbrev]{cleveref}
 \usepackage{lstautogobble}
+\usepackage{showframe}
 % 
 \pgfmathsetlengthmacro{\multibondwidth}{30mm}
 \pgfmathsetlengthmacro{\singlebondwidth}{12.5mm}
@@ -48,8 +49,9 @@
 \newcommand\textvtt[1]{{\normalfont\fontfamily{cmvtt}\selectfont #1}}
 \renewcommand{\MacroFont}{\color{black!70!blue}\small\ttfamily}
 %
+\newcounter{todos}\setcounter{todos}{0}
 \newcommand{\todolabel}{\textcolor{black}{\textbf{To do}}\xspace}
-\newcommand{\todo}[1]{\marginpar{\todolabel: \protect{#1}}\phantomsection\addcontentsline{tdo}{subsection}{#1}}
+\newcommand{\todo}[1]{\stepcounter{todos}\marginpar{\raggedleft\hyperref[sec:todolist]{\todolabel (\thetodos)}}\phantomsection\addcontentsline{tdo}{subsection}{\thetodos. #1}}
 \makeatletter
 \newcommand{\listoftodos}{\section{To-do list}\label{sec:todolist}\@starttoc{tdo}}
 \makeatother
@@ -78,6 +80,7 @@
 \def\LaTeX{\origLaTeX\xspace}
 \def\cmark{\ding{51}}
 \def\xmark{\ding{55}}
+\newcommand{\colorpreview}[1]{\tikz{\fill[#1] (0,0) rectangle (0.55em,0.55em);}}
 %
 \captionsetup{labelfont=bf,font=small,labelsep=endash}
 \captionsetup[subfigure]{font=footnotesize}
@@ -120,7 +123,7 @@
 %
 % \GetFileInfo{xbondgraphs.sty}
 %
-% \DoNotIndex{\#,\$,\%,\&,\@,\\,\{,\},\^,\_,\~,\ ,\if,\else,\fi,\def,\ifcase,\or,\ba,\backgroundpath,\backx,\backy,\centerpoint,\colorlet,\csname,\endcsname,\expandafter,\halfheight,\halfwidth,\hullpointx,\hullpointy,\ifnum,\ifxbg@bond@causality@eout,\ifxbg@bond@causality@fout,\ifxbg@element@multiport,\ifxbg@element@word,\inheritanchor,\inheritanchorborder,\inheritsavedanchors,\ensuremath,\let,\mathbb,\mathbf,\mbw,\muxinputs,\muxoutputs,\NeedsTeXFormat,\newif,\nodeparts,\noexpand,\path,\pgf@sh@lib@mux@in@anchor,\pgf@sh@lib@mux@out@anchor,\pgf@sh@s@mux,\pgf@x,\pgfarrowshullpoint,\pgfarrowssetbackend,\pgfarrowssettipend,\pgfdeclarearrow,\pgfdeclaredecoration,\pgfdeclareshape,\pgfdecoratedangle,\pgfdecoratedinputsegmentlength,\pgfextra,\pgfkeys,\pgfkeysvalueof,\pgflinewidth,\pgfmathcounter,\pgfmathloop,\pgfmathparse,\pgfmathresult,\pgfmathsetlengthmacro,\pgfmathsetlength,\pgfpathlineto,\pgfpathmoveto,\pgfpathrectanglecorners,\pgfpoint,\pgfpointdecoratedinputsegmentlast,\pgfpointorigin,\pgfsetlinewidth,\pgfusepathqstroke,\pgfutil@g@addto@macro,\pgfutil@ifundefined,\ProcessPgfPackageOptions,\ProvidesPackage,\relax,\repeatpgfmathloop,\RequirePackage,\savedanchor,\saveddimen,\savedmacro,\sbw,\small,\startx,\starty,\state,\tikzset,\tipendx,\tipendy,\tipx,\tipy,\usetikzlibrary,\xdef}
+% \DoNotIndex{\#,\$,\%,\&,\@,\\,\{,\},\^,\_,\~,\ ,\if,\else,\fi,\def,\ifcase,\or,\ba,\backgroundpath,\backx,\backy,\centerpoint,\colorlet,\csname,\endcsname,\expandafter,\halfheight,\halfwidth,\hullpointx,\hullpointy,\ifnum,\ifxbg@bond@causality@eout,\ifxbg@bond@causality@fout,\ifxbg@element@multiport,\ifxbg@element@word,\inheritanchor,\inheritanchorborder,\inheritsavedanchors,\ensuremath,\let,\mathbb,\mathbf,\mbw,\muxinputs,\muxoutputs,\NeedsTeXFormat,\newif,\nodeparts,\noexpand,\path,\pgf@sh@lib@mux@in@anchor,\pgf@sh@lib@mux@out@anchor,\pgf@sh@s@mux,\pgf@x,\pgfarrowshullpoint,\pgfarrowssetbackend,\pgfarrowssettipend,\pgfdeclarearrow,\pgfdeclaredecoration,\pgfdeclareshape,\pgfdecoratedangle,\pgfdecoratedinputsegmentlength,\pgfextra,\pgfkeys,\pgfkeysvalueof,\pgflinewidth,\pgfmathcounter,\pgfmathloop,\pgfmathparse,\pgfmathresult,\pgfmathsetlengthmacro,\pgfmathsetlength,\pgfpathlineto,\pgfpathmoveto,\pgfpathrectanglecorners,\pgfpoint,\pgfpointdecoratedinputsegmentlast,\pgfpointorigin,\pgfsetlinewidth,\pgfusepathqstroke,\pgfutil@g@addto@macro,\pgfutil@ifundefined,\ProcessPgfPackageOptions,\ProvidesPackage,\relax,\repeatpgfmathloop,\RequirePackage,\savedanchor,\saveddimen,\savedmacro,\sbw,\small,\startx,\starty,\state,\tikzset,\tipendx,\tipendy,\tipx,\tipy,\usetikzlibrary,\xdef,\xbg@mux@n,\muxnumio,\iospacing}
 %
 % \title{The \xbondgraphs package\thanks{This document corresponds to \xbondgraphs\space\fileversion, dated\space\filedate.}\\[0.5em]
 % 	\large Drawing bond graphs using \Tikz}
@@ -247,28 +250,93 @@
 %	
 %	\subsection{Package options}
 %		\label{sec:globaloptions}
+%		In the preamble of your document, the following options can be added to the |\usepackage|\oarg{package options}|{xbondgraphs}| command. They will change the global behavior of the package.
+%		
 %		\DescribeMacro{barbangle}
 %			\label{opt:barbangle}
-%			\begin{tikzpicture}
-%				\foreach [count=\i] \ang in {20,30,...,80}{
-%					\draw[bond={barb angle=\ang}] (0,-0.5*\i) -- ++ (1,0) node[pos=0,left]{\ang};
-%				}
-%			\end{tikzpicture}
+%			The angle the barb makes with respect to the line segment it is attached to can be globally changed with the |barbangle| option. Note that this is different from the local option |barb angle| described in \cref{opt:barb-angle}, because \LaTeX does not allow spaces in package options. This option defaults to 40 (degrees). See \cref{opt:barb-angle} for an example of other values for this key.
 %		
 %		\DescribeMacro{barbdirection}
 % 			\label{opt:barbdirection}
+%			Some users of bond graphs might prefer to make the arrow barb to point left or below, instead of always below. These users might use the |barbdirection| option, which defaults to |alwaysbelow|, and give it the alternative value |leftbelow|. No other values are accepted. This option is only available as package option, but might also be used locally as shown in the following example (this is discouraged however, to maintain consistency).
 %		
-%		\begin{tikzpicture}
-%			\foreach \angle in {0,30,...,359}{
-%				\draw[bond,/XBG/barbdirection=leftbelow] (0,0) -- ++(\angle:1.25);
-%				\draw[bond,/XBG/barbdirection=alwaysbelow] (2.5,0) -- ++(\angle:1.25);
-%				\draw[bond={multi},/XBG/barbdirection=leftbelow] (5,0) -- ++(\angle:1.25);
-%				\draw[bond={multi},/XBG/barbdirection=alwaysbelow] (7.5,0) -- ++(\angle:1.25);
-%			}
-%		\end{tikzpicture}
+%\begin{tikzpicture}[x=1.25cm,y=1.25cm]
+%  \foreach [count=\i from 0] \opt in {leftbelow,alwaysbelow}{
+%    \begin{scope}[/XBG/barbdirection=\opt]
+%      \foreach \a in {0,15,...,359}{
+%        \draw[bond] (2*\i,0) -- ++(\a:1);
+%      }
+%      \node at (2*\i,-1.5) [anchor=base,font=\ttfamily]{\opt};
+%    \end{scope}
+%  }
+%  \begin{scope}[red,dashed]
+%    \draw (0,0) ++(45:1) --+(225:2);
+%    \draw (2,0) ++(90:1) --+(270:2);
+%  \end{scope}
+%\end{tikzpicture}
 %		
+%		Note the angle at which the barb direction is flipped, indicated with the red line in the example. For the |leftbellow| option this is 45 (and 225) degrees, and for the |alwaysbelow| option this is 90 (and 270) degrees, where exact matches of these angles give a barb directed left.
+%		\LaTeX code:
+%		\begin{verbatim}
+%\begin{tikzpicture}[x=1.25cm,y=1.25cm]
+%  \foreach [count=\i from 0] \opt in {leftbelow,alwaysbelow}{
+%    \begin{scope}[/XBG/barbdirection=\opt]
+%      \foreach \a in {0,15,...,359}{
+%        \draw[bond] (2*\i,0) -- ++(\a:1);
+%      }
+%      \node at (2*\i,-1.5) [anchor=base,font=\ttfamily]{\opt};
+%    \end{scope}
+%  }
+%  \begin{scope}[red,dashed]
+%    \draw (0,0) ++(45:1) --+(225:2);
+%    \draw (2,0) ++(90:1) --+(270:2);
+%  \end{scope}
+%\end{tikzpicture}
+%		\end{verbatim}
+%		
+%		\DescribeMacro{singlebondwidth}
+%			\label{opt:singlebondwidth}
+%			The |singlebondwidth| option globally sets the width of the visible bond lines, including the two lines of the multi bonds, and the causality stroke. The default value is |1pt|.
+%			
+%		\DescribeMacro{multibondwidth}
+%			\label{opt:multibondwidth}
+%			The |multibondwidth| option globally sets the total width of the multi bonds, effectively determining the width of the gap between the two drawn lines, in combination with the former option ($ w_{\mathrm{multi}} = 2w_{\mathrm{single}} + w_{\mathrm{gap}} $). Additionally, this width is used to scale the causality stroke's width ($ w_{\mathrm{cstroke}}=2w_{\mathrm{multi}} $ for single bonds, and $ w_{\mathrm{cstroke}}=3w_{\mathrm{multi}} $ for multi bonds).\todo{The causal stroke scaling could be a seperate option, maybe later.} The default value of this key is |4pt|.
+%		
+%		\DescribeMacro{bgelementlabelcolor}
+%			\label{opt:bgelementlabelcolor}
+%			The |bgelementlabelcolor| option can be used to set the color of the labels (and |pin|s) of all |bond graph element|s or |bge|s. It defaults to |blue| (\colorpreview{blue}).
+%			
+%		\DescribeMacro{bondlabelcolor}
+%			\label{opt:bondlabelcolor}
+%			The |bondlabelcolor| option can be used to set the color of all effort or flow nodes placed along the bonds. It defaults to |green!50!black| (\colorpreview{green!50!black}).
+%		
+%		\DescribeMacro{gray}
+%			\label{opt:gray}
+%			The |gray| option turns the former two options to |gray| (\colorpreview{gray}). Additionally, it turns the |diff| causality color to |white!60!black| (\colorpreview{white!60!black}) and the |error| causality color to |white!30!black| (\colorpreview{white!30!black}). It accepts no arguments.
+%			
 %	\subsection{Local options}
 %		\label{sec:localoptions}
+%		
+%		\subsubsection{\texttt{bond} options}
+%			\label{sec:bondoptions}
+%			
+%			Options can be given as argument to the |bond| style as follows: |bond=|\marg{options}. This argument is passed on to the |/xbondgraphs/bond| family, where the options are evaluated.
+%			
+%			\DescribeMacro{barb angle}
+%				\label{opt:barb-angle}
+%				The barb angle, globally changable by the |barbangle| package option, can also be changed locally. 
+%				Note the |miter limit| option needed for the |barb angle=10| option.
+%				
+%				\begin{tikzpicture}
+%					\foreach [count=\i] \ang in {10,20,...,80,85}{
+%						\begin{scope}[shift={(\i*1.2,0)}]
+%							\draw[bond={barb angle=\ang},miter limit=25] (0,0) -- node[above]{\ang} ++ (1,0);
+%						\end{scope}
+%					}
+%				\end{tikzpicture}
+%				
+%		\subsubsection{\texttt{bond graph element} options}
+%			\label{sec:bondgraphelementoptions}
 %\section{Arrow tips}
 %	
 %	\subsection{Single bond arrow tip}
@@ -276,25 +344,25 @@
 %		
 %		\begin{tikzpicture}
 %			
-%			% Calculate actual path points
+^^A%			% Calculate actual path points
 %				\pgfmathsetlengthmacro{\tipx}{\singlebondwidth}
 %				\pgfmathsetlengthmacro{\tipy}{0pt}
 %				\pgfmathsetlengthmacro{\backx}{-1/tan(\barbangle)*(\multibondwidth-0.5*cos(\barbangle)*\singlebondwidth) + \singlebondwidth}
 %				\pgfmathsetlengthmacro{\backy}{\multibondwidth - 0.5*cos(\barbangle)*\singlebondwidth}
-%			% Calculate points of outer dimensions as needed by pgf
+^^A%			% Calculate points of outer dimensions as needed by pgf
 %				\pgfmathsetlengthmacro{\hullpointx}{\backx + 0.5*\singlebondwidth*sin(\barbangle)}
 %				\pgfmathsetlengthmacro{\hullpointy}{\multibondwidth}
 %				\pgfmathsetlengthmacro{\tipendx}{0.5*\singlebondwidth/tan(\barbangle/2) + \tipx}
 %				\pgfmathsetlengthmacro{\tipendy}{-0.5*\singlebondwidth}
 %			
 %			\begin{scope}[line width = \singlebondwidth,/XBG/multibondwidth=\multibondwidth]
-%			% Existing line
+^^A%			% Existing line
 %			\draw (0,0) -- (-5,0);
 %			
-%			% Arrow tip
+^^A%			% Arrow tip
 %			\draw[arrow tip demonstration,-{Single Bond Barb[left].|[width=2*\multibondwidth]}] (0,0) -- (\tipendx+\singlebondwidth,\tipy);
-%	%					\draw[arrow tip demonstration] (0,0) -- (\tipx,\tipy) -- (\backx,\backy);
-%	%					\draw[arrow tip demonstration] (\tipendx+0.5*\singlebondwidth,-\multibondwidth) -- (\tipendx+0.5*\singlebondwidth,\multibondwidth);
+^^A%	%					\draw[arrow tip demonstration] (0,0) -- (\tipx,\tipy) -- (\backx,\backy);
+^^A%	%					\draw[arrow tip demonstration] (\tipendx+0.5*\singlebondwidth,-\multibondwidth) -- (\tipendx+0.5*\singlebondwidth,\multibondwidth);
 %			\draw[arrow tip line style] (0,0) -- (\tipx,\tipy) -- (\backx,\backy);
 %			\end{scope}
 %			
@@ -324,26 +392,26 @@
 %		
 %		\begin{tikzpicture}
 %			
-%			% Calculate actual path points
+^^A%			% Calculate actual path points
 %				\pgfmathsetlengthmacro{\startx}{0pt}
 %				\pgfmathsetlengthmacro{\starty}{-0.5*\multibondwidth+0.5*\singlebondwidth}
 %				\pgfmathsetlengthmacro{\tipx}{(\multibondwidth-\singlebondwidth)/tan(\barbangle)}
 %				\pgfmathsetlengthmacro{\tipy}{-0.5*\multibondwidth + 0.5*\singlebondwidth}
 %				\pgfmathsetlengthmacro{\backy}{1.5*\multibondwidth - 0.5*\singlebondwidth*cos(\barbangle)}
 %				\pgfmathsetlengthmacro{\backx}{-(\backy+\tipy)/tan(\barbangle)}
-%			% Calculate points of outer dimensions as needed by pgf
+^^A%			% Calculate points of outer dimensions as needed by pgf
 %				\pgfmathsetlengthmacro{\hullpointx}{\backx + 0.5*\singlebondwidth*sin(\barbangle)}
 %				\pgfmathsetlengthmacro{\hullpointy}{1.5*\multibondwidth}
 %				\pgfmathsetlengthmacro{\tipendx}{0.5*\singlebondwidth/tan(\barbangle/2) + \tipx}
 %				\pgfmathsetlengthmacro{\tipendy}{-0.5*\multibondwidth}
 %			
 %			\begin{scope}[line width = \singlebondwidth]
-%				% Existing line
+^^A%				% Existing line
 %				\draw (0,\starty) -- (-5,\starty); 
 %				\draw (0,-\starty) -- (-5,-\starty); 
 %				
-%				% Arrow tip
-%				%					\draw[double,double distance={\multibondwidth-2*\singlebondwidth},arrow tip demonstration,-{Multi Bond Barb[left].|[width=3*\multibondwidth]}] (0,0) -- (\tipendx+\singlebondwidth,0);
+^^A%				% Arrow tip
+^^A%				%					\draw[double,double distance={\multibondwidth-2*\singlebondwidth},arrow tip demonstration,-{Multi Bond Barb[left].|[width=3*\multibondwidth]}] (0,0) -- (\tipendx+\singlebondwidth,0);
 %				\draw[arrow tip demonstration] (\startx,\starty) -- (\tipx,\tipy) -- (\backx,\backy);
 %				\draw[arrow tip line style] (\startx,\starty) -- (\tipx,\tipy) -- (\backx,\backy);
 %				\draw[arrow tip line style,green] (\tipx,\tipy) -- ++ (180-\barbangle:10cm);
@@ -423,8 +491,10 @@
 \RequirePackage{pgfopts}
 \RequirePackage{tikz}
 \RequirePackage{amsfonts}
-
-\usetikzlibrary{arrows.meta,decorations.markings,shapes}
+%    \end{macrocode}
+%		The |arrows.meta| library is needed to scale the causal stroke arrow tip. The |decorations| library is needed for the |bond| decoration. The |shapes| library is needed for the ellipse shape of word bond graph elements.
+%    \begin{macrocode}
+\usetikzlibrary{arrows.meta,decorations,shapes}
 %    \end{macrocode}
 %		\subsection{\pgf keys}
 %		First define a few |\ifs| used for boolean \pgf keys.
@@ -453,7 +523,23 @@
         draw,
         line width = \xbg@singlebondwidth,
       },
-      barb angle/.store in=\xbg@bond@barbangle,
+%    \end{macrocode}
+% 		The |barb angle| key checks if the angle is between 10 and 80 degrees, because it just looks awful if other values are used. The range in which the arrow tips look good (which of course is my subjective opinion) is between 30 and 50 degrees. If an extreme value is needed, a user might redefine the macro as follows: |\def\xbg@bond@barbangle|\marg{angle}, but this might break the arrow tips.
+%    \begin{macrocode}
+      barb angle/.code={
+        \ifnum#1>80\relax
+          \PackageWarning{xbondgraphs}{The `barb angle' option is %
+            limited to values between 10 and 80, 80 is used}
+          \def\xbg@bond@barbangle{80}
+        \else
+          \ifnum#1<10\relax
+            \PackageWarning{xbondgraphs}{The `barb angle' option is %
+              limited to values between 10 and 80, 10 is used}
+            \def\xbg@bond@barbangle{10}
+          \else
+            \def\xbg@bond@barbangle{#1}
+          \fi
+        \fi},
       barb angle=40,
       barb direction/.store in=\xbg@bond@barbdir,
       barb direction flip angle/.store in=\xbg@bond@barbflipang,
@@ -516,10 +602,10 @@
       multiport/.default=true,
       multiport/.initial=false,
 %    \end{macrocode}
-% 		The |label| style is used later in the \Tikz family tree.
+% 		The |/xbondgraphs/element/label| style is used later in the \Tikz family tree.
 %    \begin{macrocode}
       label/.style={
-        \xbg@bgelementlabelcolor,
+        \xbg@bgelabelcolor,
       },
 %    \end{macrocode}
 %	\end{macro}
@@ -532,7 +618,7 @@
     singlebondwidth=1pt,
     multibondwidth/.store in=\xbg@multibondwidth,
     multibondwidth=4pt,
-    bgelementlabelcolor/.store in=\xbg@bgelementlabelcolor,
+    bgelementlabelcolor/.store in=\xbg@bgelabelcolor,
     bgelementlabelcolor=blue,
     bondlabelcolor/.store in=\xbg@bondlabelcolor,
     bondlabelcolor=green!50!black,
@@ -547,7 +633,7 @@
     barbdirection/leftbelow/.code={%
       \pgfkeys{/xbondgraphs/bond/barb direction flip angle=45}},
     barbdirection/alwaysbelow/.code={%
-      \pgfkeys{/xbondgraphs/bond/barb direction flip angle=-1}},
+      \pgfkeys{/xbondgraphs/bond/barb direction flip angle=0}},
     barbdirection/alwaysbelow,
 %    \end{macrocode}
 %	\end{macro}
