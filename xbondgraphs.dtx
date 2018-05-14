@@ -36,7 +36,7 @@
 \usepackage{longtable}
 \usepackage{footnote}
 \usepackage{subcaption}
-\usepackage{listings}
+\usepackage{tcolorbox}
 \usepackage[numbered]{hypdoc}
 \usepackage[noabbrev]{cleveref}
 \usepackage{lstautogobble}
@@ -59,15 +59,27 @@
 %
 \hypersetup{hidelinks}
 %
-\makesavenoteenv{table}
-%
-\lstset{
-	autogobble,
-	tabsize=4,
-	breaklines=true,
-	basicstyle=\ttfamily\small,
-	language=[LaTeX]Tex,
+\tcbuselibrary{documentation}
+\tcbset{
+	verbatim ignore percent,
+	doc left = 0pt,
+	docexample/.style={
+		colframe=black!50!white,
+		colback=white,
+		sharp corners,
+		rounded corners=northeast,
+	},
+	tikzdocexample/.style={
+		before lower={\begin{tikzpicture}},
+		after lower={\end{tikzpicture}},
+	},
+	index annotate=false,
 }
+\tcbmakedocSubKey{XBGkey}{XBG}
+\tcbmakedocSubKey{bondkey}{xbondgraphs/bond}
+\tcbmakedocSubKey{elementkey}{xbondgraphs/element}
+%
+\makesavenoteenv{table}
 %
 \usetikzlibrary{positioning}
 %
@@ -252,40 +264,24 @@
 %	
 %	\subsection{Package options}
 %		\label{sec:globaloptions}
-%		In the preamble of your document, the following options can be added to the |\usepackage|\oarg{package options}|{xbondgraphs}| command. They will change the global behavior of the package.
-%		
-%		\DescribeMacro{barbangle}
-%			\label{opt:barbangle}
-%			The angle the barb makes with respect to the line segment it is attached to can be globally changed with the |barbangle| option. Note that the name is slightly different from the local option |barb angle| described in \cref{opt:barb-angle}, because \LaTeX does not allow spaces in package options. This option defaults to 40 (degrees). See \cref{opt:barb-angle} for an example of other values for this key. The minimum and maximum values of this key are 15 and 85 respectively.
-%		
-%		\DescribeMacro{barbdirection}
-% 			\label{opt:barbdirection}
+%		In the preamble of your document, the following options can be added to the |\usepackage|\oarg{package options}|{xbondgraphs}| command. They will change the global behavior of the package. The keys are all members of the \docAuxKey{XBG} family.
+%		\begin{XBGkey}{barbangle}{=\meta{angle}}{default 40, initially 40}
+%			The angle the barb makes with respect to the line segment it is attached to can be globally changed with the |barbangle| option. Note that the name is slightly different from the local option \refKey{/xbondgraphs/bond/barb angle}, because \LaTeX does not allow spaces in package options. This option defaults to 40 (degrees). See the \refKey{/xbondgraphs/bond/barb angle} key for an example of other values for this key. The minimum and maximum values of this key are 15 and 85 respectively.
+%		\end{XBGkey}
+%		\begin{XBGkey}{barbdirection}{=alwaysbelow\textbar leftbelow}{no default, initially |alwaysbelow|}
 %			Some users of bond graphs might prefer to make the arrow barb to point left or below, instead of always below. These users might use the |barbdirection| option, which defaults to |alwaysbelow|, and give it the alternative value |leftbelow|. No other values are accepted.
-%		
-%\begin{tikzpicture}[x=1.25cm,y=1.25cm]
-%  \foreach [count=\i from 0] \opt in {leftbelow,alwaysbelow}{
-%    \begin{scope}[/XBG/barbdirection=\opt]
-%      \foreach \a in {0,15,...,359}{
-%        \draw[bond] (2*\i,0) -- ++(\a:1);
-%      }
-%      \node at (2*\i,-1.5) [anchor=base,font=\ttfamily]{\opt};
-%    \end{scope}
-%  }
-%\end{tikzpicture}
-%
-%		\LaTeX:
-%		\begin{verbatim}
-%\begin{tikzpicture}[x=1.25cm,y=1.25cm]
-%  \foreach [count=\i from 0] \opt in {leftbelow,alwaysbelow}{
-%    \begin{scope}[/XBG/barbdirection=\opt]
-%      \foreach \a in {0,15,...,359}{
-%        \draw[bond] (2*\i,0) -- ++(\a:1);
-%      }
-%      \node at (2*\i,-1.5) [anchor=base,font=\ttfamily]{\opt};
-%    \end{scope}
-%  }
-%\end{tikzpicture}
-%		\end{verbatim}
+%			
+%\begin{dispExample*}{tikzdocexample}
+%\foreach [count=\i from 0] \opt in {leftbelow,alwaysbelow}{
+%  \begin{scope}[/XBG/barbdirection=\opt,x=1.25cm,y=1.25cm]
+%    \foreach \a in {0,15,...,359}{
+%      \draw[bond] (2*\i,0) -- ++(\a:1);
+%    }
+%    \node at (2*\i,-1.5) [anchor=base,font=\ttfamily]{\opt};
+%  \end{scope}
+%}
+%\end{dispExample*}
+%		\end{XBGkey}
 %		
 %		\DescribeMacro{singlebondwidth}
 %			\label{opt:singlebondwidth}
@@ -313,83 +309,68 @@
 %		\subsubsection{\texttt{bond} options}
 %			\label{sec:bondoptions}
 %			
-%			Options can be given as argument to the |bond| style as follows: |bond=|\marg{options}. This argument is passed on to the |/xbondgraphs/bond| family, where the options are evaluated.
+%			\begin{docKey}[tikz]{bond}{=\meta{options}}{default |empty|}
+%				When the \refKey{/tikz/bond} style is provided to a \Tikz drawing command (e.g. |\draw|, |\path|), its options can be given as argument. This argument is passed on to the \refKey{/xbondgraphs/bond} family, where the options are evaluated.
+%			\end{docKey}
 %			
-%			\DescribeMacro{barb angle}
-%				\label{opt:barb-angle}
+%			\begin{docKey}[xbondgraphs]{bond}{}{family}
+%				The \refKey{/xbondgraphs/bond} family holds the keys for the \refKey{/tikz/bond} style.
+%			\end{docKey}
+%			
+%			\begin{bondkey}{barb angle}{=\meta{angle}}{default 40}
 %				The barb angle, globally changable by the |barbangle| package option, can also be changed locally. It defaults to 40 degrees, and limited between 15 and 85 degrees.
-%				
-%\begin{tikzpicture}
-%  \foreach [count=\i] \ang in {15,25,35,40,45,65,85}{
-%    \begin{scope}[shift={(\i*1.2,0)}]
-%      \draw[bond={barb angle=\ang}] (0,0) -- node[above]{\ang} ++ (1,0);
-%    \end{scope}
-%  }
-%\end{tikzpicture}
-%				
-%				\LaTeX:
-%				\begin{verbatim}
-%\begin{tikzpicture}
-%  \foreach [count=\i] \ang in {15,25,35,40,45,65,85}{
-%    \begin{scope}[shift={(\i*1.2,0)}]
-%      \draw[bond={barb angle=\ang}] (0,0) -- node[above]{\ang} ++ (1,0);
-%    \end{scope}
-%  }
-%\end{tikzpicture}
-%				\end{verbatim}
-%
-%			\DescribeMacro{effort out}\DescribeMacro{flow in}
-%				\label{opt:effort-out}\label{opt:flow-in}
-%				The |effort out| and |flow in| options are aliases, placing the causality stroke at the end of the bond (where the barb is placed). The optional argument they receive is passed on to the |/tikz/causal stroke| style which is used for the \textbar-arrow tip. For differential or erroneous causality, the options |diff| or |error| can be passed to the causality option, which are actually defined as colors. The default colors are red (\colorpreview{red}) for |error| and orange (\colorpreview{orange}) for |diff|.
-%				
-%			\DescribeMacro{effort in}\DescribeMacro{flow out}
-%				The |effort in| and |flow out| are also aliases, and the counterpart of the |effort out| and |flow in| options. 
-%				
-%\begin{tikzpicture}
+%\begin{dispExample*}{tikzdocexample}
+%\foreach [count=\i] \ang in {15,25,35,40,45,65,85}{
+%  \begin{scope}[shift={(\i*1.2,0)}]
+%    \draw[bond={barb angle=\ang}] (0,0) -- node[above]{\ang} ++ (1,0);
+%  \end{scope}
+%}
+%\end{dispExample*}
+%			\end{bondkey}
+%			\begin{bondkey}{effort out}{=\oarg{options}}{no default, initially unset}
+%				The \refKey{/xbondgraphs/bond/effort out} key places the causality stroke of a bond at the end (where the barb is placed). The optional argument is passed on to the \refKey{causal stroke} style which is used for the \textbar-arrow tip. For differential or erroneous causality, the options \docColor{diff} or \docColor{error} can be passed to the causality option, which are actually defined as colors. The default colors are red (\colorpreview{red}) for \docColor{error} and orange (\colorpreview{orange}) for \docColor{diff}.
+%			\end{bondkey}
+%			\begin{bondkey}{flow in}{=\oarg{options}}{no default, initially unset}
+%				The \refKey{/xbondgraphs/bond/flow in} is an alias for the \refKey{/xbondgraphs/bond/effort out} key. 
+%			\end{bondkey}
+%			\begin{bondkey}{effort in}{=\oarg{options}}{no default, initially unset}
+%				The \refKey{/xbondgraphs/bond/effort in} is the counterpart of the \refKey{/xbondgraphs/bond/effort out} key. It places the causality stroke at the beginning of the bond.
+%			\end{bondkey}
+%			\begin{bondkey}{flow out}{=\oarg{options}}{no default, initially unset}
+%				The \refKey{/xbondgraphs/bond/flow out} is an alias for the \refKey{/xbondgraphs/bond/effort in} key. 
+%			\end{bondkey}
+%\begin{dispExample*}{tikzdocexample}
 %  \draw[bond={effort out={error}}] (0,0) -- ++(1,0);
 %  \draw[bond={flow in={width=1.5em,diff}}] (1.5,0) -- ++(1,0);
 %  \draw[bond={effort in={blue,line width=4pt}}] (3,0) -- ++(1,0);
 %  \draw[bond={flow out},green] (4.5,0) to[effort={$ e $}] ++(1,0);
-%\end{tikzpicture}
+%\end{dispExample*}
 %
-%			\LaTeX:
-%			\begin{verbatim}
-%\begin{tikzpicture}
-%  \draw[bond={effort out={error}}] (0,0) -- ++(1,0);
-%  \draw[bond={flow in={width=1.5em,diff}}] (1.5,0) -- ++(1,0);
-%  \draw[bond={effort in={blue,line width=4pt}}] (3,0) -- ++(1,0);
-%  \draw[bond={flow out},green] (4.5,0) to[effort={$ e $}] ++(1,0);
-%\end{tikzpicture}
-%			\end{verbatim}
-%			
-%			\DescribeMacro{multi}
-%				When the |multi| option is called, the bond is changed to a multi bond, with a different arrow head, and double lines. All other options are still applicable.
-%				
-%\begin{tikzpicture}
+%			\begin{bondkey}{multi}{}{initially unset}
+%				When the \refKey{/xbondgraphs/bond/multi} key is called, the bond is changed to a multi bond, with a different arrow head, and double lines. All other options are still applicable.
+%\begin{dispExample*}{tikzdocexample}
 %  \draw[bond={multi,effort out={diff}}] (0,0) -- ++(1,0);
 %  \draw[bond={multi},red] (1.5,0) -- ++(1,0);
-%\end{tikzpicture}
-%
-%			\LaTeX:
-%			\begin{verbatim}
-%\begin{tikzpicture}
-%  \draw[bond={multi,effort out={diff}}] (0,0) -- ++(1,0);
-%  \draw[bond={multi},red] (1.5,0) -- ++(1,0);
-%\end{tikzpicture}
-%			\end{verbatim}
+%\end{dispExample*}
+%			\end{bondkey}
 %				
 %		\subsubsection{\texttt{bond graph element} options}
 %			\label{sec:bondgraphelementoptions}
-%			The |bond graph element| or |bge| style can be used for \Tikz nodes. It takes two arguments, the first being the node contents, and the second any of the following options.
+%			\begin{docKey}[tikz]{bond graph element}{=\marg{contents}\marg{options}}{no default}
+%				The |bond graph element| or |bge| style can be used for \Tikz nodes. It takes two arguments, the first being the node contents, and the second any of the following options. The options are passed to the \refKey{/xbondgraphs/element} family.
+%			\end{docKey}
+%			\begin{docKey}[xbondgraphs]{element}{}{family}
+%				This family holds the keys for the bond graph elements.
+%			\end{docKey}
 %
-%			\DescribeMacro{multiport}
+%			\begin{elementkey}{multiport}{=true\textbar false}{default |true|, initially |false|}
 %				If the element depicts a multidimensional element, this might be emphasized with the |multiport| option. This will print the node contents in blackboard bold math font. Generally this should be combined with the next option (|n|), unless all elements in the graph have the same order.
-%
-%\begin{tikzpicture}
-%  \node (mtf) [bge={MTF}{multiport}];
-%  \draw[bond={multi}] (-2,0) -- (mtf);
-%  \draw[bond={multi}] (mtf) -- (2,0);
-%\end{tikzpicture}
+%\begin{dispExample*}{tikzdocexample}
+%\node (mtf) [bge={MTF}{multiport}];
+%\draw[bond={multi}] (-2,0) -- (mtf);
+%\draw[bond={multi}] (mtf) -- (2,0);
+%\end{dispExample*}
+%			\end{elementkey}
 %			
 %			\DescribeMacro{n}
 %				The order of the bond graph element can be given with the |n=|\marg{order} option. This will be added to the node contents as subscript, if unequal to the default (1).
@@ -535,7 +516,7 @@
 %		\draw (mux5.output 1) -- ++(1,0) node[output]{O1};
 %	\end{tikzpicture}
 % 
-% \StopEventually{\PrintChanges \PrintIndex \listoftodos}
+% \StopEventually{\PrintChanges \printindex \listoftodos}
 % 
 % \clearpage
 % \section{Implementation}
