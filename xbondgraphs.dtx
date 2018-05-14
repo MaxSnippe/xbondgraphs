@@ -36,10 +36,9 @@
 \usepackage{longtable}
 \usepackage{footnote}
 \usepackage{subcaption}
-\usepackage{tcolorbox}
 \usepackage[numbered]{hypdoc}
+\usepackage{tcolorbox}
 \usepackage[noabbrev]{cleveref}
-\usepackage{lstautogobble}
 \usepackage{showframe}
 % 
 \pgfmathsetlengthmacro{\multibondwidth}{30mm}
@@ -73,7 +72,7 @@
 		before lower={\begin{tikzpicture}},
 		after lower={\end{tikzpicture}},
 	},
-	index annotate=false,
+	index format=pgf,
 }
 \tcbmakedocSubKey{XBGkey}{XBG}
 \tcbmakedocSubKey{bondkey}{xbondgraphs/bond}
@@ -340,17 +339,17 @@
 %				The \refKey{/xbondgraphs/bond/flow out} is an alias for the \refKey{/xbondgraphs/bond/effort in} key. 
 %			\end{bondkey}
 %\begin{dispExample*}{tikzdocexample}
-%  \draw[bond={effort out={error}}] (0,0) -- ++(1,0);
-%  \draw[bond={flow in={width=1.5em,diff}}] (1.5,0) -- ++(1,0);
-%  \draw[bond={effort in={blue,line width=4pt}}] (3,0) -- ++(1,0);
-%  \draw[bond={flow out},green] (4.5,0) to[effort={$ e $}] ++(1,0);
+%\draw[bond={effort out={error}}] (0,0) -- ++(1,0);
+%\draw[bond={flow in={width=1.5em,diff}}] (1.5,0) -- ++(1,0);
+%\draw[bond={effort in={blue,line width=4pt}}] (3,0) -- ++(1,0);
+%\draw[bond={flow out},green] (4.5,0) to[effort={$ e $}] ++(1,0);
 %\end{dispExample*}
 %
 %			\begin{bondkey}{multi}{}{initially unset}
 %				When the \refKey{/xbondgraphs/bond/multi} key is called, the bond is changed to a multi bond, with a different arrow head, and double lines. All other options are still applicable.
 %\begin{dispExample*}{tikzdocexample}
-%  \draw[bond={multi,effort out={diff}}] (0,0) -- ++(1,0);
-%  \draw[bond={multi},red] (1.5,0) -- ++(1,0);
+%\draw[bond={multi,effort out={diff}}] (0,0) -- ++(1,0);
+%\draw[bond={multi},red] (1.5,0) -- ++(1,0);
 %\end{dispExample*}
 %			\end{bondkey}
 %				
@@ -371,13 +370,12 @@
 %\draw[bond={multi}] (mtf) -- (2,0);
 %\end{dispExample*}
 %			\end{elementkey}
-%			
-%			\DescribeMacro{n}
+%			\begin{elementkey}{n}{=\meta{order}}{no default, initially |1|}
 %				The order of the bond graph element can be given with the |n=|\marg{order} option. This will be added to the node contents as subscript, if unequal to the default (1).
-%
-%\begin{tikzpicture}
-%  \node[bge={I}{multiport,n=6}];
-%\end{tikzpicture}
+%\begin{dispExample*}{tikzdocexample}
+%\node[bge={I}{multiport,n=6}];
+%\end{dispExample*}
+%			\end{elementkey}
 %
 %\section{Arrow tips}
 %	
