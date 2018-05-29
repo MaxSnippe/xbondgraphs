@@ -58,15 +58,16 @@
 % \changes{v0.0.1}{2018/05/02}{Initial version}
 % \changes{v0.0.2}{2018/05/16}{Changed to \textsf{tcolorbox} documentation style}
 % \changes{v0.1.0}{2018/05/18}{Added \textsf{xbondgraphs.iconix} `library'}
+% \changes{v0.1.1}{2018/05/29}{Added lots of documentation}
 %
 % \GetFileInfo{xbondgraphs.sty}
 %
 % \DoNotIndex{\#,\$,\%,\&,\@,\\,\{,\},\^,\_,\~,\ ,\if,\else,\fi,\def,\ifcase,\or,\ba,\backgroundpath,\backx,\backy,\centerpoint,\colorlet,\csname,\endcsname,\expandafter,\halfheight,\halfwidth,\hullpointx,\hullpointy,\ifnum,\ifxbg@bond@causality@eout,\ifxbg@bond@causality@fout,\ifxbg@element@multiport,\ifxbg@element@word,\inheritanchor,\inheritanchorborder,\inheritsavedanchors,\ensuremath,\let,\mathbb,\mathbf,\mbw,\muxinputs,\muxoutputs,\NeedsTeXFormat,\newif,\nodeparts,\noexpand,\path,\pgf@sh@lib@mux@in@anchor,\pgf@sh@lib@mux@out@anchor,\pgf@sh@s@mux,\pgf@x,\pgfarrowshullpoint,\pgfarrowssetbackend,\pgfarrowssettipend,\pgfdeclarearrow,\pgfdeclaredecoration,\pgfdeclareshape,\pgfdecoratedangle,\pgfdecoratedinputsegmentlength,\pgfextra,\pgfkeys,\pgfkeysvalueof,\pgflinewidth,\pgfmathcounter,\pgfmathloop,\pgfmathparse,\pgfmathresult,\pgfmathsetlengthmacro,\pgfmathsetlength,\pgfpathlineto,\pgfpathmoveto,\pgfpathrectanglecorners,\pgfpoint,\pgfpointdecoratedinputsegmentlast,\pgfpointorigin,\pgfsetlinewidth,\pgfusepathqstroke,\pgfutil@g@addto@macro,\pgfutil@ifundefined,\ProcessPgfPackageOptions,\ProvidesPackage,\relax,\repeatpgfmathloop,\RequirePackage,\savedanchor,\saveddimen,\savedmacro,\sbw,\small,\startx,\starty,\state,\tikzset,\tipendx,\tipendy,\tipx,\tipy,\usetikzlibrary,\xdef,\xbg@mux@n,\muxmaxio,\iospacing,\PackageWarning,\xbg@bgelabelcolor,\xbg@bondlabelcolor,\xbg@multibondwidth,\xbg@singlebondwidth,\xbg@causalitystrokescale,\xbg@error,\xbg@warning,\pgfqkeys,\pgfkeysalso,\PackageError,\xbgset,\long,\appto,\tikz,\draw,\node,\bge@i,\bge@ii,\bond@i,\bond@ii,\bond,\bge}
 %
-%\title{The \xbondgraphs package\thanks{This document corresponds to \xbondgraphs\space\fileversion, dated\space\filedate.}\\[0.5em]
-%	\large Drawing bond graphs using \Tikz}
+%\title{The \xbondgraphs package\\[0.5em]\large Drawing bond graphs using \Tikz}
 %\author{Marcus J.W. Snippe\\
 %	\normalsize\href{mailto:m.j.w.snippe@saxion.nl}{$\langle$\texttt{m.j.w.snippe@saxion.nl}$\rangle$}}
+%\date{\filedate\\[0.4em]\normalsize\fileversion}
 %
 % \input{xbondgraphs.doc.document.tex}
 %
@@ -80,9 +81,9 @@
 %<*xbondgraphs-package>
 \NeedsTeXFormat{LaTeX2e}[2017/04/15]
 \ProvidesPackage{xbondgraphs}
-    [2018/05/18 v0.0.1 Bond graph drawing using TikZ]
+    [2018/05/29 v0.1.1 Bond graph drawing using TikZ]
 %    \end{macrocode}
-%   \subsection{Required packages and libraries}
+%   \subsection{Dependencies}
 %       This package uses \Tikz to do the actual drawing. \Tikz itself loads the \pgf package that is used for the key management system. The \textsf{amsfonts} package is used for the |\mathbb| font.
 %    \begin{macrocode}
 \RequirePackage{tikz}
@@ -996,8 +997,8 @@ signalname/.style={},
 	},
 	capacitor/.style={
 		line component,
-		minimum height = 1cm,
-		minimum width = 1.5cm,
+		minimum height = 0.8cm,
+		minimum width = 0.5cm,
 		path picture={%
 			\pgfmathparse{max(1.5*\pgflinewidth,2pt)}
 			\pgfmathsetlengthmacro{\halfwidth}{\pgfmathresult pt}
