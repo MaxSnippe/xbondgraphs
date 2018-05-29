@@ -186,6 +186,9 @@ pythontex-files-*/
 *.md5
 *.auxlock
 
+# tcolorbox
+*.tcbtemp
+
 # todonotes
 *.tdo
 
