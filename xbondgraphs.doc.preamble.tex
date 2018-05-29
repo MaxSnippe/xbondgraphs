@@ -1,4 +1,5 @@
 \usepackage[utf8]{inputenc}
+\usepackage{filecontents}
 \usepackage{xbondgraphs}
 \usepackage{xbondgraphs.iconix}
 \usepackage{xspace}
@@ -6,7 +7,6 @@
 \usepackage{booktabs}
 \usepackage{tabu}
 \usepackage{longtable}
-\usepackage{footnote}
 \usepackage{subcaption}
 \usepackage{hyperref}
 \usepackage{tcolorbox}
@@ -28,9 +28,7 @@
 \newcommand{\listoftodos}{\phantomsection\section*{To-do list}\addcontentsline{toc}{section}{To-do list}\label{sec:todolist}\@starttoc{tdo}}
 \makeatother
 
-\makesavenoteenv{table}
-
-\usetikzlibrary{positioning}
+\usetikzlibrary{positioning,spy}
 \tcbuselibrary{documentation}
 
 \newcommand\Tikz{{\normalfont Ti\textit{k}Z}\xspace}
