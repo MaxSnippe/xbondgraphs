@@ -8,10 +8,12 @@
 \usepackage{tabu}
 \usepackage{longtable}
 \usepackage{subcaption}
+\usepackage{geometry}
 \usepackage{hyperref}
 \usepackage{tcolorbox}
 \usepackage[noabbrev]{cleveref}
-%\usepackage{showframe}
+
+\geometry{margin=1in,showframe}
 
 \pgfmathsetlengthmacro{\multibondwidth}{32mm}
 \pgfmathsetlengthmacro{\singlebondwidth}{8mm}
@@ -30,6 +32,26 @@
 
 \usetikzlibrary{positioning,spy,graphs}
 \tcbuselibrary{documentation}
+
+\iffalse
+% Tikz externalizing
+\usetikzlibrary{external}
+\tikzexternalize[
+    prefix={figures/},
+    only named,
+]
+% FOR EXTERNALIZING
+\pgfkeys{/pgf/images/include external/.code=\includegraphics{#1}}
+
+% FOR EXPORTING BITMAP IMAGES
+\tikzset{
+	export as png/.style={
+		external/system call/.add={}{
+			; convert -density 300 -transparent white "\image.pdf" "\image.png"
+		}
+	}
+}
+\fi
 
 \newcommand\Tikz{{\normalfont Ti\textit{k}Z}\xspace}
 \newcommand\pgf{PGF\xspace}
@@ -154,8 +176,6 @@
 \makeatother
 
 \tcbset{
-    doc left = 0em,
-    doc left indent = -4em,
     doc head template/.style={boxsep=2pt,interior style={fill,left color=#1!5!white, right color = #1!25!white}},
     doc head key={doc head template={Key}},
     doc head decoration={doc head template={Decoration}},
@@ -178,6 +198,7 @@
         doc left = 0em,
         doc head={},
     },
+    shield externalize,
 }
 
 \tcbmakedocSubKey{XBGkey}{XBG}

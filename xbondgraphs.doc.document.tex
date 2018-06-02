@@ -39,23 +39,23 @@
         \immediate\write18{pdflatex xbg_tmp_example_bondgraphs.tex}
         \begin{figure}[htpb]
             \centering
-            \begin{subfigure}[t]{\linewidth}
+            \begin{subfigure}[t]{0.48\linewidth}
                 \centering
                 \begin{tikzpicture}
-                    \begin{scope}[spy using outlines={gray,magnification=8,minimum width=32mm,minimum height=22mm, connect spies,every spy on node/.append style={line width=.4pt}}]
+                    \begin{scope}[spy using outlines={gray,magnification=8,minimum width=32mm,minimum height=30mm, connect spies,every spy on node/.append style={line width=.4pt}}]
                         \node{\includegraphics{xbg_tmp_example_bondgraphs.pdf}};
-                        \spy on (0, 1.15) in node[above left]  (tipf) at (-1, 0.5);
-                        \spy on (0, 0.35) in node[above right] (tail) at ( 1, 0.5);
-                        \spy on (0,-1.15) in node[below right] (tipe) at ( 1,-0.5);
+                        \spy on (0, 1.15) in node[above left]  (tipf) at (-0.5, 0.5);
+                        \spy on (0, 0.35) in node[above right] (tail) at ( 0.5, 0.5);
+                        \spy on (0,-1.15) in node[below right] (tipe) at ( 0.5,-0.5);
                     \end{scope}
                 \end{tikzpicture}
                 \caption{Using the \bondgraphs package.}
                 \label{fig:comparisonmultibonds-bondgraphs}
             \end{subfigure}
-            \begin{subfigure}[t]{\linewidth}
+            \begin{subfigure}[t]{0.48\linewidth}
                 \centering
                 \begin{tikzpicture}
-                    \begin{scope}[spy using outlines={gray,magnification=8,minimum width=32mm,minimum height=28mm, connect spies,every spy on node/.append style={line width=.4pt}}]
+                    \begin{scope}[spy using outlines={gray,magnification=8,minimum width=32mm,minimum height=30mm, connect spies,every spy on node/.append style={line width=.4pt}}]
                         \begin{scope}[x=15mm,y=15mm]
                             \node at (-1, 0) (Se) [bge={Se}{},pin=left:$ V $];
                             \node at ( 0, 0) (1j) [bge={1}{},label=below right:$ i $];
@@ -67,9 +67,9 @@
                         \draw[bond={multi,effort in}]  (1j) -- (C);
                         \draw[bond={multi,effort out}] (1j) -- (L);
                         \draw[bond={multi,effort in}]  (1j) -- (R);
-                        \spy on (0, 1.05) in node[above left]  (tipf) at (-1, 0.5);
-                        \spy on (0, 0.40) in node[above right] (tail) at ( 1, 0.5);
-                        \spy on (0,-1.05) in node[below right] (tipe) at ( 1,-0.5);
+                        \spy on (0, 1.075) in node[above left]  (tipf) at (-0.5, 0.5);
+                        \spy on (0, 0.40) in node[above right] (tail) at ( 0.5, 0.5);
+                        \spy on (0,-1.075) in node[below right] (tipe) at ( 0.5,-0.5);
                     \end{scope}
                 \end{tikzpicture}
                 \caption{Using the \xbondgraphs package.}
@@ -226,30 +226,32 @@ If the bond is multidimensional, lets draw it as such \bond[multi]{(0,0)
         ->[bond={effort out}] (w) ->[bond={effort in}] (d);
     (i) ->[bond={effort out}] (l);
     (i) ->[bond={effort in}] (r);
-    (w) ->[bond={effort out}] (j);
-};
+    (w) ->[bond={effort out}] (j)};
 \end{dispExample*}
+        \iffalse
         \todo{Look at PGF manual page 270 for automatic graphs}
         \begin{tikzpicture}
-        \tikzgraphsset{
-            bond graph/.style={
-            grow right,
-            grid placement,
-            effort out/.forward to=/xbg/effort out,
-            effort in/.forward to=/xbg/flow out,
-            flow out/.forward to=/xbg/flow out,
-            flow in/.forward to=/xbg/effort out,
-            typeset=\bge{\tikzgraphnodetext},
-            edge={bond},
+            \tikzgraphsset{
+                bond graph/.style={
+                    grow right,
+                    grow right sep=1cm,
+                    branch up,
+                    effort out/.forward to=/xbg/effort out,
+                    effort in/.forward to=/xbg/flow out,
+                    flow out/.forward to=/xbg/flow out,
+                    flow in/.forward to=/xbg/effort out,
+                    multi/.forward to=/xbg/multi,
+                    typeset=\bge{\tikzgraphnodetext},
+                    edge={bond},
+                }
             }
-        }
-        \graph[bond graph]{
-            u/Se[/xbg/n=4] ->[effort out] i/1 ->[effort in] k/GY ->[effort out] w/1 ->[effort in] d/R;
-            i ->[effort in] r/R;
-            i ->[effort out] l/I;
-            w ->[effort out] j/I;
-        };
+            \graph[bond graph]{
+                u/Se[/xbg/n=4] ->[effort out] i/1 ->[effort in,multi] k/GY ->[effort out] w/1 ->[effort in] d/R;
+                i ->[effort in] r/R;
+                i ->[effort out] l/I;
+                w ->[effort out] j/I};
         \end{tikzpicture}
+        \fi
 \section{Keys}
     \label{sec:keys}
     
@@ -566,7 +568,7 @@ If the bond is multidimensional, lets draw it as such \bond[multi]{(0,0)
 \section{Examples}
     
 	\begin{tikzpicture}
-		\node (Vabc) at (0,0) [bond graph element={\mathbb{MS}e}{n=3},label={west:$ V_{abc} $}];
+		\node (Vabc) at (0,0) [bond graph element={\mathbb{MS}e}{},pin={west:$ V_{abc} $}];
 		\node (iabc) [right=of Vabc,bond graph element={1}{},label={300:$ i_{abc} $}];
 		\node (Rs) [above=of iabc,bond graph element={R}{},pin={north:$ R_s $}];
 		\node (Ls) [below=of iabc,bond graph element={L}{},pin={south:$ L_s $}];
