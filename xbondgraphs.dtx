@@ -398,9 +398,6 @@
     \inheritanchor[from=rectangle]{center}
     \inheritanchor[from=rectangle]{west}
     \inheritanchor[from=rectangle]{east}
-    \inheritanchor[from=rectangle]{mid}
-    \inheritanchor[from=rectangle]{mid west}
-    \inheritanchor[from=rectangle]{mid east}
     \inheritanchor[from=rectangle]{south}
     \inheritanchor[from=rectangle]{south west}
     \inheritanchor[from=rectangle]{south east}
@@ -465,6 +462,7 @@
 }
 %    \end{macrocode}
 %       \subsection{Arrow tips}
+%           \label{imp:arrowtips}
 %           The arrow tips defined by the \xbondgraphs package are \refArr{Single Bond Barb} and \refArr{Multi Bond Barb}.
 %    \begin{macrocode}
 \pgfdeclarearrow{
@@ -716,64 +714,74 @@
 }
 
 \tikzset{
-	sum/.style n args = {4}{draw,circle,minimum width = 4mm,fill=white,
-		append after command={
-			\pgfextra{
-				\begin{scope}%[every node/.style={inner sep = 0pt, minimum width = 5mm, draw, circle,font=\tiny}]
-					\ifthenelse{\equal{#1}{+}}{
-						\begin{scope}[shift={(\tikzlastnode.north)},shift={(-2mm,1.5mm)},line width = .8pt]
-							\draw (-0.75mm,0mm) -- (0.75mm,0mm);
-							\draw (0mm,-0.75mm) -- (0mm,0.75mm);
-						\end{scope}
-					}{
-					\ifthenelse{\equal{#1}{-}}{
-						\begin{scope}[shift={(\tikzlastnode.north)},shift={(-2mm,1.5mm)},line width = .8pt]
-							\draw (-0.75mm,0mm) -- (0.75mm,0mm);
-						\end{scope}
-					}{}
-				}
-				\ifthenelse{\equal{#2}{+}}{
-					\begin{scope}[shift={(\tikzlastnode.south)},shift={(2mm,-1.5mm)},line width = .8pt]
-						\draw (-0.75mm,0mm) -- (0.75mm,0mm);
-						\draw (0mm,-0.75mm) -- (0mm,0.75mm);
-					\end{scope}
-				}{
-				\ifthenelse{\equal{#2}{-}}{
-					\begin{scope}[shift={(\tikzlastnode.south)},shift={(2mm,-1.5mm)},line width = .8pt]
-						\draw (-0.75mm,0mm) -- (0.75mm,0mm);
-					\end{scope}
-				}{}
-			}
-			\ifthenelse{\equal{#3}{+}}{
-				\begin{scope}[shift={(\tikzlastnode.west)},shift={(-1.5mm,-2mm)},line width = .8pt]
-					\draw (-0.75mm,0mm) -- (0.75mm,0mm);
-					\draw (0mm,-0.75mm) -- (0mm,0.75mm);
-				\end{scope}
-			}{
-			\ifthenelse{\equal{#3}{-}}{
-				\begin{scope}[shift={(\tikzlastnode.west)},shift={(-1.5mm,-2mm)},line width = .8pt]
-					\draw (-0.75mm,0mm) -- (0.75mm,0mm);
-				\end{scope}
-			}{}
-		}
-		\ifthenelse{\equal{#4}{+}}{
-			\begin{scope}[shift={(\tikzlastnode.east)},shift={(1.5mm,2mm)},line width = .8pt]
-				\draw (-0.75mm,0mm) -- (0.75mm,0mm);
-				\draw (0mm,-0.75mm) -- (0mm,0.75mm);
-			\end{scope}
-		}{
-		\ifthenelse{\equal{#4}{-}}{
-			\begin{scope}[shift={(\tikzlastnode.east)},shift={(1.5mm,2mm)},line width = .8pt]
-				\draw (-0.75mm,0mm) -- (0.75mm,0mm);
-			\end{scope}
-		}{}
-	}
-\end{scope}
-}
-},
-},
-sum/.default = {}{-}{}{+},
-signalname/.style={},
+    sum/.style n args = {4}{
+        draw,
+        circle,
+        minimum width = 4mm,
+        fill=white,
+        append after command={
+            \pgfextra{
+                \begin{scope}%[every node/.style={inner sep = 0pt, minimum width = 5mm, draw, circle,font=\tiny}]
+                    \edef\@tmpi{#1}%
+                    \def\@tmpii{+}%
+                    \def\@tmpiii{-}%
+                    \ifx\@tmpi\@tmpii%
+                        \begin{scope}[shift={(\tikzlastnode.north)},shift={(-2mm,1.5mm)},line width = .8pt]
+                            \draw (-0.75mm,0mm) -- (0.75mm,0mm);
+                            \draw (0mm,-0.75mm) -- (0mm,0.75mm);
+                        \end{scope}
+                    \else
+                        \ifx\@tmpi\@tmpiii%
+                            \begin{scope}[shift={(\tikzlastnode.north)},shift={(-2mm,1.5mm)},line width = .8pt]
+                                \draw (-0.75mm,0mm) -- (0.75mm,0mm);
+                            \end{scope}
+                        \fi
+                    \fi
+                    \edef\@tmpi{#2}%
+                    \ifx\@tmpi\@tmpii%
+                        \begin{scope}[shift={(\tikzlastnode.south)},shift={(2mm,-1.5mm)},line width = .8pt]
+                            \draw (-0.75mm,0mm) -- (0.75mm,0mm);
+                            \draw (0mm,-0.75mm) -- (0mm,0.75mm);
+                        \end{scope}
+                    \else
+                        \ifx\@tmpi\@tmpiii%
+                            \begin{scope}[shift={(\tikzlastnode.south)},shift={(2mm,-1.5mm)},line width = .8pt]
+                                \draw (-0.75mm,0mm) -- (0.75mm,0mm);
+                            \end{scope}
+                        \fi
+                    \fi
+                    \edef\@tmpi{#3}%
+                    \ifx\@tmpi\@tmpii%
+                        \begin{scope}[shift={(\tikzlastnode.west)},shift={(-1.5mm,-2mm)},line width = .8pt]
+                            \draw (-0.75mm,0mm) -- (0.75mm,0mm);
+                            \draw (0mm,-0.75mm) -- (0mm,0.75mm);
+                        \end{scope}
+                    \else
+                        \ifx\@tmpi\@tmpiii%
+                            \begin{scope}[shift={(\tikzlastnode.west)},shift={(-1.5mm,-2mm)},line width = .8pt]
+                                \draw (-0.75mm,0mm) -- (0.75mm,0mm);
+                            \end{scope}
+                        \fi
+                    \fi
+                    \edef\@tmpi{#4}%
+                    \ifx\@tmpi\@tmpii%
+                        \begin{scope}[shift={(\tikzlastnode.east)},shift={(1.5mm,2mm)},line width = .8pt]
+                            \draw (-0.75mm,0mm) -- (0.75mm,0mm);
+                            \draw (0mm,-0.75mm) -- (0mm,0.75mm);
+                        \end{scope}
+                    \else
+                        \ifx\@tmpi\@tmpiii%
+                            \begin{scope}[shift={(\tikzlastnode.east)},shift={(1.5mm,2mm)},line width = .8pt]
+                                \draw (-0.75mm,0mm) -- (0.75mm,0mm);
+                            \end{scope}
+                        \fi
+                    \fi
+                \end{scope}
+            }
+        },
+    },
+    sum/.default = {}{-}{}{+},
+    signalname/.style={},
 }
 %    \end{macrocode}
 %           \subsection{Iconic diagrams}
@@ -928,11 +936,10 @@ signalname/.style={},
 		},
 		#1,
 	},
-	gyrator/.style 2 args={
+	gyrator/.style={
 		component,
-		minimum height=1.5cm, 
-		minimum width=1cm,
-		label={[label distance = 0cm]#2:#1},
+		minimum height=10mm+\pgflinewidth, 
+		minimum width=8mm+\pgflinewidth,
 		path picture={%
 			\draw[fill=white] (-.2,-.5) rectangle (.2,.5);
 			\draw[fill=white] (0,0) circle (.4);
@@ -940,8 +947,8 @@ signalname/.style={},
 	},
 	resistor/.style={
 		line component,
-		minimum height=1cm,
-		minimum width = 1.5cm,
+		minimum height=4mm+\pgflinewidth,
+		minimum width=1cm+\pgflinewidth,
 		path picture={%
 			\fill[white] (-0.5,-0.6*\pgflinewidth) rectangle (0.5,0.6*\pgflinewidth);
 			\draw (-.5,-.2) rectangle (.5,.2);
@@ -1019,11 +1026,10 @@ signalname/.style={},
 		},
 		#1
 	},
-	elecearth/.style 2 args={
+	electric earth/.style={
 		component,
 		minimum height = 1cm,
 		minimum width=1.5cm,
-		label={[label distance = 0cm]#2:#1},
 		path picture={%
 			\draw (0,0) --++(0,-.1)
 			(-.3,-.1) -- (.3,-.1)
@@ -1115,11 +1121,10 @@ signalname/.style={},
 			\node{$ m $};
 		}
 	},
-	inertia/.style 2 args={
+	inertia/.style={
 		component,
-		minimum height = 1.5cm,
-		minimum width = 1.5cm,
-		label={[label distance = 0cm]#2:#1},
+		minimum height = 14mm+\pgflinewidth,
+		minimum width = 4mm+\pgflinewidth,
 		path picture={%
 			\draw[fill=white!80!black] (-.2,-.7) rectangle (.2,.7);
 		}

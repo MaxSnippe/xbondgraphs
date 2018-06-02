@@ -125,29 +125,6 @@
         \fi
         \todo{Describe installation sequence}
         
-    \subsection{Simple example}
-        The following example shows an electric domain dynamic model shown as an iconic diagram, and its domain independent equivalent model shown as a bond graph. The iconic diagram icons are taken from the (undocumented) \textsf{xbondgraphs.iconix} package, that is installed alongside the \xbondgraphs package. \todo{Document the iconix package}\todo{Change iconix package into library}
-\begin{dispExample*}{tikzdocexample}
-\draw[line width=0.8pt] (-1,-1) 
-    -- ++(0,0.5)
-    -- node[voltage source,label={above:$ u $}]{} ++(0,1)
-    -- node[current,label={above:$ i $}]{} ++(0,0.5)
-    -- node[inductor,label={above:$ L $}]{} ++(2,0) 
-    -- node[resistor2,label={above:$ R $}]{} ++(0,-2) 
-    -- node[capacitor,label={above:$ C $}]{} cycle;
-\begin{scope}[shift={(5,0)}]
-    \node (u) at (-1.5, 0.0) [bge={Se}{},pin={left:$ u $}];
-    \node (i) at ( 0.0, 0.0) [bge={1}{},label={300:$ i $}];
-    \node (c) at ( 0.0, 1.5) [bge={C}{},pin={above:$ C $}];
-    \node (r) at ( 1.5, 0.0) [bge={R}{},pin={right:$ R $}];
-    \node (l) at ( 0.0,-1.5) [bge={L}{},pin={below:$ L $}];
-    \draw[bond={effort out}] (u) -- (i);
-    \draw[bond={effort in}] (i) -- (c);
-    \draw[bond={effort in}] (i) -- (r);
-    \draw[bond={effort out}] (i) -- (l);
-\end{scope}
-\end{dispExample*}
-        
     \subsection{Macros}
         
         \begin{docCommand}{bge}{\oarg{xbg keys}\oarg{tikz/pgf keys}\marg{contents}}
@@ -186,10 +163,10 @@ If the bond is multidimensional, lets draw it as such \bond[multi]{(0,0)
         \begin{docKey}[tikz]{bond graph element}{=\marg{contents}\marg{options}}{default \brackets{empty}\brackets{empty}}
             This style can be used for \Tikz nodes. It takes two arguments, the first being the node contents, and the second a list of \meta{key}|=|\meta{value} options. The \meta{contents} will be printed in \cs{mathbf} for a normal element, and in \cs{mathbb} for a multiport element. Note that most fonts do not have glyphs for lowercase blackboard bold.
 \begin{dispExample*}{tikzdocexample}
-\node at (0,0) [bond graph element={I}{}];
-\node at (1,0) [bond graph element={C}{multiport,n=3}];
-\node at (2.5,0) [bond graph element={motor}{word}];
-\node at (4.5,0) [bond graph element={BODY}{word,multiport,n=6}];
+\node at (0,0) [bond graph element={I}{label colon},label=above:$ J $];
+\node at (1,0) [bond graph element={C}{multiport,n=3},pin=above:$ \mathcal{C} $];
+\node at (2.5,0) [bond graph element={Motor}{word}, label=below:Electromotor];
+\node at (5,0) [bond graph element={BODY}{word,multiport,n=6}];
 \end{dispExample*}
         \end{docKey}
         \begin{docKey}[tikz]{bge}{=\marg{options}\marg{contents}}{default \brackets{|empty|}\brackets{|empty|}}
@@ -221,6 +198,58 @@ If the bond is multidimensional, lets draw it as such \bond[multi]{(0,0)
 \end{dispExample*}
         \end{docKey}
         
+    \subsection{Simple example}
+        The following examples shows an ideal physical dynamic model of a DC motor, shown as an iconic diagram, and its domain independent equivalent model shown as a bond graph. The iconic diagram icons are taken from the (undocumented) \textsf{xbondgraphs.iconix} package, that is installed alongside the \xbondgraphs package. \todo{Document the iconix package}\todo{Change iconix package into library}
+\begin{dispExample*}{tikzdocexample,title={Ideal physical model of a DC motor}}
+\draw[line width = .8pt] (0,0) 
+    -- node[voltage source,label={above:$ u $}]{} ++(0,2) node[current,pos=0.9,label={above:$ i $}]{}
+    -- node[resistor,label={above:$ R $}]{} ++(2,0)
+    -- node[inductor,label={above:$ L $}]{} ++(2,0)
+    -- node(gyr)[gyrator,label={left:$ K_m $}]{} ++(0,-2)
+    -- node[electric earth]{} cycle;
+\draw[line width = .8pt] (gyr.center) -- (gyr.east)
+    -- node[friction,label={above:$ D $}]{} ++(2,0)
+    -- node[inertia,pos=1,label={above:$ J $}]{} ++(1,0);
+\end{dispExample*}
+\begin{dispExample*}{tikzdocexample,title={Bond graph model of a DC motor}}
+\tikzset{x=12.5mm,y=12.5mm}
+\node (u) at (-1, 0) [bge={Se}{},pin={left:$ u $}];
+\node (i) at ( 0, 0) [bge={1}{}, label={300:$ i $}];
+\node (r) at ( 0, 1) [bge={R}{}, pin={above:$ R $}];
+\node (l) at ( 0,-1) [bge={I}{}, pin={below:$ L $}];
+\node (k) at ( 1, 0) [bge={GY}{},pin={below:$ K_m $}];
+\node (w) at ( 2, 0) [bge={1}{}, label={300:$ \omega $}];
+\node (d) at ( 2, 1) [bge={R}{}, pin={above:$ D $}];
+\node (j) at ( 2,-1) [bge={I}{}, pin={below:$ J $}];
+\graph {
+    (u) ->[bond={effort out}] (i) ->[bond={effort in}] (k) 
+        ->[bond={effort out}] (w) ->[bond={effort in}] (d);
+    (i) ->[bond={effort out}] (l);
+    (i) ->[bond={effort in}] (r);
+    (w) ->[bond={effort out}] (j);
+};
+\end{dispExample*}
+        \todo{Look at PGF manual page 270 for automatic graphs}
+        \begin{tikzpicture}
+        \tikzgraphsset{
+            bond graph/.style={
+            grow right,
+            grid placement,
+            effort out/.forward to=/xbg/effort out,
+            effort in/.forward to=/xbg/flow out,
+            flow out/.forward to=/xbg/flow out,
+            flow in/.forward to=/xbg/effort out,
+            typeset=\bge{\tikzgraphnodetext},
+            edge={bond},
+            }
+        }
+        \graph[bond graph]{
+            u/Se[/xbg/n=4] ->[effort out] i/1 ->[effort in] k/GY ->[effort out] w/1 ->[effort in] d/R;
+            i ->[effort in] r/R;
+            i ->[effort out] l/I;
+            w ->[effort out] j/I;
+        };
+        \end{tikzpicture}
 \section{Keys}
     \label{sec:keys}
     
@@ -361,7 +390,7 @@ If the bond is multidimensional, lets draw it as such \bond[multi]{(0,0)
 \draw[bond={multi,effort in}] (-2,0) -- (mtf);
 \draw[bond={multi,effort in}] (mtf) -- (2,0);
 \end{dispExample*}
-            As mentioned before, most fonts do not have glyphs for lower case blackboard bold. For elements as \bge{MSe}s or \bge{MSf}s, this might be a problem, but this could be solved by not explicitly setting the \refKey{/xbg/multiport} key, but using blackboard bold in the \meta{contents} field. This can be solved with some packages, e.g. \textsf{bbm} or \textsf{mathbbol}, but I will leave that for you as end user to solve\footnote{Personally, I do not like these solutions.}.\todo{The multiport option should ignore lower case symbols and just print them with normalfont}
+            As mentioned before, most fonts do not have glyphs for lower case blackboard bold. For elements as \bge{MSe}s or \bge{MSf}s, this might be a problem, but this could be solved by not explicitly setting the \refKey{/xbg/multiport} key, but using blackboard bold in the \meta{contents} field. Lowercase blackboard bold fonts can be included with some packages, e.g. \textsf{bbm} or \textsf{mathbbol}, but I will leave that for you as end user to decide\footnote{Personally, I do not like these solutions.}.\todo{The multiport option should ignore lower case symbols and just print them with normalfont}
 \begin{dispExample*}{tikzdocexample}
 \node [bge={MSe}{multiport}];
 \node at (1,0) [bge={\mathbb{MS}e}{}];
@@ -420,100 +449,122 @@ If the bond is multidimensional, lets draw it as such \bond[multi]{(0,0)
     \end{docDecoration}
     
     \begin{docShape}{mux}{}
-    
+        The \refShp{mux} is basically the same as the |rectangle| shape, with some additional anchors. For every in- and output an anchor is defined, placed based on the \refKey{/xbg/mux io spacing} key. See the following example for the placement of the anchors. The grid is drawn to see that the length between two consecutive in- or outputs is exactly the given spacing (|15mm|). |m.50| and |m.230| are examples of border anchors.
+        
+\begin{dispExample*}{tikzdocexample}
+\node[mux={mux inputs=2,mux outputs=4,mux io spacing=15mm},mux example];
+\draw[help lines,step=2.5mm] (-1cm,-3cm) grid (1cm,3cm);
+\foreach \anchor/\placement in {input 1/left,input 2/left,output 1/right,output 2/right, output 3/right,output 4/right,north west/above left, north/above, north east/above right,west/left, center/above, east/right,south west/below left, south/below, south east/below right,50/right, 230/left}{
+    \draw[shift=(m.\anchor)] plot[mark=x] coordinates{(0,0)}
+        node[\placement] {\scriptsize\texttt{(m.\anchor)}};
+}
+\end{dispExample*}
+         The default dimensions of the \refShp{mux} shape are |2.5pt| width and \texttt{max(mux inputs,mux outputs)*mux io spacing} height.
     \end{docShape}
     
     \begin{docArrowTip}{Single Bond Barb}{}
-    
+        The \refArr{Single Bond Barb} arrow tip is the default arrow tip for a bond. It is very similar to the |Straight Barb| arrow tip that is included in the \Tikz library |arrows.meta|, except that the outer hull points are described more accurately, and its size is based on some of the keys of this package. Also the default is directed left, and there is no double barb version. 
+        
+        See \cref{imp:arrowtips} in the implementation for how exactly the coordinates are determined. The dimensions which are used to determine the coordinates are shown in the following example, where $ a $, $ b $, and $ \phi $ denote \refKey{/xbg/multi bond width}, \refKey{/xbg/single bond width}, and  \refKey{/xbg/barb angle}, which are |32mm|, |8mm|, and |40| respectively for this and the following example.
+        
+        \pgfmathsetlengthmacro{\tipx}{\singlebondwidth}
+        \pgfmathsetlengthmacro{\tipy}{0pt}
+        \pgfmathsetlengthmacro{\backx}{-1/tan(\barbangle)*(\multibondwidth-0.5*cos(\barbangle)*\singlebondwidth) + \singlebondwidth}
+        \pgfmathsetlengthmacro{\backy}{\multibondwidth - 0.5*cos(\barbangle)*\singlebondwidth}
+        \pgfmathsetlengthmacro{\hullpointx}{\backx + 0.5*\singlebondwidth*sin(\barbangle)}
+        \pgfmathsetlengthmacro{\hullpointy}{\multibondwidth}
+        \pgfmathsetlengthmacro{\tipendx}{0.5*\singlebondwidth/tan(\barbangle/2) + \tipx}
+        \pgfmathsetlengthmacro{\tipendy}{-0.5*\singlebondwidth}
+        
+        \begin{tikzpicture}
+            \coordinate (tip) at (\tipx,\tipy);
+            \coordinate (back) at (\backx,\backy);
+            \coordinate (tipend) at (\tipendx,\tipendy);
+            \coordinate (hullpoint) at (\hullpointx,\hullpointy);
+            
+            \draw[blue] (-5,0) -- (0,0);
+            \draw[red] (0,0) -- (tip) -- (back);
+            \draw[blue,opacity=.5,line width=\singlebondwidth] (-5,0) -- (0,0);
+            \draw[red, opacity=.5,line width=\singlebondwidth] (0,0) -- (tip) -- (back);
+            
+            \foreach \coord/\placement in {{(0,0)}/below,tip/below,tipend/below,back/above left,hullpoint/above}{
+                \draw[shift={(\coord)}] plot[mark=x] coordinates{(0,0)}
+                    node[\placement,example note] {\coord};
+            }
+            
+            \begin{scope}[<->,every node/.style={example note,midway}]
+                \draw (\tipendx,\hullpointy) -- (\tipendx,\tipy) node[right]{$ a $};
+                \draw (\tipendx+5mm,4mm) -- (\tipendx+5mm,\tipendy) node[right]{$ b $};
+                \draw (tip) ++(-1,0) arc (180:180-\barbangle:1) node[left]{$ \phi $};
+            \end{scope}
+            
+            \begin{scope}[help lines]
+                \draw (hullpoint) -- (\tipendx+1mm,\hullpointy);
+                \draw (tip) -- (\tipendx+1mm,\tipy);
+                \draw (tipend) -- (\tipendx+6mm,\tipendy);
+                \draw (0,4mm) -- (\tipendx+6mm,4mm);
+            \end{scope}
+        \end{tikzpicture}
     \end{docArrowTip}
-    
-    \begin{tikzpicture}
-    
-    % Calculate actual path points
-    \pgfmathsetlengthmacro{\tipx}{\singlebondwidth}
-    \pgfmathsetlengthmacro{\tipy}{0pt}
-    \pgfmathsetlengthmacro{\backx}{-1/tan(\barbangle)*(\multibondwidth-0.5*cos(\barbangle)*\singlebondwidth) + \singlebondwidth}
-    \pgfmathsetlengthmacro{\backy}{\multibondwidth - 0.5*cos(\barbangle)*\singlebondwidth}
-    % Calculate points of outer dimensions as needed by pgf
-    \pgfmathsetlengthmacro{\hullpointx}{\backx + 0.5*\singlebondwidth*sin(\barbangle)}
-    \pgfmathsetlengthmacro{\hullpointy}{\multibondwidth}
-    \pgfmathsetlengthmacro{\tipendx}{0.5*\singlebondwidth/tan(\barbangle/2) + \tipx}
-    \pgfmathsetlengthmacro{\tipendy}{-0.5*\singlebondwidth}
-    
-    \begin{scope}[line width = \singlebondwidth,/xbg/multi bond width=\multibondwidth]
-    % Existing line
-    \draw (0,0) -- (-5,0);
-    
-    % Arrow tip
-    \draw[arrow tip demonstration,-{Single Bond Barb[left].|[width=2*\multibondwidth]}] (0,0) -- (\tipendx+\singlebondwidth,\tipy);
-    %					\draw[arrow tip demonstration] (0,0) -- (\tipx,\tipy) -- (\backx,\backy);
-    %					\draw[arrow tip demonstration] (\tipendx+0.5*\singlebondwidth,-\multibondwidth) -- (\tipendx+0.5*\singlebondwidth,\multibondwidth);
-    \draw[arrow tip line style] (0,0) -- (\tipx,\tipy) -- (\backx,\backy);
-    \end{scope}
-    
-    \begin{scope}[annotation style]
-    \begin{scope}[xshift=\tipendx+2.5mm]
-    \draw (0,\tipendy) -- node[right]{$ y_a $} (0,\tipy);
-    \draw (0,\tipy) -- node[right]{$ y_b $} (0,\backy);
-    \draw (0,\backy) -- node[right]{$ y_c $} (0,\hullpointy);
-    \end{scope}
-    \begin{scope}[yshift=\hullpointy+2.5mm]
-    \draw (\backx,0) -- node[above]{$ x_a $} (\hullpointx,0);
-    \draw (\hullpointx,0) -- node[above]{$ x_b $} (0,0);
-    \draw (0,0) -- node[above]{$ x_c $} (\tipx,0);
-    \draw (\tipx,0) -- node[above]{$ x_d $} (\tipendx,0);
-    \end{scope}
-    \end{scope}
-    
-    \begin{scope}[help lines]
-    \draw (\backx,\hullpointy) -- (\hullpointx,\hullpointy-|\tipendx+3mm,0);
-    \draw (\tipx,\tipy) -- (\tipx,\tipy-|\tipendx+3mm,0);
-    \end{scope}
-    
-    \end{tikzpicture}
     
     \begin{docArrowTip}{Multi Bond Barb}{}
-    
+        The \refArr{Multi Bond Barb} is slightly complexer, because the macro \cs{pgflinewidth} now does not hold single bond width and the origin of this arrow definition is located at the center of the endpoint of the line. Otherwise the idea is the same, see \cref{imp:arrowtips} for the implementation.
+        
+        \pgfmathsetlengthmacro{\startx}{0pt}
+        \pgfmathsetlengthmacro{\starty}{-0.5*\multibondwidth+0.5*\singlebondwidth}
+        \pgfmathsetlengthmacro{\tipx}{(\multibondwidth-\singlebondwidth)/tan(\barbangle)}
+        \pgfmathsetlengthmacro{\tipy}{-0.5*\multibondwidth + 0.5*\singlebondwidth}
+        \pgfmathsetlengthmacro{\backy}{1.5*\multibondwidth - 0.5*\singlebondwidth*cos(\barbangle)}
+        \pgfmathsetlengthmacro{\backx}{-(\backy+\tipy)/tan(\barbangle)}
+        \pgfmathsetlengthmacro{\hullpointx}{\backx + 0.5*\singlebondwidth*sin(\barbangle)}
+        \pgfmathsetlengthmacro{\hullpointy}{1.5*\multibondwidth}
+        \pgfmathsetlengthmacro{\tipendx}{0.5*\singlebondwidth/tan(\barbangle/2) + \tipx}
+        \pgfmathsetlengthmacro{\tipendy}{-0.5*\multibondwidth}
+        \begin{tikzpicture}
+            
+            \coordinate (start) at (\startx,\starty);
+            \coordinate (tip) at (\tipx,\tipy);
+            \coordinate (back) at (\backx,\backy);
+            \coordinate (tipend) at (\tipendx,\tipendy);
+            \coordinate (hullpoint) at (\hullpointx,\hullpointy);
+            
+            \begin{scope}[line width = \singlebondwidth,opacity=.5]
+                \draw[blue] (0,\starty) -- (-5,\starty); 
+                \draw[blue] (0,-\starty) -- (-5,-\starty); 
+                
+                \draw[red] (start) -- (tip) -- (back);
+            \end{scope}
+            
+            \draw[blue] (0,\starty) -- (-5,\starty); 
+            \draw[blue] (0,-\starty) -- (-5,-\starty); 
+            \draw[red] (start) -- (tip) -- (back);
+            
+            \foreach \coord/\placement in {{(0,0)}/below,start/below,tip/below,tipend/below,back/above left,hullpoint/above}{
+                \draw[shift={(\coord)}] plot[mark=x] coordinates{(0,0)}
+                    node[\placement,example note] {\coord};
+            }
+            
+            \begin{scope}[help lines]
+                \draw (hullpoint) -- (\tipendx-10mm,\hullpointy);
+                \draw (tipend) -- (\tipendx+3mm,\tipendy);
+                \draw (0,0) -- (\tipendx-10mm,0);
+                \draw (0,\starty+0.5*\singlebondwidth) -- (\tipendx+3mm,\starty+0.5*\singlebondwidth);
+                \draw (-5,0.5*\multibondwidth) -- ++(-6mm,0);
+                \draw (-5,-0.5*\multibondwidth) -- ++(-6mm,0);
+            \end{scope}
+            
+            \begin{scope}[<->,every node/.style={example note,midway}]
+                \draw (\tipendx-11mm,\hullpointy) -- ++(0,-1.5*\multibondwidth) node[right]{$ 1.5a $};
+                \draw (\tipendx+2mm,\starty + 4mm) -- (\tipendx+2mm,\tipendy) node[right]{$ b $};
+                \draw (tip) ++(-1.75,0) arc (180:180-\barbangle:1.75) node[left]{$ \phi $};
+                \draw (-5,0.5*\multibondwidth) ++(-5mm,0) -- ++(0,-\multibondwidth) node[left]{$ a $};
+            \end{scope}
+        \end{tikzpicture}
     \end{docArrowTip}
     
-    \begin{tikzpicture}
-    
-    % Calculate actual path points
-    \pgfmathsetlengthmacro{\startx}{0pt}
-    \pgfmathsetlengthmacro{\starty}{-0.5*\multibondwidth+0.5*\singlebondwidth}
-    \pgfmathsetlengthmacro{\tipx}{(\multibondwidth-\singlebondwidth)/tan(\barbangle)}
-    \pgfmathsetlengthmacro{\tipy}{-0.5*\multibondwidth + 0.5*\singlebondwidth}
-    \pgfmathsetlengthmacro{\backy}{1.5*\multibondwidth - 0.5*\singlebondwidth*cos(\barbangle)}
-    \pgfmathsetlengthmacro{\backx}{-(\backy+\tipy)/tan(\barbangle)}
-    % Calculate points of outer dimensions as needed by pgf
-    \pgfmathsetlengthmacro{\hullpointx}{\backx + 0.5*\singlebondwidth*sin(\barbangle)}
-    \pgfmathsetlengthmacro{\hullpointy}{1.5*\multibondwidth}
-    \pgfmathsetlengthmacro{\tipendx}{0.5*\singlebondwidth/tan(\barbangle/2) + \tipx}
-    \pgfmathsetlengthmacro{\tipendy}{-0.5*\multibondwidth}
-    
-    \begin{scope}[line width = \singlebondwidth]
-    % Existing line
-    \draw (0,\starty) -- (-5,\starty); 
-    \draw (0,-\starty) -- (-5,-\starty); 
-    
-    % Arrow tip
-%    \draw[double,double distance={\multibondwidth-2*\singlebondwidth},arrow tip demonstration,-{Multi Bond Barb[left].|[width=3*\multibondwidth]}] (0,0) -- (\tipendx+\singlebondwidth,0);
-    \draw[arrow tip demonstration] (\startx,\starty) -- (\tipx,\tipy) -- (\backx,\backy);
-    \draw[arrow tip line style] (\startx,\starty) -- (\tipx,\tipy) -- (\backx,\backy);
-    \draw[arrow tip line style,green] (\tipx,\tipy) -- ++ (180-\barbangle:10cm);
-    \end{scope}
-    
-    \node[draw,cross out] at (\hullpointx,\hullpointy){};
-    
-    \begin{scope}[annotation style]
-    \draw[<->] (\tipx+5mm,\tipy) -- node[right]{$ 2a $} ++ (0,2*\multibondwidth);
-    \draw[<->] (\startx,\starty-5mm) -- node[below]{} (\tipx,\tipy-5mm);
-    \end{scope}
-    
-    \end{tikzpicture}
     
 \section{Examples}
-	
+    
 	\begin{tikzpicture}
 		\node (Vabc) at (0,0) [bond graph element={\mathbb{MS}e}{n=3},label={west:$ V_{abc} $}];
 		\node (iabc) [right=of Vabc,bond graph element={1}{},label={300:$ i_{abc} $}];
@@ -560,4 +611,25 @@ If the bond is multidimensional, lets draw it as such \bond[multi]{(0,0)
 		}
 		\draw (mux5.output 1) -- ++(1,0) node[output]{O1};
 	\end{tikzpicture}
+
+\begin{dispExample*}{tikzdocexample}
+\draw[line width=0.8pt] (-1,-1) 
+    -- ++(0,0.5)
+    -- node[voltage source,label={above:$ u $}]{} ++(0,1)
+    -- node[current,label={above:$ i $}]{} ++(0,0.5)
+    -- node[inductor,label={above:$ L $}]{} ++(2,0) 
+    -- node[resistor,label={above:$ R $}]{} ++(0,-2) 
+    -- node[capacitor,label={above:$ C $}]{} cycle;
+\begin{scope}[shift={(5,0)}]
+    \node (u) at (-1.5, 0.0) [bge={Se}{},pin={left:$ u $}];
+    \node (i) at ( 0.0, 0.0) [bge={1}{},label={300:$ i $}];
+    \node (c) at ( 0.0, 1.5) [bge={C}{},pin={above:$ C $}];
+    \node (r) at ( 1.5, 0.0) [bge={R}{},pin={right:$ R $}];
+    \node (l) at ( 0.0,-1.5) [bge={L}{},pin={below:$ L $}];
+    \draw[bond={effort out}] (u) -- (i);
+    \draw[bond={effort in}] (i) -- (c);
+    \draw[bond={effort in}] (i) -- (r);
+    \draw[bond={effort out}] (i) -- (l);
+\end{scope}
+\end{dispExample*}
  

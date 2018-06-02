@@ -13,8 +13,8 @@
 \usepackage[noabbrev]{cleveref}
 %\usepackage{showframe}
 
-\pgfmathsetlengthmacro{\multibondwidth}{30mm}
-\pgfmathsetlengthmacro{\singlebondwidth}{12.5mm}
+\pgfmathsetlengthmacro{\multibondwidth}{32mm}
+\pgfmathsetlengthmacro{\singlebondwidth}{8mm}
 \pgfmathsetmacro{\barbangle}{40}
 
 \hyphenation{bond-graphs x-bond-graphs}
@@ -28,7 +28,7 @@
 \newcommand{\listoftodos}{\phantomsection\section*{To-do list}\addcontentsline{toc}{section}{To-do list}\label{sec:todolist}\@starttoc{tdo}}
 \makeatother
 
-\usetikzlibrary{positioning,spy}
+\usetikzlibrary{positioning,spy,graphs}
 \tcbuselibrary{documentation}
 
 \newcommand\Tikz{{\normalfont Ti\textit{k}Z}\xspace}
@@ -54,8 +54,10 @@
 \tikzset{
     > = stealth,
     arrow tip demonstration/.style={red,opacity=.75},
-    arrow tip line style/.style={gray!40!black,line width = 0.5pt},
-    annotation style/.style={line width = .4pt,gray,text=black,<->},
+    causal stroke demonstration/.style={blue,opacity=.75},
+    arrow tip line/.style={green!40!black,line width = 0.5pt},
+    mux example/.style={name=m,minimum width=20mm,fill=red,opacity=.75},
+    example note/.style={font=\scriptsize\ttfamily},
 }
 
 \makeatletter
@@ -153,7 +155,7 @@
 
 \tcbset{
     doc left = 0em,
-    doc left indent = -2em,
+    doc left indent = -4em,
     doc head template/.style={boxsep=2pt,interior style={fill,left color=#1!5!white, right color = #1!25!white}},
     doc head key={doc head template={Key}},
     doc head decoration={doc head template={Decoration}},
