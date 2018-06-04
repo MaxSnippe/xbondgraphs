@@ -34,6 +34,7 @@ With [xbondgraphs], users can:
 * Use the `mux` key in a `\node` specification to create a mux element in a `tikzpicture` environment with a specified number of in- and outputs.
 
 # Examples
+
 ```latex
 \begin{tikzpicture}[x=12.5mm,y=12.5mm]
     \node (u) at (-1, 0) [bge={Se}{},pin={left:$ u $}];
@@ -52,11 +53,13 @@ With [xbondgraphs], users can:
         (w) ->[bond={effort out}] (j)};
 \end{tikzpicture}
 ```
+
 <center>
 <img src="/figures/example1dcmotor.png" alt="bond graph of an ideal dc motor"/>
 
 *A bond graph representation of an ideal DC motor.*
 </center>
+
 ```latex
 \begin{tikzpicture}
     \node (V) at (0,0) [bge={\mathbb{MS}e}{},pin={west:$ V_{abc} $}];
