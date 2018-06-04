@@ -34,6 +34,7 @@ With [xbondgraphs], users can:
 * Use the `mux` key in a `\node` specification to create a mux element in a `tikzpicture` environment with a specified number of in- and outputs.
 
 # Examples
+
 ```latex
 \begin{tikzpicture}[x=12.5mm,y=12.5mm]
     \node (u) at (-1, 0) [bge={Se}{},pin={left:$ u $}];
@@ -53,7 +54,7 @@ With [xbondgraphs], users can:
 \end{tikzpicture}
 ```
 
-<img src="/figures/example1dcmotor.png" alt="bond graph of an ideal dc motor"/>
+![bond graph of an ideal DC motor](/figures/example1dcmotor.png)
 
 *A bond graph representation of an ideal DC motor.*
 
@@ -89,7 +90,7 @@ With [xbondgraphs], users can:
 \end{tikzpicture}
 ```
 
-<img src="/figures/example2dcmotor3.png" alt="bond graph of a three phase dc motor">
+![bond graph of a three phase DC motor](/figures/example2dcmotor3.png)
 
 *A bond graph representation of a three phase DC motor.*
 
@@ -115,19 +116,15 @@ Optional colon between element and label | :x:                | :x:             
 
 This example shows a very simple multi-bond when using both the [bondgraphs] and the [xbondgraphs] package. You can clearly see the drawing peculiarities mentioned before in the focused parts of the drawing.
 
-<center>
-<img src="/figures/bondgraphs_example.png" alt="bondgraphs example" width="350"/>
+![bondgraphs example](/figures/bondgraphs_example.png)
 
 *A bond graph with multi-bonds using the [bondgraphs] package.*
-</center>
 
 Using the [xbondgraphs] package, the resulting bond graph is more concise and does not show similar peculiarities.
 
-<center>
-<img src="/figures/xbondgraphs_example.png" alt="xbondgraphs example" width="350"/>
+![xbondgraphs example](/figures/xbondgraphs_example.png)
 
 *A bond graph with multi-bonds using the [xbondgraphs] package.*
-</center>
 
 
 
