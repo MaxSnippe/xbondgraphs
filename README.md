@@ -52,11 +52,11 @@ With [xbondgraphs], users can:
         (w) ->[bond={effort out}] (j)};
 \end{tikzpicture}
 ```
-<center>
+
 <img src="/figures/example1dcmotor.png" alt="bond graph of an ideal dc motor"/>
 
 *A bond graph representation of an ideal DC motor.*
-</center>
+
 ```latex
 \begin{tikzpicture}
     \node (V) at (0,0) [bge={\mathbb{MS}e}{},pin={west:$ V_{abc} $}];
@@ -89,11 +89,9 @@ With [xbondgraphs], users can:
 \end{tikzpicture}
 ```
 
-<center>
 <img src="/figures/example2dcmotor3.png" alt="bond graph of a three phase dc motor">
 
 *A bond graph representation of a three phase DC motor.*
-</center>
 
 # Alternatives
 Other packages to draw bond graphs using Ti*k*z and/or PGF are the [bondgraph] package by Jean-François Dupuis, and the [bondgraphs] package by Geert Folkertsma. The former has no documentation and just a brief example file. The latter is well documented, but due to some drawing peculiarities, the resulting bond graphs are not always beautiful, especially when using multi bonds.
