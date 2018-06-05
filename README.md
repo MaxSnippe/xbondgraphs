@@ -60,8 +60,8 @@ With [xbondgraphs], users can:
 
 ```latex
 \begin{tikzpicture}
-    \node (V) at (0,0) [bge={\mathbb{MS}e}{},pin={west:$ V_{abc} $}];
-    \node (i) [right=of V,bge={1}{},label={300:$ i_{abc} $}];
+    \node (V)  [bge={\mathbb{MS}e}{},pin={west:$ V_{abc} $}];
+    \node (i)  [right=of V,bge={1}{},label={300:$ i_{abc} $}];
     \node (Rs) [above=of i,bge={R}{},pin={north:$ R_s $}];
     \node (Ls) [below=of i,bge={L}{},pin={south:$ L_s $}];
     \node (Kl) [right=of i,bge={MGY}{},pin={south:$ K\Lambda(\theta_e) $}];

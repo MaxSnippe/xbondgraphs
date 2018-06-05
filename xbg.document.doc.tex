@@ -5,7 +5,7 @@
 \maketitle
 
 \begin{abstract}
-    Using the \xbondgraphs-package, one can draw visually pleasing bond graphs, while mostly maintaining the standard notation of \Tikz drawings. It defines two new \pgf arrows, a \pgf decoration to ensure the direction of the barb, as well as a \pgf shape for power (de-)mux elements. This package is based on the \bondgraphs package by Geert Folkertsma\footnote{\url{https://ctan.org/pkg/bondgraphs}}, but does not (yet) cover all its functions. It \emph{might} result in more appealing bond graphs, but this of course is subjective.
+    Using the \xbondgraphs-package, one can draw visually pleasing bond graphs, while mostly maintaining the standard notation of \Tikz drawings. It defines two new \pgfpkg arrows, a \pgfpkg decoration to ensure the direction of the barb, as well as a \pgfpkg shape for power (de-)mux elements. This package is based on the \bondgraphs package by Geert Folkertsma\footnote{\url{https://ctan.org/pkg/bondgraphs}}, but does not (yet) cover all its functions. It \emph{might} result in more appealing bond graphs, but this of course is subjective.
 \end{abstract}
 
 \begin{multicols}{2}
@@ -111,8 +111,7 @@
         
         Besides the to-dos listed in \hyperlink{sec:todolist}{the to-do list}, the following issues are known and not (yet) fixed.
         \begin{itemize}
-            \item Due to using the \docAuxKey*[tikz]{double} key for multi bonds, the center of the multi bond is normally drawn in opaque white. This does not look good if the graph is drawn on a non-white background.\todo{Create a \texttt{background} color (key) that effectively changes the \texttt{double} color}
-            \item 
+            \item \dots
         \end{itemize}
         Please support a starting \LaTeX nut and submit issues (and function requests) to \url{https://github.com/MaxSnippe/xbondgraphs/issues}.
 
@@ -125,25 +124,29 @@
         \fi
         \todo{Describe installation sequence}
         
+    \subsection{Libraries}
+        Currently the \xbondgraphs package has two (still undocumented) libraries.
+        \begin{docCommand}{usexbglibrary}{\marg{comma separated list of libraries}}
+            This command can be used to include one of the following libraries:
+            \begin{itemize}
+                \item \refLib{iconicdiagrams}
+                \item \refLib{blockdiagrams}
+            \end{itemize}
+        \end{docCommand}
+        
     \subsection{Macros}
         
         \begin{docCommand}{bge}{\oarg{xbg keys}\oarg{tikz/pgf keys}\marg{contents}}
             This macro can be used to create an in-line bond graph element. It accepts two optional arguments and one mandatory argument, firstly a list of \meta{xbg keys} as described in \cref{sec:keys}, secondly a list of \meta{tikz/pgf keys} such as color definitions, and finally a character (combination) that denotes one of the base components of bond graphs.
 \begin{dispExample}
-This text could say something about the \bge{MTF}-element, which is a
-modulated transformer. A multidimensional specimen also exists, which is
-denoted \bge[multiport]{MTF}. Extra emphasis can be given a beautiful 
-color, e.g. \bge[][blue]{MTF}.
+This text could say something about the \bge{MTF}-element, which is a modulated transformer. A multi-dimensional specimen also exists, which is denoted \bge[multiport]{MTF}. Extra emphasis can be given a beautiful color, e.g. \bge[][blue]{MTF}.
 \end{dispExample}
         \end{docCommand}
         
         \begin{docCommand}{bond}{\oarg{xbg keys}\oarg{tikz/pgf keys}\marg{path}}
             This macro can be used to create an in-line bond. It accepts the same optional arguments as the \refCom{bge} macro, and the final argument is a \Tikz compatible path description.
 \begin{dispExample}
-This text could use an in-line \bond{(0,0)--(1,0)} just for clarification.
-If the bond is multidimensional, lets draw it as such \bond[multi]{(0,0)
---(1,0)}. And to give additional emphasis, lets give it a beautiful color
-\bond[multi][blue]{(0,0)--(1,0)}.
+This text could use an in-line \bond{(0,0)--(1,0)} just for clarification. If the bond is multi-dimensional, lets draw it as such \bond[multi]{(0,0)--(1,0)}. And to give additional emphasis, lets give it a beautiful color \bond[multi][blue]{(0,0)--(1,0)}.
 \end{dispExample}
         \end{docCommand}
         
@@ -199,7 +202,7 @@ If the bond is multidimensional, lets draw it as such \bond[multi]{(0,0)
         \end{docKey}
         
     \subsection{Simple example}
-        The following examples shows an ideal physical dynamic model of a DC motor, shown as an iconic diagram, and its domain independent equivalent model shown as a bond graph. The iconic diagram icons are taken from the (undocumented) \textsf{xbondgraphs.iconix} package, that is installed alongside the \xbondgraphs package. \todo{Document the iconix package}\todo{Change iconix package into library}
+        The following examples shows an ideal physical dynamic model of a DC motor, shown as an iconic diagram, and its domain independent equivalent model shown as a bond graph. The iconic diagram icons are taken from the (undocumented) \refLib{iconicdiagrams} library.
 \begin{dispExample*}{tikzdocexample,title={Ideal physical model of a DC motor}}
 \draw[line width = .8pt] (0,0) 
     -- node[voltage source,label={above:$ u $}]{} ++(0,2) node[current,pos=0.9,label={above:$ i $}]{}
@@ -380,7 +383,7 @@ If the bond is multidimensional, lets draw it as such \bond[multi]{(0,0)
         \end{xbgkey}
         
         \begin{xbgkey}{background color}{\meta{color}}{no default, initially |white|}
-            With the \docAuxKey*[tikz]{double} style, \Tikz draws two lines on top of each other to simulate the effect of two parallel lines. The downside of this is that the thinner line must be the same color as its background, otherwise the parallel effect is gone. With this key the \docColor{Background} color is set, which is used when defining a multi bond. Additionally it is used in many of the icons in the \refLib{iconic} library, for the same reason.
+            With the \docAuxKey*[tikz]{double} style, \Tikz draws two lines on top of each other to simulate the effect of two parallel lines. The downside of this is that the thinner line must be the same color as its background, otherwise the parallel effect is gone. With this key the \docColor{Background} color is set, which is used when defining a multi bond. Additionally it is used in many of the icons in the \refLib{iconicdiagrams} library, for the same reason.
 \begin{dispExample*}{tikzdocexample}
 \xbgset{multi bond width=3.2mm,single bond width=0.8mm}
 \draw[bond={multi,background color=red}] (0,0) -- ++(2,0);
@@ -478,7 +481,7 @@ If the bond is multidimensional, lets draw it as such \bond[multi]{(0,0)
             This key sets the distance between two consecutive in- or outputs. Together with the maximum number of in-/outputs, it also determines the height of the \refShp{mux} element.
         \end{xbgkey}
         
-\section{Miscellaneous \pgf definitions}
+\section{Miscellaneous \pgfpkg definitions}
         
     \begin{docDecoration}{bond}{}
         This decoration is used to determine the direction of the arrow tip barb. It uses the \docAuxCommand*{pgfdecoratedangle} in a |case| statement. Note that \docAuxCommand*{pgfdecoratedangle} holds the angle of the \emph{start} of the current path segment, so if the last segment of a path is curved, it might lead to a incorrect direction for the barb. 
@@ -564,6 +567,10 @@ If the bond is multidimensional, lets draw it as such \bond[multi]{(0,0)
             \coordinate (tipend) at (\tipendx,\tipendy);
             \coordinate (hullpoint) at (\hullpointx,\hullpointy);
             
+            \draw[line width=\multibondwidth-2*\singlebondwidth,green,opacity=.5] (0,0) -- (-5,0);
+            
+            \fill[orange,opacity=.5] (start) -- (tip) -- (\startx,-\starty) -- cycle;
+            
             \begin{scope}[line width = \singlebondwidth,opacity=.5]
                 \draw[blue] (0,\starty) -- (-5,\starty); 
                 \draw[blue] (0,-\starty) -- (-5,-\starty); 
@@ -596,6 +603,8 @@ If the bond is multidimensional, lets draw it as such \bond[multi]{(0,0)
                 \draw (-5,0.5*\multibondwidth) ++(-5mm,0) -- ++(0,-\multibondwidth) node[left]{$ a $};
             \end{scope}
         \end{tikzpicture}
+        
+        The green area is the second line drawn by \Tikz to simulate the effect of two parallel lines. The orange area (which over-(under)-laps the arrow tip lines) is drawn by the arrow tip with the same color as the green area to maintain a concise tip, even if that color is not the same as the background.
     \end{docArrowTip}
     
     

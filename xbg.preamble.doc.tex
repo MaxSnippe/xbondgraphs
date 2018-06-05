@@ -31,7 +31,7 @@
 
 \usetikzlibrary{positioning,spy,graphs}
 \tcbuselibrary{documentation,breakable}
-\usexbglibrary{iconic}
+\usexbglibrary{iconicdiagrams,blockdiagrams}
 
 \iffalse
 % Tikz externalizing
@@ -54,7 +54,7 @@
 \fi
 
 \newcommand\Tikz{{\normalfont Ti\textit{k}Z}\xspace}
-\newcommand\pgf{PGF\xspace}
+\newcommand\pgfpkg{PGF\xspace}
 \newcommand\xbondgraphs{\textsf{xbondgraphs}\xspace}
 \newcommand\bondgraphs{\textsf{bondgraphs}\xspace}
 \newcommand\pgfkeyspkg{\textsf{pgfkeys}\xspace}
@@ -137,7 +137,7 @@
     \tcb@doc@do@description%
     \end{tcb@doc@head}\nobreak\tcbset{before upper=}\kvtcb@doc@body@shape@before\ignorespaces}%
     {\ifvmode\else\unskip\fi\kvtcb@doc@body@shape@after\end{tcb@manual@entry}}
-\newcommand{\refLib}[1]{\tikz[baseline=(node.base)]{\node[draw=orange,fill=orange!20!,name=node]{#1};}}
+\newcommand{\refLib}[1]{\tikz[baseline=(node.base)]{\node[draw=orange,fill=orange!20!,name=node,inner sep=1.5pt]{#1};}}
 
 
 \definecolor{Decoration}{RGB}{23 55 83}
