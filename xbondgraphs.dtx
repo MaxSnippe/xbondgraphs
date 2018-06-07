@@ -56,10 +56,15 @@
 %   Right brace \} Tilde \~}
 %
 % \changes{v0.0.1}{2018/05/02}{Initial version}
+% 
 % \changes{v0.0.2}{2018/05/16}{Changed to \textsf{tcolorbox} documentation style}
+% \changes{v0.0.2}{2018/05/16}{Added documentation for various keys}
+% 
 % \changes{v0.1.0}{2018/05/18}{Added \textsf{iconicdiagrams} library}
-% \changes{v0.1.1}{2018/05/29}{Added lots of documentation}
+% 
 % \changes{v0.1.2}{2018/06/05}{Added initial \textsf{blockdiagrams} library}
+% \changes{v0.1.2}{2018/06/05}{Removed \textsf{xparse} package dependancy from \textsf{iconicdiagrams} library}
+% \changes{v0.1.2}{2018/06/05}{Added \texttt{flip} option for blocks in \textsf{blockdiagram} library}
 %
 % \GetFileInfo{xbondgraphs.sty}
 %
@@ -67,7 +72,7 @@
 %
 %\title{The \xbondgraphs package\\[0.5em]\large Drawing bond graphs using \Tikz}
 %\author{Marcus J.W. Snippe\\
-%	\normalsize\href{mailto:m.j.w.snippe@saxion.nl}{$\langle$\texttt{m.j.w.snippe@saxion.nl}$\rangle$}}
+%   \normalsize\href{mailto:m.j.w.snippe@saxion.nl}{$\langle$\texttt{m.j.w.snippe@saxion.nl}$\rangle$}}
 %\date{\filedate\\[0.4em]\normalsize\fileversion}
 %
 % \input{xbg.document.doc.tex}
@@ -360,6 +365,7 @@
     },
     library/iconicdiagrams/.code={\input{xbg.iconicdiagrams.code.tex}},
     library/blockdiagrams/.code={\input{xbg.blockdiagrams.code.tex}},
+    library/all/.code=\xbgset{load libraries/.list={iconicdiagrams,blockdiagrams}},
     library/.unknown/.code={\xbg@error{No library named "\pgfkeyscurrentname" exists}{}},
 }
 %    \end{macrocode}
@@ -623,14 +629,14 @@
 %       \section{Implementation: \xbondgraphs-iconic library}
 %    \begin{macrocode}
 %<*xbg-iconicdiagrams-code>
-
+\makeatletter
 \usetikzlibrary{decorations.pathreplacing,decorations.pathmorphing,patterns}
 
-\pgfkeys{
-    /iconix/.is family,
-    /iconix,
-        iconiclabelcolor/.store in=\iconix@iconic@labelcolor,
-        iconiclabelcolor=blue,
+\xbgset{,
+    iconic label color/.code=\colorlet{Iconic Label}{#1},
+    iconic label color=blue,
+    iconic contents color/.code=\colorlet{Iconic Contents}{#1},
+    iconic contents color=blue,
 }
 %    \end{macrocode}
 %           \subsection{Signals}
@@ -655,55 +661,32 @@
 %           \subsection{Block diagrams}
 %    \begin{macrocode}
 \tikzset{
-	block/.style args = {#1}{
+	iconic block/.style args ={
 		draw,
 		thick,
 		minimum height = 1cm,
 		minimum width = 1cm,
-		text = \bondgraphs@blockcontentscolour,
-		prefix after command= {
-			\pgfextra{
-				\tikzset{
-					every label/.style={
-						% Element label style
-						\iconix@iconic@labelcolor,
-						font={\mdseries}
-					}
-				}
-			}
-		},
-		#1
 	},
-	block/.default = {},
-}
-
-\tikzset{
-	splitter/.style args = {#1}{
-		fill,
-		inner sep = 0pt,
-		minimum width = 1.5mm,
-		circle,
-		#1
-	}
+	iconic block/.default = {},
 }
 
 \tikzset{
 	sinewavegen/.style args = {#1}{
-		block,
+		iconic block,
 		path picture = {
 			\begin{scope}[x=1mm,y=2.5mm]
 				\draw (-4mm,3.5mm) -- (-4mm,-3.5mm);
 				\draw (-4.5mm,0mm) -- (4.5mm,0mm);
-				\draw[\bondgraphs@blockcontentscolour,thick] (-4mm,0) sin ++(1,1) cos ++(1,-1) sin ++(1,-1) cos ++(1,1) sin ++(1,1) cos ++(1,-1) sin ++(1,-1) cos ++(1,1);
+				\draw[Iconic Contents,thick] (-4mm,0) sin ++(1,1) cos ++(1,-1) sin ++(1,-1) cos ++(1,1) sin ++(1,1) cos ++(1,-1) sin ++(1,-1) cos ++(1,1);
 			\end{scope}
 		}
 	},
 	motionprofilegen/.style args = {#1}{
-		block,
+		iconic block,
 		path picture = {
 			\draw (-4mm,3.5mm) -- (-4mm,-3.5mm);
 			\draw (-4.5mm,-3mm) -- (4.5mm,-3mm);
-			\begin{scope}[\bondgraphs@blockcontentscolour,thick,smooth,variable=\t,x=1cm,y=1cm]
+			\begin{scope}[Iconic Contents,thick,smooth,variable=\t,x=1cm,y=1cm]
 				\pgfmathsetmacro{\hm}{0.5}
 				\pgfmathsetmacro{\tm}{0.7}
 				\pgfmathsetmacro{\ts}{-0.4}
@@ -719,82 +702,11 @@
 
 \tikzset{
 	integrator/.style args = {#1}{
-		block,
+		iconic block,
 		path picture = {
-			\node[\bondgraphs@blockcontentscolour]{\ensuremath{\int}};
+			\node[Iconic Contents]{\ensuremath{\int}};
 		}
 	}
-}
-
-\tikzset{
-    sum/.style n args = {4}{
-        draw,
-        circle,
-        minimum width = 4mm,
-        fill=Background,
-        append after command={
-            \pgfextra{
-                \begin{scope}%[every node/.style={inner sep = 0pt, minimum width = 5mm, draw, circle,font=\tiny}]
-                    \edef\@tmpi{#1}%
-                    \def\@tmpii{+}%
-                    \def\@tmpiii{-}%
-                    \ifx\@tmpi\@tmpii%
-                        \begin{scope}[shift={(\tikzlastnode.north)},shift={(-2mm,1.5mm)},line width = .8pt]
-                            \draw (-0.75mm,0mm) -- (0.75mm,0mm);
-                            \draw (0mm,-0.75mm) -- (0mm,0.75mm);
-                        \end{scope}
-                    \else
-                        \ifx\@tmpi\@tmpiii%
-                            \begin{scope}[shift={(\tikzlastnode.north)},shift={(-2mm,1.5mm)},line width = .8pt]
-                                \draw (-0.75mm,0mm) -- (0.75mm,0mm);
-                            \end{scope}
-                        \fi
-                    \fi
-                    \edef\@tmpi{#2}%
-                    \ifx\@tmpi\@tmpii%
-                        \begin{scope}[shift={(\tikzlastnode.south)},shift={(2mm,-1.5mm)},line width = .8pt]
-                            \draw (-0.75mm,0mm) -- (0.75mm,0mm);
-                            \draw (0mm,-0.75mm) -- (0mm,0.75mm);
-                        \end{scope}
-                    \else
-                        \ifx\@tmpi\@tmpiii%
-                            \begin{scope}[shift={(\tikzlastnode.south)},shift={(2mm,-1.5mm)},line width = .8pt]
-                                \draw (-0.75mm,0mm) -- (0.75mm,0mm);
-                            \end{scope}
-                        \fi
-                    \fi
-                    \edef\@tmpi{#3}%
-                    \ifx\@tmpi\@tmpii%
-                        \begin{scope}[shift={(\tikzlastnode.west)},shift={(-1.5mm,-2mm)},line width = .8pt]
-                            \draw (-0.75mm,0mm) -- (0.75mm,0mm);
-                            \draw (0mm,-0.75mm) -- (0mm,0.75mm);
-                        \end{scope}
-                    \else
-                        \ifx\@tmpi\@tmpiii%
-                            \begin{scope}[shift={(\tikzlastnode.west)},shift={(-1.5mm,-2mm)},line width = .8pt]
-                                \draw (-0.75mm,0mm) -- (0.75mm,0mm);
-                            \end{scope}
-                        \fi
-                    \fi
-                    \edef\@tmpi{#4}%
-                    \ifx\@tmpi\@tmpii%
-                        \begin{scope}[shift={(\tikzlastnode.east)},shift={(1.5mm,2mm)},line width = .8pt]
-                            \draw (-0.75mm,0mm) -- (0.75mm,0mm);
-                            \draw (0mm,-0.75mm) -- (0mm,0.75mm);
-                        \end{scope}
-                    \else
-                        \ifx\@tmpi\@tmpiii%
-                            \begin{scope}[shift={(\tikzlastnode.east)},shift={(1.5mm,2mm)},line width = .8pt]
-                                \draw (-0.75mm,0mm) -- (0.75mm,0mm);
-                            \end{scope}
-                        \fi
-                    \fi
-                \end{scope}
-            }
-        },
-    },
-    sum/.default = {}{-}{}{+},
-    signalname/.style={},
 }
 %    \end{macrocode}
 %           \subsection{Iconic diagrams}
@@ -806,7 +718,7 @@
 			\pgfextra{
 				\tikzset{
 					every label/.style={
-						text=\iconix@iconic@labelcolor,
+						text=Iconic Label,
 						label distance = 0pt,
 					}
 				}
@@ -1296,95 +1208,148 @@
 %               \subsection{Additional macros}
 %    \begin{macrocode}
 \tikzset{
-	numberedgridlabel/.style={
-		black,
-		font=\tiny,
-		text width=0.6cm,
-		align=right,
-	}
+    numbered grid label/.code={
+        \tikzset{
+            gray,
+            font=\tiny,
+            inner ysep=0.5pt,
+            inner xsep=2.5pt,
+        }
+        \pgfkeys{
+            /pgf/number format/.cd,
+                fixed,
+                fixed zerofill=true,
+                precision=3,
+        }
+    },
 }
 
-\NewDocumentCommand{\numberedgrid}{o o m m o}{%
-	\IfValueTF{#1}{%
-		\pgfmathsetmacro\xmin{#1}%
-	}{%
-		\pgfmathsetmacro\xmin{0}%
-	}
-	\IfValueTF{#2}{%
-		\pgfmathsetmacro\ymin{#2}%
-	}{%
-		\pgfmathsetmacro\ymin{0}%
-	}
-	\pgfmathsetmacro\xmax{#3}%
-	\pgfmathsetmacro\ymax{#4}%
-	\IfValueTF{#5}{%
-		\pgfmathsetmacro\xstep{\xmin + #5}%
-		\pgfmathsetmacro\ystep{\ymin + #5}%
-	}{%
-		\pgfmathsetmacro\xstep{\xmin + 1}%
-		\pgfmathsetmacro\ystep{\ymin + 1}%
-	}
-	\foreach \x in {\xmin,\xstep,...,\xmax}{
-		\draw[help lines,dotted] (\x,\ymin) -- (\x,\ymax) 
-		node[numberedgridlabel,pos=0, left,rotate=90]{\pgfmathprintnumber[assume math mode=true,fixed,fixed zerofill=true,precision=2]{\x}} 
-		node[numberedgridlabel,pos=1,right,rotate=90]{\pgfmathprintnumber[assume math mode=true,fixed,fixed zerofill=true,precision=2]{\x}};
-	}
-	\foreach \y in {\ymin,\ystep,...,\ymax}{
-		\draw[help lines,dotted] (\xmin,\y) -- (\xmax,\y) 
-		node[numberedgridlabel,pos=0,  left]{\pgfmathprintnumber[assume math mode=true,fixed,fixed zerofill=true,precision=2]{\y}} 
-		node[numberedgridlabel,pos=1, right]{\pgfmathprintnumber[assume math mode=true,fixed,fixed zerofill=true,precision=2]{\y}};
-	}
+\def\numgrid{\@ifnextchar[%
+    {\numgrid@i}{\numgrid@i[1]}%
 }
+\def\numgrid@i[#1]{\@ifnextchar[%
+    {\numgrid@ii{#1}}{\numgrid@ii{#1}[0]}%
+}
+\def\numgrid@ii#1[#2]{\@ifnextchar[%
+    {\numgrid@iii{#1}{#2}}{\numgrid@iii{#1}{#2}[0]}
+}
+\def\numgrid@iii#1#2[#3]#4#5{
+    \pgfmathsetmacro\xstep{#1+#2}%
+    \pgfmathsetmacro\ystep{#1+#3}%
+    \foreach \x in {#2,\xstep,...,#4}{
+        \draw[help lines] (\x,#3) -- (\x,#5) foreach \pos/\place in {0/left,1/right}{
+            node[numbered grid label,pos=\pos, \place,rotate=90]{\pgfmathprintnumber{\x}}};
+    }
+    \foreach \y in {#3,\ystep,...,#5}{
+        \draw[help lines] (#2,\y) -- (#4,\y) foreach \pos/\place in {0/left,1/right}{
+            node[numbered grid label,pos=\pos, \place]{\pgfmathprintnumber{\y}}};
+    }
+}
+\makeatother
 %</xbg-iconicdiagrams-code>
 %<*xbg-blockdiagrams-code>
 \makeatletter
-\newdimen\bd@block@iospacing
-\newdimen\bd@block@height
+\newdimen\xbg@bd@block@iospacing
+\newdimen\xbg@bd@block@height
+
+\newif\ifxbg@bd@block@flip
+\newcounter{xbg@sum@elements}
+
+\tikzset{
+    sum/.style={
+        append after command={
+            \pgfextra{
+                \setcounter{xbg@sum@elements}{0}%
+                \foreach \j in {#1}{\stepcounter{xbg@sum@elements}}
+                \pgfmathsetmacro\@noelem{max(4,\thexbg@sum@elements)}
+                \def\@plus{+}%
+                \def\@min{-}%
+                \foreach[count=\i from 0] \@el in {#1}{
+                    \edef\ex@el{\@el}
+                    \pgfmathsetmacro\@ang{360/\@noelem*\i + 180}%
+                    \draw (\tikzlastnode) ++(\@ang:0.25) ++(\@ang+90:0.15)%
+                        \ifx\ex@el\@plus%
+                                +(-0.5mm,0mm) -- +(0.5mm,0mm)
+                                +(0mm,-0.5mm) -- +(0mm,0.5mm)
+                        \else
+                            \ifx\ex@el\@min%
+                                +(-0.5mm,0mm) -- +(0.5mm,0mm)
+                            \fi
+                        \fi;
+                }
+            }
+        },
+        node contents={},
+        circle,
+        draw,
+        minimum size=4mm,
+    },
+    sum/.default = {+,-},
+    signalname/.style={},
+}
+
 \tikzset{
     block/.code={
         \xbgset{
-            /block/.cd,
+            block/.cd,
             #1
         }
-        \pgfmathsetlengthmacro{\bd@block@height}{%
-            max(10mm, int(max(\bd@block@inputs,\bd@block@outputs) * \bd@block@iospacing))}
-        \xbgset{/block/block template}
+        \pgfmathsetlengthmacro{\xbg@bd@block@height}{%
+            max(10mm, int(max(\xbg@bd@block@inputs,\xbg@bd@block@outputs) * \xbg@bd@block@iospacing))}
+        \xbgset{block/block template}
     },
     signalname/.code={
         \tikzset{
             align=center,
         }
     },
-    flip/.style={
-        shape border rotate=180,
+    splitter/.style args ={
+        fill,
+        inner sep = 0pt,
+        minimum size = 1.5mm,
+        circle,
     },
 }
 \xbgset{
-    /block/.is family,
-    /block/.cd,
+    block/.is family,
+    block/.cd,
         inputs/.code={
             \pgfmathparse{int(#1)}
-            \let\bd@block@inputs=\pgfmathresult
+            \let\xbg@bd@block@inputs=\pgfmathresult
         },
         inputs=1,
         outputs/.code={
             \pgfmathparse{int(#1)}
-            \let\bd@block@outputs=\pgfmathresult
+            \let\xbg@bd@block@outputs=\pgfmathresult
         },
         outputs=1,
-        io spacing/.code=\setlength\bd@block@iospacing{#1},
+        io spacing/.code=\setlength\xbg@bd@block@iospacing{#1},
         io spacing=5mm,
+        flip/.is choice,
+        flip/true/.code={\xbg@bd@block@fliptrue\def\xbg@bd@block@flipbool{1}},
+        flip/false/.code={\xbg@bd@block@flipfalse\def\xbg@bd@block@flipbool{0}},
+        flip/.default=true,
+        flip=false,
         block template/.code=\tikzset{
             draw,
             align=center,
-            text width=14.5mm,
             minimum width = 15mm,
-            inner sep=0pt,
-            minimum height = \bd@block@height,
+            minimum height = \xbg@bd@block@height,
             shape=block,
+            text = Iconic Contents,
+            prefix after command= {
+                \pgfextra{
+                    \tikzset{
+                        every label/.style={
+                            Iconic Label,
+                        }
+                    }
+                }
+            },
         },
 }
 \pgfdeclareshape{block}{
+    \inheritsavedanchors[from={rectangle}]
     \savedanchor\centerpoint{%
         \pgf@x=.5\wd\pgfnodeparttextbox%
         \pgf@y=.5\ht\pgfnodeparttextbox%
@@ -1396,33 +1361,37 @@
     \inheritanchor[from=rectangle]{north west}
     \inheritanchor[from=rectangle]{north east}
     \inheritanchor[from=rectangle]{center}
+    \inheritanchor[from=rectangle]{text}
     \inheritanchor[from=rectangle]{west}
     \inheritanchor[from=rectangle]{east}
+    \inheritanchor[from=rectangle]{mid}
+    \inheritanchor[from=rectangle]{mid west}
+    \inheritanchor[from=rectangle]{mid east}
+    \inheritanchor[from=rectangle]{base}
+    \inheritanchor[from=rectangle]{base west}
+    \inheritanchor[from=rectangle]{base east}
     \inheritanchor[from=rectangle]{south}
     \inheritanchor[from=rectangle]{south west}
     \inheritanchor[from=rectangle]{south east}
     \savedmacro\blockinputs{%
-        \pgfmathparse{int(\bd@block@inputs)}%
+        \pgfmathparse{int(\xbg@bd@block@inputs)}%
         \let\blockinputs=\pgfmathresult}%
     \savedmacro\blockoutputs{%
-        \pgfmathparse{int(\bd@block@outputs)}%
+        \pgfmathparse{int(\xbg@bd@block@outputs)}%
         \let\blockoutputs=\pgfmathresult}%
     \savedmacro\blockmaxio{%
-        \pgfmathparse{int(max(\bd@block@inputs,\bd@block@outputs))}%
+        \pgfmathparse{int(max(\xbg@bd@block@inputs,\xbg@bd@block@outputs))}%
         \let\blockmaxio=\pgfmathresult}%
+    \savedmacro\blockflip{%
+        \pgfmathparse{\xbg@bd@block@flipbool}%
+        \let\blockflip=\pgfmathresult}%
     \saveddimen\halfwidth{\pgfmathsetlength\pgf@x{%
         \pgfkeysvalueof{/pgf/minimum width}/2}\pgfmathresult}
     \saveddimen\halfheight{\pgfmathsetlength\pgf@x{%
         \pgfkeysvalueof{/pgf/minimum height}/2}\pgfmathresult}
     \saveddimen\iospacing{\pgfmathsetlength\pgf@x{%
-        \bd@block@iospacing}\pgfmathresult}
-    \backgroundpath{
-        \pgfpathrectanglecorners{%
-            \pgfpointadd{\centerpoint}{\pgfpoint{-\halfwidth}{-\halfheight}}%
-        }{%
-            \pgfpointadd{\centerpoint}{\pgfpoint{\halfwidth}{\halfheight}}%
-        }%
-    }
+        \xbg@bd@block@iospacing}\pgfmathresult}
+    \inheritbackgroundpath[from={rectangle}]
     \pgfutil@g@addto@macro\pgf@sh@s@block{%
         \pgfmathloop%
         \ifnum\pgfmathcounter>\blockinputs\relax%
@@ -1446,11 +1415,26 @@
         \repeatpgfmathloop%
     }%
 }
+
 \def\pgf@sh@lib@block@in@anchor#1{%
-    \pgfpointadd{\centerpoint}{\pgfpoint{-\halfwidth}{\iospacing*(\blockinputs/2+0.5)-\iospacing*#1}}%
+    \pgf@process{\centerpoint}%
+    \pgf@ya=\pgf@y%
+    \ifnum\blockflip=0\relax%
+        \pgf@process{\southwest}%
+    \else%
+        \pgf@process{\northeast}%
+    \fi%
+    \pgfmathsetlength\pgf@y{\pgf@ya + (0.5*(\blockinputs+1)-#1)*\iospacing}
 }
 \def\pgf@sh@lib@block@out@anchor#1{%
-    \pgfpointadd{\centerpoint}{\pgfpoint{\halfwidth}{\iospacing*(\blockoutputs/2 + 0.5)-\iospacing*#1}}%
+    \pgf@process{\centerpoint}%
+    \pgf@ya=\pgf@y%
+    \ifnum\blockflip=0\relax%
+        \pgf@process{\northeast}%
+    \else%
+        \pgf@process{\southwest}%
+    \fi%
+    \pgfmathsetlength\pgf@y{\pgf@ya + (0.5*(\blockoutputs+1)-#1)*\iospacing}
 }
 \makeatother
 %</xbg-blockdiagrams-code>
