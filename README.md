@@ -3,14 +3,17 @@ The `xbondgraphs` package
 [xbondgraphs] is a LaTeX package that defines Ti*k*z styles and PGF keys to draw beautiful bond graphs.
 
 # Table of contents
-<!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:1 -->
+<!-- TOC depthFrom:1 depthTo:2 withLinks:1 updateOnSave:1 orderedList:0 -->
 
-1. [Table of contents](#table-of-contents)
-2. [Installing](#installing)
-3. [Functionality](#functionality)
-4. [Examples](#examples)
-5. [Alternatives](#alternatives)
-	1. [Functionality comparison](#functionality-comparison)
+- [Table of contents](#table-of-contents)
+- [Installing](#installing)
+- [Functionality](#functionality)
+- [Examples](#examples)
+	- [Bond graphs](#bond-graphs)
+	- [Iconic diagrams](#iconic-diagrams)
+	- [Block diagrams](#block-diagrams)
+- [Alternatives](#alternatives)
+	- [Functionality comparison](#functionality-comparison)
 
 <!-- /TOC -->
 
@@ -33,7 +36,10 @@ With [xbondgraphs], users can:
 * Use the `bond graph element` or the `bge` key in a `\node` specification to create elements in a `tikzpicture` environment
 * Use the `mux` key in a `\node` specification to create a mux element in a `tikzpicture` environment with a specified number of in- and outputs.
 
+Additionally users can include one of the (undocumented) libraries using `\usexbglibrary`. The currently supported libraries include `iconicdiagrams` and `blockdiagrams`.
+
 # Examples
+## Bond graphs
 
 ```latex
 \begin{tikzpicture}[x=12.5mm,y=12.5mm]
@@ -94,6 +100,11 @@ With [xbondgraphs], users can:
 
 *A bond graph representation of a three phase DC motor.*
 
+## Iconic diagrams
+
+## Block diagrams
+
+
 # Alternatives
 Other packages to draw bond graphs using Ti*k*z and/or PGF are the [bondgraph] package by Jean-François Dupuis, and the [bondgraphs] package by Geert Folkertsma. The former has no documentation and just a brief example file. The latter is well documented, but due to some drawing peculiarities, the resulting bond graphs are not always beautiful, especially when using multi bonds.
 
@@ -110,6 +121,7 @@ In-line bonds and elements               | :x:                | :heavy_check_mar
 Multi bond drawings                      | :x:                | :white_check_mark: | :heavy_check_mark:
 Power (de-)mux element                   | :x:                | :x:                | :heavy_check_mark:
 Multi-segment bonds                      | :question:         | :x:                | :heavy_check_mark:
+Straight bond barb                       | :x:                | :heavy_check_mark: | :heavy_check_mark:
 Curly bond barb                          | :heavy_check_mark: | :heavy_check_mark: | :x:
 Optional colon between element and label | :x:                | :x:                | :heavy_check_mark:
 
