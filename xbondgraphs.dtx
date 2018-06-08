@@ -13,9 +13,7 @@
 % and version 1.3 or later is part of all distributions of LaTeX
 % version 2005/12/01 or later.
 % 
-% This work has the LPPL maintenance status `maintained'.
-% 
-% The Current Maintainer of this work is M.J.W. Snippe
+% This work has the LPPL maintenance status `author-maintained'.
 % 
 % This work consists of the files found at https://github.com/MaxSnippe/xbondgraphs.
 % 
@@ -25,7 +23,7 @@
 % 
 %<*driver>
 \documentclass{ltxdoc}
-\input{xbg.preamble.doc.tex}
+\input{xbg.doc.preamble.tex}
 %
 %\OnlyDescription
 \EnableCrossrefs
@@ -55,17 +53,6 @@
 %   Grave accent \` Left brace \{ Vertical bar \|
 %   Right brace \} Tilde \~}
 %
-% \changes{v0.0.1}{2018/05/02}{Initial version}
-% 
-% \changes{v0.0.2}{2018/05/16}{Changed to \textsf{tcolorbox} documentation style}
-% \changes{v0.0.2}{2018/05/16}{Added documentation for various keys}
-% 
-% \changes{v0.1.0}{2018/05/18}{Added \textsf{iconicdiagrams} library}
-% 
-% \changes{v0.1.2}{2018/06/05}{Added initial \textsf{blockdiagrams} library}
-% \changes{v0.1.2}{2018/06/05}{Removed \textsf{xparse} package dependancy from \textsf{iconicdiagrams} library}
-% \changes{v0.1.2}{2018/06/05}{Added \texttt{flip} option for blocks in \textsf{blockdiagram} library}
-%
 % \GetFileInfo{xbondgraphs.sty}
 %
 % \DoNotIndex{\#,\$,\%,\&,\@,\\,\{,\},\^,\_,\~,\ ,\if,\else,\fi,\def,\ifcase,\or,\ba,\backgroundpath,\backx,\backy,\centerpoint,\colorlet,\csname,\endcsname,\expandafter,\halfheight,\halfwidth,\hullpointx,\hullpointy,\ifnum,\ifxbg@bond@causality@eout,\ifxbg@bond@causality@fout,\ifxbg@element@multiport,\ifxbg@element@word,\inheritanchor,\inheritanchorborder,\inheritsavedanchors,\ensuremath,\let,\mathbb,\mathbf,\mbw,\muxinputs,\muxoutputs,\NeedsTeXFormat,\newif,\nodeparts,\noexpand,\path,\pgf@sh@lib@mux@in@anchor,\pgf@sh@lib@mux@out@anchor,\pgf@sh@s@mux,\pgf@x,\pgfarrowshullpoint,\pgfarrowssetbackend,\pgfarrowssettipend,\pgfdeclarearrow,\pgfdeclaredecoration,\pgfdeclareshape,\pgfdecoratedangle,\pgfdecoratedinputsegmentlength,\pgfextra,\pgfkeys,\pgfkeysvalueof,\pgflinewidth,\pgfmathcounter,\pgfmathloop,\pgfmathparse,\pgfmathresult,\pgfmathsetlengthmacro,\pgfmathsetlength,\pgfpathlineto,\pgfpathmoveto,\pgfpathrectanglecorners,\pgfpoint,\pgfpointdecoratedinputsegmentlast,\pgfpointorigin,\pgfsetlinewidth,\pgfusepathqstroke,\pgfutil@g@addto@macro,\pgfutil@ifundefined,\ProcessPgfPackageOptions,\ProvidesPackage,\relax,\repeatpgfmathloop,\RequirePackage,\savedanchor,\saveddimen,\savedmacro,\sbw,\small,\startx,\starty,\state,\tikzset,\tipendx,\tipendy,\tipx,\tipy,\usetikzlibrary,\xdef,\xbg@mux@n,\muxmaxio,\iospacing,\PackageWarning,\xbg@bgelabelcolor,\xbg@bondlabelcolor,\xbg@multibondwidth,\xbg@singlebondwidth,\xbg@causalitystrokescale,\xbg@error,\xbg@warning,\pgfqkeys,\pgfkeysalso,\PackageError,\xbgset,\long,\appto,\tikz,\draw,\node,\bge@i,\bge@ii,\bond@i,\bond@ii,\bond,\bge,\pgfkeyscurrentname,\pgfsetfillcolor,\pgfusepathqfill,\input,\usexbglibrary}
@@ -75,7 +62,7 @@
 %   \normalsize\href{mailto:m.j.w.snippe@saxion.nl}{$\langle$\texttt{m.j.w.snippe@saxion.nl}$\rangle$}}
 %\date{\filedate\\[0.4em]\normalsize\fileversion}
 %
-% \input{xbg.document.doc.tex}
+% \input{xbg.doc.main.tex}
 %
 % \StopEventually{\PrintChanges\listoftodos\printindex}
 %
@@ -357,14 +344,15 @@
         minimum width = 2.5pt,
         minimum height = \xbg@mux@height,
         node contents = {},
+        draw=none,
         fill=black,
         shape=mux,
     },
     load libraries/.code={
         \xbgset{library/#1}
     },
-    library/iconicdiagrams/.code={\input{xbg.iconicdiagrams.code.tex}},
-    library/blockdiagrams/.code={\input{xbg.blockdiagrams.code.tex}},
+    library/iconicdiagrams/.code={\input{xbg.code.iconicdiagrams.tex}},
+    library/blockdiagrams/.code={\input{xbg.code.blockdiagrams.tex}},
     library/all/.code=\xbgset{load libraries/.list={iconicdiagrams,blockdiagrams}},
     library/.unknown/.code={\xbg@error{No library named "\pgfkeyscurrentname" exists}{}},
 }
@@ -628,7 +616,7 @@
 %       \iffalse
 %       \section{Implementation: \xbondgraphs-iconic library}
 %    \begin{macrocode}
-%<*xbg-iconicdiagrams-code>
+%<*xbg-code-iconicdiagrams>
 \makeatletter
 \usetikzlibrary{decorations.pathreplacing,decorations.pathmorphing,patterns}
 
@@ -1246,8 +1234,8 @@
     }
 }
 \makeatother
-%</xbg-iconicdiagrams-code>
-%<*xbg-blockdiagrams-code>
+%</xbg-code-iconicdiagrams>
+%<*xbg-code-blockdiagrams>
 \makeatletter
 \newdimen\xbg@bd@block@iospacing
 \newdimen\xbg@bd@block@height
@@ -1437,7 +1425,7 @@
     \pgfmathsetlength\pgf@y{\pgf@ya + (0.5*(\blockoutputs+1)-#1)*\iospacing}
 }
 \makeatother
-%</xbg-blockdiagrams-code>
+%</xbg-code-blockdiagrams>
 %    \end{macrocode}
 %       \fi
 % \Finale

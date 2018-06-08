@@ -132,6 +132,7 @@
                 \item \refLib{iconicdiagrams}
                 \item \refLib{blockdiagrams}
             \end{itemize}
+            Alternatively, one can use \docAuxCommand*{usexbglibrary}|{all}| to include all libraries.
         \end{docCommand}
         
     \subsection{Macros}
@@ -699,4 +700,45 @@ This text could use an in-line \bond{(0,0)--(1,0)} just for clarification. If th
     \draw[bond={effort out}] (i) -- (l);
 \end{scope}
 \end{dispExample*}
+
+\begin{dispExample*}{tikzdocexample}
+\tikzset{block/.append style={rounded corners=2pt,minimum size=8mm,fill=black!10!}}
+\node[block={inputs=2,outputs=2,flip,io spacing=7.5mm},minimum size=14mm] (G) {$ G $};
+\node[block,below=0.5 of G] (K) {$ K $};
+\node[signalname,left=of G.output 1] (z) {$ z $};
+\coordinate[left=0.5 of G.output 2] (left);
+\node[signalname,right=of G.input 1] (w) {$ w $};
+\coordinate[right=0.5 of G.input 2] (right);
+\begin{scope}[->]
+    \draw (w) -- (G.input 1);
+    \draw (G.output 1) -- (z);
+    \draw (K) -- (K-|right) -- node[right]{$ u $} (right) -- (G.input 2);
+    \draw (G.output 2) -- (left) -- node[left]{$ y $} (K-|left) -- (K);
+\end{scope}
+\end{dispExample*}
+
+\section{Change history}
+    
+    \begin{itemize}
+        \item v0.0.1 (2018/05/02)
+        \begin{itemize}
+            \item Initial version
+        \end{itemize}
+        \item v0.0.2 (2018/05/16)
+        \begin{itemize}
+            \item Changed to \textsf{tcolorbox} documentation style
+            \item Added documentation for various keys
+        \end{itemize}
+        \item v0.1.0 (2018/05/18)
+        \begin{itemize}
+            \item Added \textsf{iconicdiagrams} library
+        \end{itemize}
+        \item v0.1.2 (2018/06/05)
+        \begin{itemize}
+            \item Added initial \textsf{blockdiagrams} library
+            \item Removed \textsf{xparse} package dependancy from \textsf{iconicdiagrams} library
+            \item Added \texttt{flip} option for blocks in \textsf{blockdiagram} library
+            \item Made sign placement around \texttt{sum} block dependent of number of signs
+        \end{itemize}
+    \end{itemize}
  
