@@ -1,4 +1,4 @@
-Copyright &copy; 2018 M.J.W. Snippe
+Copyright (C) 2018 M.J.W. Snippe
 
 This work may be distributed and/or modified under the
 conditions of the LaTeX Project Public License, either version 1.3

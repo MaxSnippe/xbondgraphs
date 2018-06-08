@@ -20,15 +20,12 @@
 % \fi
 % 
 % \iffalse
-% 
 %<*driver>
 \documentclass{ltxdoc}
-\input{xbg.doc.preamble.tex}
+\input{xbg.doc.settings.sty}
 %
-%\OnlyDescription
+\OnlyDescription
 \EnableCrossrefs
-\CodelineIndex
-\RecordChanges
 \begin{document}
     \DocInput{xbondgraphs.dtx}
 \end{document}
@@ -55,18 +52,15 @@
 %
 % \GetFileInfo{xbondgraphs.sty}
 %
-% \DoNotIndex{\#,\$,\%,\&,\@,\\,\{,\},\^,\_,\~,\ ,\if,\else,\fi,\def,\ifcase,\or,\ba,\backgroundpath,\backx,\backy,\centerpoint,\colorlet,\csname,\endcsname,\expandafter,\halfheight,\halfwidth,\hullpointx,\hullpointy,\ifnum,\ifxbg@bond@causality@eout,\ifxbg@bond@causality@fout,\ifxbg@element@multiport,\ifxbg@element@word,\inheritanchor,\inheritanchorborder,\inheritsavedanchors,\ensuremath,\let,\mathbb,\mathbf,\mbw,\muxinputs,\muxoutputs,\NeedsTeXFormat,\newif,\nodeparts,\noexpand,\path,\pgf@sh@lib@mux@in@anchor,\pgf@sh@lib@mux@out@anchor,\pgf@sh@s@mux,\pgf@x,\pgfarrowshullpoint,\pgfarrowssetbackend,\pgfarrowssettipend,\pgfdeclarearrow,\pgfdeclaredecoration,\pgfdeclareshape,\pgfdecoratedangle,\pgfdecoratedinputsegmentlength,\pgfextra,\pgfkeys,\pgfkeysvalueof,\pgflinewidth,\pgfmathcounter,\pgfmathloop,\pgfmathparse,\pgfmathresult,\pgfmathsetlengthmacro,\pgfmathsetlength,\pgfpathlineto,\pgfpathmoveto,\pgfpathrectanglecorners,\pgfpoint,\pgfpointdecoratedinputsegmentlast,\pgfpointorigin,\pgfsetlinewidth,\pgfusepathqstroke,\pgfutil@g@addto@macro,\pgfutil@ifundefined,\ProcessPgfPackageOptions,\ProvidesPackage,\relax,\repeatpgfmathloop,\RequirePackage,\savedanchor,\saveddimen,\savedmacro,\sbw,\small,\startx,\starty,\state,\tikzset,\tipendx,\tipendy,\tipx,\tipy,\usetikzlibrary,\xdef,\xbg@mux@n,\muxmaxio,\iospacing,\PackageWarning,\xbg@bgelabelcolor,\xbg@bondlabelcolor,\xbg@multibondwidth,\xbg@singlebondwidth,\xbg@causalitystrokescale,\xbg@error,\xbg@warning,\pgfqkeys,\pgfkeysalso,\PackageError,\xbgset,\long,\appto,\tikz,\draw,\node,\bge@i,\bge@ii,\bond@i,\bond@ii,\bond,\bge,\pgfkeyscurrentname,\pgfsetfillcolor,\pgfusepathqfill,\input,\usexbglibrary}
-%
-%\title{The \xbondgraphs package\\[0.5em]\large Drawing bond graphs using \Tikz}
-%\author{Marcus J.W. Snippe\\
-%   \normalsize\href{mailto:m.j.w.snippe@saxion.nl}{$\langle$\texttt{m.j.w.snippe@saxion.nl}$\rangle$}}
-%\date{\filedate\\[0.4em]\normalsize\fileversion}
+% \title{The \xbondgraphs package\\[0.5em]\large Drawing bond graphs using \Tikz}
+% \author{Marcus J.W. Snippe\\
+%    \normalsize\href{mailto:m.j.w.snippe@saxion.nl}{$\langle$\texttt{m.j.w.snippe@saxion.nl}$\rangle$}}
+% \date{\filedate\\[0.4em]\normalsize\fileversion}
 %
 % \input{xbg.doc.main.tex}
 %
-% \StopEventually{\PrintChanges\listoftodos\printindex}
+% \StopEventually{\printindex\listoftodos}
 %
-% \clearpage
 % \section{Implementation: \xbondgraphs}
 %	\tcbset{keyimplementation}
 % 	\subsection{Package definition}
@@ -1427,6 +1421,967 @@
 \makeatother
 %</xbg-code-blockdiagrams>
 %    \end{macrocode}
+%<*xbg-doc-main>
+\maketitle
+
+\begin{abstract}
+    Using the \xbondgraphs-package, one can draw visually pleasing bond graphs, while mostly maintaining the standard notation of \Tikz drawings. It defines two new \pgfpkg arrows, a \pgfpkg decoration to ensure the direction of the barb, as well as a \pgfpkg shape for power (de-)mux elements. This package is based on the \bondgraphs package by Geert Folkertsma\footnote{\url{https://ctan.org/pkg/bondgraphs}}, but does not (yet) cover all its functions. It \emph{might} result in more appealing bond graphs, but this of course is subjective.
+\end{abstract}
+
+\begin{multicols}{2}
+\tableofcontents
+\end{multicols}
+
+\section{Introduction}
+    
+    \subsection{Motivation}
+        This package is a by-product of a project in which I was in need of a convenient way to draw bond graphs. At first, the \bondgraphs package was sufficient, but as the delivery date of the final report approached, I became less and less satisfied by the aesthetic end result of my bond graphs, especially when using multi-bonds.
+        
+        \begin{filecontents*}{xbg.tmp.example_bondgraphs.tex}
+        \documentclass[tikz]{standalone}
+        \usepackage{bondgraphs}
+        \usepackage{mathpazo}
+        \begin{document}
+        \begin{tikzpicture}[x=15mm,y=15mm]
+            \path[use as bounding box] (-25mm,-25mm) rectangle (25mm,25mm);
+            \node at (-1, 0) [label=left:$ V $,bgelement] (Se) {Se};
+            \node at ( 0, 0) [label=below right:$ i $,bgelement] (1j) {1};
+            \node at ( 0, 1) [label=above:$ C $,bgelement] (C) {C};
+            \node at ( 0,-1) [label=below:$ L $,bgelement] (L) {I};
+            \node at ( 1, 0) [label=right:$ R $,bgelement] (R) {R};
+            \draw (Se) edge[mbond,e_out] (1j);
+            \draw (1j) edge[mbond,e_in] (C);
+            \draw (1j) edge[mbond,e_out] (L);
+            \draw (1j) edge[mbond,e_in] (R);
+        \end{tikzpicture}
+        \end{document}
+        \end{filecontents*}
+        \immediate\write18{pdflatex xbg.tmp.example_bondgraphs.tex}
+        \begin{figure}[htpb]
+            \centering
+            \begin{subfigure}[t]{0.48\linewidth}
+                \centering
+                \begin{tikzpicture}
+                    \begin{scope}[spy using outlines={gray,magnification=8,minimum width=32mm,minimum height=30mm, connect spies,every spy on node/.append style={line width=.4pt}}]
+                        \node{\includegraphics{{xbg.tmp.example_bondgraphs}.pdf}};
+                        \spy on (0, 1.15) in node[above left]  (tipf) at (-0.5, 0.5);
+                        \spy on (0, 0.35) in node[above right] (tail) at ( 0.5, 0.5);
+                        \spy on (0,-1.15) in node[below right] (tipe) at ( 0.5,-0.5);
+                    \end{scope}
+                \end{tikzpicture}
+                \caption{Using the \bondgraphs package.}
+                \label{fig:comparisonmultibonds-bondgraphs}
+            \end{subfigure}
+            \begin{subfigure}[t]{0.48\linewidth}
+                \centering
+                \begin{tikzpicture}
+                    \begin{scope}[spy using outlines={gray,magnification=8,minimum width=32mm,minimum height=30mm, connect spies,every spy on node/.append style={line width=.4pt}}]
+                        \begin{scope}[x=15mm,y=15mm]
+                            \node at (-1, 0) (Se) [bge={Se}{},pin=left:$ V $];
+                            \node at ( 0, 0) (1j) [bge={1}{},label=below right:$ i $];
+                            \node at ( 0, 1) (C)  [bge={C}{},pin=above:$ C $];
+                            \node at ( 0,-1) (L)  [bge={I}{},pin=below:$ L $];
+                            \node at ( 1, 0) (R)  [bge={R}{},pin=right:$ R $];
+                        \end{scope}
+                        \draw[bond={multi,effort out}] (Se) -- (1j);
+                        \draw[bond={multi,effort in}]  (1j) -- (C);
+                        \draw[bond={multi,effort out}] (1j) -- (L);
+                        \draw[bond={multi,effort in}]  (1j) -- (R);
+                        \spy on (0, 1.075) in node[above left]  (tipf) at (-0.5, 0.5);
+                        \spy on (0, 0.40) in node[above right] (tail) at ( 0.5, 0.5);
+                        \spy on (0,-1.075) in node[below right] (tipe) at ( 0.5,-0.5);
+                    \end{scope}
+                \end{tikzpicture}
+                \caption{Using the \xbondgraphs package.}
+                \label{fig:comparisonmultibonds-xbondgraphs}
+            \end{subfigure}
+            \caption{Comparison of multi bond graph drawing.}
+            \label{fig:comparisonmultibonds}
+        \end{figure}
+        
+        \Cref{fig:comparisonmultibonds} shows an example of a simple bond graph with multi bonds, using both the \bondgraphs package and the \xbondgraphs package. The points that motivated me to rewrite the package are emphasized. Although of course subjective, most of the differences between the \bondgraphs- and the \xbondgraphs package can be argued to be improvements.
+        
+        Additionally, the \bondgraphs package only permits \texttt{edge}s to be bonds, making multi-segment bonds impossible. With the \refDec{bond} decoration, the \xbondgraphs package makes these multi-segment bonds possible.
+        
+    \subsection{Alternatives}
+        
+        Other packages to draw bond graphs using \Tikz and/or \pgfpkg are the \textsf{bondgraph}\footnote{\url{https://ctan.org/pkg/bondgraph}} package by Jean-François Dupuis, and the \bondgraphs\footnote{\url{https://ctan.org/pkg/bondgraphs}} package by Geert Folkertsma. The former has no documentation and just a brief example file. The latter is well documented, but due to some drawing peculiarities, the resulting bond graphs are not always beautiful, especially when using multi bonds.
+        
+        As already mentioned, this package is based on the \bondgraphs package and attempts to cover all its functionality. However it currently does not (yet) cover all functions. It does provide some additional functionality. A comparison of main package functions is shown in \cref{tab:functioncomparison}. 
+        
+        \begin{table}[htbp]
+            \centering
+            \caption{Function comparison between the three bond graph packages.}
+            \label{tab:functioncomparison}
+            \begin{tabular}{lccc}
+            	\toprule
+            	\bfseries Function                       &    \textsf{bondgraph}     &        \bondgraphs         &       \xbondgraphs        \\ \midrule
+            	Automatic arrow barb direction           &  \textcolor{red}{\xmark}  & \textcolor{green}{\cmark}  & \textcolor{green}{\cmark} \\
+            	Single bond drawings                     & \textcolor{green}{\cmark} & \textcolor{green}{\cmark}  & \textcolor{green}{\cmark} \\
+            	In-line bonds and elements               &  \textcolor{red}{\xmark}  & \textcolor{green}{\cmark}  & \textcolor{green}{\cmark} \\
+            	Multi bond drawings                      &  \textcolor{red}{\xmark}  & \textcolor{orange}{\cmark} & \textcolor{green}{\cmark} \\
+            	Power (de-)mux element                   &  \textcolor{red}{\xmark}  &  \textcolor{red}{\xmark}   & \textcolor{green}{\cmark} \\
+            	Multi-segment bonds                      &   \textcolor{orange}{?}   &  \textcolor{red}{\xmark}   & \textcolor{green}{\cmark} \\
+            	Curly bond barb                          & \textcolor{green}{\cmark} & \textcolor{green}{\cmark}  &  \textcolor{red}{\xmark}  \\
+            	Optional colon between element and label &  \textcolor{red}{\xmark}  &  \textcolor{red}{\xmark}   & \textcolor{green}{\cmark} \\ \bottomrule
+            \end{tabular}
+        \end{table}
+        
+    \subsection{Known issues}
+        
+        Besides the to-dos listed in \hyperlink{sec:todolist}{the to-do list}, the following issues are known and not (yet) fixed.
+        \begin{itemize}
+            \item \dots
+        \end{itemize}
+        Please support a starting \LaTeX nut and submit issues (and function requests) to \url{https://github.com/MaxSnippe/xbondgraphs/issues}.
+
+\section{Basic usage}
+    
+    \subsection{Installation}
+        This package has not yet been included in popular \LaTeX distributions, and therefore can be installed only by downloading it as \texttt{.zip} archive from \href{https://github.com/MaxSnippe/xbondgraphs}{the Github page} and extracting it in the root of your TeXmf tree. The documentation files should be automatically placed in \texttt{\$TEXMF/doc/latex/xbondgraphs}, and the package code in \texttt{\$TEXMF/tex/latex/xbondgraphs}. The documentation files are:
+        * `xbondgraphs.pdf`
+        * `xbondgraphs.tex`
+        
+        The package code files are:
+        * `xbondgraphs.sty`
+        * `xbg.iconicdiagrams.code.tex`
+        * `xbg.blockdiagrams.code.tex`
+        
+        `\$TEXMF` is the root folder of your main TeX-tree. For MiKTeX users that is probably `C:/texmf/`, and for TeXLive users that is probably `/usr/local/texlive/<year>/texmf-dist/`.
+        
+    \subsection{Libraries}
+        Currently the \xbondgraphs package has two (still undocumented) libraries.
+        \begin{docCommand}{usexbglibrary}{\marg{comma separated list of libraries}}
+            This command can be used to include one of the following libraries:
+            \begin{itemize}
+                \item \refLib{iconicdiagrams}
+                \item \refLib{blockdiagrams}
+            \end{itemize}
+            Alternatively, one can use \docAuxCommand*{usexbglibrary}\brackets{\texttt{all}} to include all libraries.
+        \end{docCommand}
+        
+    \subsection{Macros}
+        
+        \begin{docCommand}{bge}{\oarg{xbg keys}\oarg{tikz/pgf keys}\marg{contents}}
+            This macro can be used to create an in-line bond graph element. It accepts two optional arguments and one mandatory argument, firstly a list of \meta{xbg keys} as described in \cref{sec:keys}, secondly a list of \meta{tikz/pgf keys} such as color definitions, and finally a character (combination) that denotes one of the base components of bond graphs.
+\begin{dispExample}
+This text could say something about the \bge{MTF}-element, which is a modulated transformer. A multi-dimensional specimen also exists, which is denoted \bge[multiport]{MTF}. Extra emphasis can be given a beautiful color, e.g. \bge[][blue]{MTF}.
+\end{dispExample}
+        \end{docCommand}
+        
+        \begin{docCommand}{bond}{\oarg{xbg keys}\oarg{tikz/pgf keys}\marg{path}}
+            This macro can be used to create an in-line bond. It accepts the same optional arguments as the \refCom{bge} macro, and the final argument is a \Tikz compatible path description.
+\begin{dispExample}
+This text could use an in-line \bond{(0,0)--(1,0)} just for clarification. If the bond is multi-dimensional, lets draw it as such \bond[multi]{(0,0)--(1,0)}. And to give additional emphasis, lets give it a beautiful color \bond[multi][blue]{(0,0)--(1,0)}.
+\end{dispExample}
+        \end{docCommand}
+        
+    \subsection{\Tikz styles}
+        \label{sec:tikzstyles}
+        
+        \begin{docKey}[tikz]{bond}{=\meta{options}}{default \texttt{empty}}
+            When the \refKey{/tikz/bond} style is provided to a \Tikz drawing command (e.g. \cs{draw}, \cs{path}), the \refDec{bond} decoration is applied. Additionally, some options can be given as argument. Note that this style has to be given to every path that must be a bond, because it uses a decoration. Alternatively, the key \docAuxKey*[tikz]{decorate} must be given.
+\begin{dispExample*}{tikzdocexample}
+\draw[bond] (0,0) -- ++(1,0);
+\begin{scope}[bond={multi}]
+    \draw[decorate] (1.5,0) -- ++(1,0);
+    \draw (3,0) -- ++(1,0);
+\end{scope}
+\end{dispExample*}
+        \end{docKey}
+        \begin{docKey}[tikz]{bond graph element}{=\marg{contents}\marg{options}}{default \brackets{empty}\brackets{empty}}
+            This style can be used for \Tikz nodes. It takes two arguments, the first being the node contents, and the second a list of \meta{key}\texttt{=}\meta{value} options. The \meta{contents} will be printed in \cs{mathbf} for a normal element, and in \cs{mathbb} for a multiport element. Note that most fonts do not have glyphs for lowercase blackboard bold.
+\begin{dispExample*}{tikzdocexample}
+\node at (0,0) [bond graph element={I}{label colon},label=above:$ J $];
+\node at (1,0) [bond graph element={C}{multiport,n=3},pin=above:$ \mathcal{C} $];
+\node at (2.5,0) [bond graph element={Motor}{word}, label=below:Electromotor];
+\node at (5,0) [bond graph element={BODY}{word,multiport,n=6}];
+\end{dispExample*}
+        \end{docKey}
+        \begin{docKey}[tikz]{bge}{=\marg{options}\marg{contents}}{default \brackets{\texttt{empty}}\brackets{\texttt{empty}}}
+            This key is provided as a shorter alias for \refKey{/tikz/bond graph element}.
+        \end{docKey}
+        \begin{docKey}[tikz]{effort}{=\meta{contents}}{default \texttt{empty}}
+            This key only makes sense if given to a \texttt{to} or \texttt{edge} path command. It places a edge node (following convention) \emph{above} the middle of the path segment with \meta{contents} to describe the effort variable of the bond.
+        \end{docKey}
+        \begin{docKey}[tikz]{flow}{=\meta{contents}}{default \texttt{empty}}
+            This key is the counterpart of \refKey{/tikz/effort}, and places a edge node \emph{below} the middle of the path segment to describe the flow variable of the bond.
+        \end{docKey}
+\begin{dispExample*}{tikzdocexample}
+\foreach \ang in {0,60,...,359}{
+    \draw[bond] (0,0) to[flow=$ f $] ++(\ang:1.5);
+    \draw[bond] (3.5,0) to[effort=$ e $] ++(\ang:1.5);
+}
+\end{dispExample*}
+        \begin{docKey}[tikz]{mux}{=\meta{options}}{default \texttt{empty}}
+            This style applies the \refShp{mux} shape, and sets the minimum size of the node according to the number of in- and outputs, and the in-/output spacing. The node contents are set to \brackets{}, and the fill of the shape to black. The \refShp{mux} shape defines an anchor \texttt{input }\meta{n} for every input and \texttt{output }\meta{n} for every output.
+            
+            Inputs are always placed on the left hand side of the shape, and outputs on the right hand side. The shape can of course be rotated with the \docAuxKey*[tikz]{rotate} key.
+\begin{dispExample*}{tikzdocexample}
+\node (mux) [mux={mux inputs=2,mux outputs=3}];
+\foreach \i in {1,2}{\draw[<-] (mux.input \i) -- ++(-1,0);}
+\foreach \i in {1,...,3}{\draw[->] (mux.output \i) -- ++(1,0);}
+\node at (3,0) (mux2) [mux={mux inputs=2,mux outputs=3},rotate=180];
+\foreach \i in {1,2}{\draw[<-] (mux2.input \i) -- ++(1,0);}
+\foreach \i in {1,...,3}{\draw[->] (mux2.output \i) -- ++(-1,0);}
+\end{dispExample*}
+        \end{docKey}
+        
+    \subsection{Simple example}
+        The following examples shows an ideal physical dynamic model of a DC motor, shown as an iconic diagram, and its domain independent equivalent model shown as a bond graph. The iconic diagram icons are taken from the (undocumented) \refLib{iconicdiagrams} library.
+\begin{dispExample*}{tikzdocexample,title={Ideal physical model of a DC motor}}
+\draw[line width = .8pt] (0,0) 
+    -- node[voltage source,label={above:$ u $}]{} ++(0,2) node[current,pos=0.9,label={above:$ i $}]{}
+    -- node[resistor,label={above:$ R $}]{} ++(2,0)
+    -- node[inductor,label={above:$ L $}]{} ++(2,0)
+    -- node(gyr)[gyrator,label={left:$ K_m $}]{} ++(0,-2)
+    -- node[electric earth]{} cycle;
+\draw[line width = .8pt] (gyr.center) -- (gyr.east)
+    -- node[friction,label={above:$ D $}]{} ++(2,0)
+    -- node[inertia,pos=1,label={above:$ J $}]{} ++(1,0);
+\end{dispExample*}
+\begin{dispExample*}{tikzdocexample,title={Bond graph model of a DC motor}}
+\tikzset{x=12.5mm,y=12.5mm}
+\node (u) at (-1, 0) [bge={Se}{},pin={left:$ u $}];
+\node (i) at ( 0, 0) [bge={1}{}, label={300:$ i $}];
+\node (r) at ( 0, 1) [bge={R}{}, pin={above:$ R $}];
+\node (l) at ( 0,-1) [bge={I}{}, pin={below:$ L $}];
+\node (k) at ( 1, 0) [bge={GY}{},pin={below:$ K_m $}];
+\node (w) at ( 2, 0) [bge={1}{}, label={300:$ \omega $}];
+\node (d) at ( 2, 1) [bge={R}{}, pin={above:$ D $}];
+\node (j) at ( 2,-1) [bge={I}{}, pin={below:$ J $}];
+\graph {
+    (u) ->[bond={effort out}] (i) ->[bond={effort in}] (k) 
+        ->[bond={effort out}] (w) ->[bond={effort in}] (d);
+    (i) ->[bond={effort out}] (l);
+    (i) ->[bond={effort in}] (r);
+    (w) ->[bond={effort out}] (j)};
+\end{dispExample*}
+        \iffalse
+        \todo{Look at PGF manual page 270 for automatic graphs}
+        \begin{tikzpicture}
+            \tikzgraphsset{
+                bond graph/.style={
+                    grow right,
+                    grow right sep=1cm,
+                    branch up,
+                    effort out/.forward to=/xbg/effort out,
+                    effort in/.forward to=/xbg/flow out,
+                    flow out/.forward to=/xbg/flow out,
+                    flow in/.forward to=/xbg/effort out,
+                    multi/.forward to=/xbg/multi,
+                    typeset=\bge{\tikzgraphnodetext},
+                    edge={bond},
+                }
+            }
+            \graph[bond graph]{
+                u/Se[/xbg/n=4] ->[effort out] i/1 ->[effort in,multi] k/GY ->[effort out] w/1 ->[effort in] d/R;
+                i ->[effort in] r/R;
+                i ->[effort out] l/I;
+                w ->[effort out] j/I};
+        \end{tikzpicture}
+        \fi
+\section{Keys}
+    \label{sec:keys}
+    
+    \begin{docCommand}{xbgset}{\brackets{\meta{key-value list}}}
+        The \refCom{xbgset} macro can be used to set the keys described in this section. This macro basically only changes the current \pgfkeyspkg directory to \docAuxKey*{/xbg} and sets the keys presented in \meta{key-value list}.
+    \end{docCommand}
+    
+    \subsection{Bond behavior}
+        
+        \begin{xbgkey}{single bond width}{=\meta{dimension}}{no default, initially \texttt{0.8pt}}
+            This key sets the width of the visible bond lines, including the two lines of the multi bonds, and the causality stroke.
+\begin{dispExample*}{tikzdocexample}
+\foreach [count = \i from 0] \lw in {0.1pt, 0.4pt, 0.8pt, 1pt, 2pt, 4pt}{
+    \begin{scope}[/xbg/single bond width=\lw]
+        \draw[bond] (1.5*\i,0) -- node[above]{\lw} ++(1,0);
+        \draw[bond={multi}] (1.5*\i,-0.5) -- ++ (1,0);
+    \end{scope}
+}
+\end{dispExample*}
+            As shown in the example, the multi bond width does not scale with the single bond width.\todo{Maybe this should be added, for simple and consistent scaling.}
+        \end{xbgkey}
+        
+        \begin{xbgkey}{multi bond width}{=\meta{dimension}}{no default, initially \texttt{3.2pt}}
+            This key sets the total width of the multi bonds, effectively determining the width of the gap between the two drawn lines, in combination with the former option ($ w_{\mathrm{multi}} = 2w_{\mathrm{single}} + w_{\mathrm{gap}} $). Additionally, this width is used to scale the causality stroke's width ($ w_{\mathrm{cstroke}}=2w_{\mathrm{multi}} $ for single bonds, and $ w_{\mathrm{cstroke}}=3w_{\mathrm{multi}} $ for multi bonds) and the length of the barb is scaled such that it ends parallel with the causality stroke.\todo{The causal stroke scaling could be a separate option, maybe later.}
+\begin{dispExample*}{tikzdocexample}
+\foreach [count = \i from 0] \lw in {2pt, 3.2pt, 4pt, 5pt, 8pt}{
+    \begin{scope}[/xbg/multi bond width=\lw]
+        \draw[bond] (1.5*\i,0) -- node[above]{\lw} ++ (1,0);
+        \draw[bond={multi}] (1.5*\i,-0.5) -- ++ (1,0);
+    \end{scope}
+}
+\end{dispExample*}
+            The default ratio between single- and multi bond widths (1:4) ought to be a good rule of thumb when scaling the line widths.
+        \end{xbgkey}
+                    
+        \begin{xbgkey}{bond label color}{=\meta{color}}{no default, initially \texttt{green!50!black} [\colorpreview{green!50!black}]}
+            This key can be used to set the color of all effort or flow nodes placed along the bonds. The key sets the color \docColor{BondLabelColor} using \cs{colorlet} to the color described with \meta{color}. 
+        \end{xbgkey}
+        
+        \begin{xbgkey}{error color}{=\meta{color}}{no default, initially \texttt{red} [\colorpreview{red}]}
+            This key sets the color for erroneous causality strokes. The color is named \docColor{Error} and is set to the value of \meta{color} using \cs{colorlet}.
+        \end{xbgkey}
+        
+        \begin{xbgkey}{differential color}{=\meta{color}}{no default, initially \texttt{orange} [\colorpreview{orange}]}
+            Similarly to \refKey{/xbg/error color}, this key sets the color \docColor{Differential} to the value of \meta{color}. This can be used for causality strokes with (non-preferred) differential causality.
+        \end{xbgkey}
+        
+        \begin{xbgkey}{gray}{}{initially unset}
+            This key is a shortcut to set the following colors:
+            
+            \begin{tabular}{llc}
+                \docColor{BondLabelColor}    & \texttt{gray}           &      \colorpreview{gray}      \\
+                \docColor{ElementLabelColor} & \texttt{gray}           &      \colorpreview{gray}      \\
+                \docColor{Differential}      & \texttt{white!60!black} & \colorpreview{white!60!black} \\
+                \docColor{Error}             & \texttt{white!30!black} & \colorpreview{white!30!black}
+            \end{tabular}
+            
+            For if you want to limit the number of colors in your document, for whatever reason.
+        \end{xbgkey}
+        
+        \begin{xbgkey}{barb direction rule}{=\meta{direction}}{no default, initially \texttt{always below}}
+            This key can be used to set the automated direction of the arrow barb. Accepted values for \meta{direction} are:
+            \begin{itemize}
+                \item \docValue{always below}
+                \item \docValue{left below}
+            \end{itemize}
+            See the following example for how the arrow barb behaves.
+\begin{dispExample*}{tikzdocexample}
+\foreach [count=\i from 0] \opt in {left below,always below}{
+    \begin{scope}[x=1.25cm,y=1.25cm]
+        \xbgset{barb direction rule=\opt}
+        \foreach \a in {0,15,...,359}{
+            \draw[bond] (2*\i,0) -- ++(\a:1);
+        }
+        \node at (2*\i,-1.5) [anchor=base,font=\ttfamily]{\opt};
+    \end{scope}
+}
+\end{dispExample*}
+        \end{xbgkey}
+        
+        \begin{xbgkey}{barb angle}{=\meta{angle}}{no default, initially \texttt{40}}
+            This key sets the barb angle of the bond's barb arrow tip. It can be set in any desired (pgf-)scope, including globally. The accepted values are limited between 15 and 85 degrees, to prevent distorted arrow tips.
+\begin{dispExample*}{tikzdocexample}
+\foreach [count=\i] \ang in {15,25,35,40,45,65,85}{
+    \begin{scope}[shift={(\i*1.2,0)}]
+        \draw[bond={barb angle=\ang}](0,0) --node[above]{\ang} ++(1,0);
+    \end{scope}
+}
+\end{dispExample*}
+        \end{xbgkey}
+        
+        \begin{xbgkey}{effort out}{=\meta{options}}{no default, initially unset}
+            This key places the causality stroke of a bond at the end (where the barb is placed). The optional argument is passed on to the \docAuxKey[xbg]{causal stroke} style which is used for the \textbar-arrow tip. For differential or erroneous causality, the colors \docColor{Differential} or \docColor{Error} can be passed to the causality option. The default colors are red (\colorpreview{red}) for \docColor{Error} and orange (\colorpreview{orange}) for \docColor{Differential}.
+        \end{xbgkey}
+        
+        \begin{xbgkey}{flow in}{=\meta{options}}{no default, initially unset}
+            This key is an alias for the \refKey{/xbg/effort out} key.
+        \end{xbgkey}
+        
+        \begin{xbgkey}{effort in}{=\meta{options}}{no default, initially unset}
+            This key is the counterpart of the \refKey{/xbg/effort out} key. It places the causality stroke at the beginning of the bond.
+        \end{xbgkey}
+        
+        \begin{xbgkey}{flow out}{=\meta{options}}{no default, initially unset}
+            This key is an alias for the \refKey{/xbg/effort in} key. The causality cannot be set to both flow out and effort out, these keys are mutually exclusive, and the last given key is decisive.
+        \end{xbgkey}
+        
+        \begin{xbgkey}{unset causality}{}{initially set}
+            If one of the former causality keys is set, this key un-sets them all (both). This might prove useful when one of the former is set in a larger scope.
+        \end{xbgkey}
+\begin{dispExample*}{tikzdocexample}
+\draw[bond={effort out={Error}}] (0,0) -- ++(1,0);
+\draw[bond={flow in={width=1.5em,Differential}}] (1.5,0) -- ++(1,0);
+\draw[bond={effort in={blue,line width=4pt}}] (3,0) -- ++(1,0);
+\draw[bond={flow out},green] (4.5,0) to[effort={$ e $}] ++(1,0);
+\draw[bond={flow out, unset causality}] (6,0) to[flow={$ f $}] ++(1,0);
+\end{dispExample*}
+
+        \begin{xbgkey}{multi}{}{initially unset}
+            When this key is called, the bond is changed to a multi bond, with a different arrow head, and double lines. All other options are still applicable, e.g. causality options.
+\begin{dispExample*}{tikzdocexample}
+\draw[bond={multi,effort out={Differential}}] (0,0) -- ++(1,0);
+\draw[bond={multi},red] (1.5,0) -- ++(1,0);
+\draw[bond={multi,flow in}] (3,0) to[effort={$ \mathbf{V}_{abc} $}] ++(1,0);
+\end{dispExample*}
+        \end{xbgkey}
+        
+        \begin{xbgkey}{background color}{\meta{color}}{no default, initially \texttt{white}}
+            With the \docAuxKey*[tikz]{double} style, \Tikz draws two lines on top of each other to simulate the effect of two parallel lines. The downside of this is that the thinner line must be the same color as its background, otherwise the parallel effect is gone. With this key the \docColor{Background} color is set, which is used when defining a multi bond. Additionally it is used in many of the icons in the \refLib{iconicdiagrams} library, for the same reason.
+\begin{dispExample*}{tikzdocexample}
+\xbgset{multi bond width=3.2mm,single bond width=0.8mm}
+\draw[bond={multi,background color=red}] (0,0) -- ++(2,0);
+\draw[bond={multi,background color=white}] (2.5,0) -- ++(2,0);
+\draw[bond={multi,background color=blue!10!}] (5,0) -- ++(2,0);
+\end{dispExample*}          
+            In the previous example, the background color is initially set to the \texttt{colback} of the \texttt{tcolorbox} in which it is placed (i.e. \texttt{blue!10!}), therefore the \texttt{background color=white} example is not very pretty. If you want similar behavior in your document, it can be achieved by defining a box style as follows:
+\begin{dispExample}
+\tcbset{
+    my bond graph box/.style={
+        colback/.forward to=/xbg/background color,
+        colback=purple!20!,
+        colframe=purple,
+        before upper={\begin{tikzpicture}},
+        after upper={\end{tikzpicture}},
+        width=0.49\linewidth,
+        nobeforeafter,
+    }
+}
+\begin{tcolorbox}[my bond graph box]
+    \node (F) [bge={\mathbb{S}e}{n=3},label=west:$ F $];
+    \node (m) [right=of F,bge={I}{multiport,n=3},label=east:$ m $];
+    \draw[bond={multi,effort out}] (F) -- (m);
+\end{tcolorbox}
+\begin{tcolorbox}[my bond graph box,colback=green!50!]
+    \node (F) [bge={\mathbb{S}e}{n=3},label=west:$ F $];
+    \node (m) [right=of F,bge={I}{multiport,n=3},label=east:$ m $];
+    \draw[bond={multi,effort out}] (F) -- (m);
+\end{tcolorbox}
+\end{dispExample}
+        \end{xbgkey}
+        
+    \subsection{Element behavior}
+        
+        \begin{xbgkey}{element label color}{=\meta{color}}{no default, initially \texttt{blue} [\colorpreview{blue}]}
+            This key can be used to set the color of the labels (and pins) of bond graph elements. The key sets the color \docColor{ElementLabelColor} using \cs{colorlet} to the color described with \meta{color}. 
+        \end{xbgkey}
+        
+        \begin{xbgkey}{multiport}{=true\textbar false}{default \texttt{true}, initially \texttt{false}}
+            If the element depicts a multidimensional element, this might be emphasized with the \texttt{multiport} option. This will print the node contents in blackboard bold math font. Generally this should be combined with the next option (\texttt{n}), unless all elements in the graph have the same order.
+\begin{dispExample*}{tikzdocexample}
+\node (mtf) [bge={MTF}{multiport}];
+\draw[bond={multi,effort in}] (-2,0) -- (mtf);
+\draw[bond={multi,effort in}] (mtf) -- (2,0);
+\end{dispExample*}
+            As mentioned before, most fonts do not have glyphs for lower case blackboard bold. For elements as \bge{MSe}s or \bge{MSf}s, this might be a problem, but this could be solved by not explicitly setting the \refKey{/xbg/multiport} key, but using blackboard bold in the \meta{contents} field. Lowercase blackboard bold fonts can be included with some packages, e.g. \textsf{bbm} or \textsf{mathbbol}, but I will leave that for you as end user to decide\footnote{Personally, I do not like these solutions.}.\todo{The multiport option should ignore lower case symbols and just print them with normalfont}
+\begin{dispExample*}{tikzdocexample}
+\node [bge={MSe}{multiport}];
+\node at (1,0) [bge={\mathbb{MS}e}{}];
+\node at (2,0) [bge={MSf}{multiport}];
+\node at (3,0) [bge={\mathbb{MS}f}{}];
+\end{dispExample*}
+        \end{xbgkey}
+        
+        \begin{xbgkey}{n}{=\meta{order}}{no default, initially \texttt{1}}
+            The order of the bond graph element can be given with the \texttt{n=}\marg{order} option. This will be added to the node contents as subscript, if unequal to the default (1).
+\begin{dispExample*}{tikzdocexample}
+\node (I) [bge={I}{multiport,n=6}];
+\draw[bond={multi,effort out}] (-2,0) -- (I);
+\end{dispExample*}
+        \end{xbgkey}
+        
+        \begin{xbgkey}{word}{=true\textbar false}{default \texttt{true}, initially \texttt{false}}
+            Following convention, word bond graph elements are depicted as drawn ellipsoids with a descriptive name. This can be achieved with this key.
+\begin{dispExample*}{tikzdocexample}
+\node (motor) [bge={Motor}{word}];
+\node (wheel) [right=of motor,bge={Wheel}{word}];
+\node [right=of wheel,bge={RIGIDBODY}{multiport,n=6,word}];
+\end{dispExample*}
+        \end{xbgkey}
+        
+        \begin{xbgkey}{label colon}{}{default \texttt{true}, initially \texttt{false}}
+            Common practice when drawing bond graphs is using a colon between a (non-junction) element and its label. This can be achieved in two ways when using this package.
+\begin{dispExample*}{tikzdocexample}
+\node [bge={C}{},label=north:$ \frac{1}{k} $];
+\node at (1,0) [bge={C}{},pin=north:$ \frac{1}{k} $];
+\node at (2,0) [bge={C}{label colon},label=north:$ \frac{1}{k} $];
+\end{dispExample*}
+            The \texttt{pin} method is shorter, but the \refKey{/xbg/label colon} key can also be set in a scope.
+        \end{xbgkey}
+        
+    \subsection{Mux behavior}
+        
+        The following keys are used when drawing the \refShp{mux} shape. They can be given to the \refKey{/tikz/mux} style as arguments.
+        
+        \begin{xbgkey}{mux inputs}{=\meta{integer}}{no default, initially \texttt{1}}
+            This key sets the number of inputs of the \refShp{mux} element.
+        \end{xbgkey}
+        
+        \begin{xbgkey}{mux outputs}{=\meta{integer}}{no default, initially \texttt{1}}
+            This key sets the number of outputs of the \refShp{mux} element.
+        \end{xbgkey}
+        
+        \begin{xbgkey}{mux io spacing}{=\meta{dimension}}{no default, initially \texttt{5mm}}
+            This key sets the distance between two consecutive in- or outputs. Together with the maximum number of in-/outputs, it also determines the height of the \refShp{mux} element.
+        \end{xbgkey}
+        
+\section{Miscellaneous \pgfpkg definitions}
+        
+    \begin{docDecoration}{bond}{}
+        This decoration is used to determine the direction of the arrow tip barb. It uses the \docAuxCommand*{pgfdecoratedangle} in a \texttt{case} statement. Note that \docAuxCommand*{pgfdecoratedangle} holds the angle of the \emph{start} of the current path segment, so if the last segment of a path is curved, it might lead to a incorrect direction for the barb. 
+    \end{docDecoration}
+    
+    \begin{docShape}{mux}{}
+        The \refShp{mux} is basically the same as the \texttt{rectangle} shape, with some additional anchors. For every in- and output an anchor is defined, placed based on the \refKey{/xbg/mux io spacing} key. See the following example for the placement of the anchors. The grid is drawn to see that the length between two consecutive in- or outputs is exactly the given spacing (\texttt{15mm}). \texttt{m.50} and \texttt{m.230} are examples of border anchors.\todo{The \texttt{mux} shape is actually just a special case of the \texttt{block} shape and does not need a separate shape.}
+        
+\begin{dispExample*}{tikzdocexample}
+\node[mux={mux inputs=2,mux outputs=4,mux io spacing=15mm},mux example];
+\draw[help lines,step=2.5mm] (-1cm,-3cm) grid (1cm,3cm);
+\foreach \anchor/\placement in {input 1/left,input 2/left,output 1/right,output 2/right, output 3/right,output 4/right,north west/above left, north/above, north east/above right,west/left, center/above, east/right,south west/below left, south/below, south east/below right,50/right, 230/left}{
+    \draw[shift=(m.\anchor)] plot[mark=x] coordinates{(0,0)}
+        node[\placement] {\scriptsize\texttt{(m.\anchor)}};
+}
+\end{dispExample*}
+         The default dimensions of the \refShp{mux} shape are \texttt{2.5pt} width and \texttt{max(mux inputs,mux outputs)*mux io spacing} height.
+    \end{docShape}
+    
+    \begin{docShape}{block}{}
+        The \refShp{block} shape is only slightly different from the \texttt{rectangle} shape. It also creates additional anchors for in- and outputs, just like the \refShp{mux} shape.
+        \tikzset{
+            shape example/.style={
+                line width = 5mm,
+                draw=black!40!,
+                text=black!40!,
+                inner ysep=10mm,
+                inner xsep=30mm,
+                fill=yellow!40!,
+            }}
+\begin{dispExample*}{tikzdocexample}
+\Huge
+\node[name=b,shape=block,shape example,/xbg/block/inputs=2,/xbg/block/outputs=4,/xbg/block/io spacing=10mm] {Block\vrule width 1pt height 2cm};
+\foreach \anchor/\placement in {north west/above left, north/above, north east/above right, west/left, center/above, east/right, mid west/right, mid/above, mid east/left, base west/left, base/below, base east/right, south west/below left, south/below, south east/below right, text/left, 10/right, 130/above, input 1/left, input 2/left, output 1/right, output 2/right, output 3/right, output 4/right}
+    \draw[shift=(b.\anchor)] plot[mark=x] coordinates{(0,0)}
+        node[\placement] {\scriptsize\texttt{(b.\anchor)}};
+\end{dispExample*}
+    \end{docShape}
+    
+    \begin{docArrowTip}{Single Bond Barb}{}
+        The \refArr{Single Bond Barb} arrow tip is the default arrow tip for a bond. It is very similar to the \texttt{Straight Barb} arrow tip that is included in the \Tikz library \texttt{arrows.meta}, except that the outer hull points are described more accurately, and its size is based on some of the keys of this package. Also the default is directed left, and there is no double barb version. 
+        
+        The coordinates needed to draw the arrows are calculated using some simple trigonometry. The dimensions which are used to determine the coordinates are shown in the following example, where $ a $, $ b $, and $ \phi $ denote \refKey{/xbg/multi bond width}, \refKey{/xbg/single bond width}, and  \refKey{/xbg/barb angle}, which are \texttt{32mm}, \texttt{8mm}, and \texttt{40} respectively for this and the following example.
+        
+        \pgfmathsetlengthmacro{\tipx}{\singlebondwidth}
+        \pgfmathsetlengthmacro{\tipy}{0pt}
+        \pgfmathsetlengthmacro{\backx}{-1/tan(\barbangle)*(\multibondwidth-0.5*cos(\barbangle)*\singlebondwidth) + \singlebondwidth}
+        \pgfmathsetlengthmacro{\backy}{\multibondwidth - 0.5*cos(\barbangle)*\singlebondwidth}
+        \pgfmathsetlengthmacro{\hullpointx}{\backx + 0.5*\singlebondwidth*sin(\barbangle)}
+        \pgfmathsetlengthmacro{\hullpointy}{\multibondwidth}
+        \pgfmathsetlengthmacro{\tipendx}{0.5*\singlebondwidth/tan(\barbangle/2) + \tipx}
+        \pgfmathsetlengthmacro{\tipendy}{-0.5*\singlebondwidth}
+        
+        \begin{tikzpicture}
+            \coordinate (tip) at (\tipx,\tipy);
+            \coordinate (back) at (\backx,\backy);
+            \coordinate (tipend) at (\tipendx,\tipendy);
+            \coordinate (hullpoint) at (\hullpointx,\hullpointy);
+            
+            \draw[blue] (-5,0) -- (0,0);
+            \draw[red] (0,0) -- (tip) -- (back);
+            \draw[blue,opacity=.5,line width=\singlebondwidth] (-5,0) -- (0,0);
+            \draw[red, opacity=.5,line width=\singlebondwidth] (0,0) -- (tip) -- (back);
+            
+            \foreach \coord/\placement in {{(0,0)}/below,tip/below,tipend/below,back/above left,hullpoint/above}{
+                \draw[shift={(\coord)}] plot[mark=x] coordinates{(0,0)}
+                    node[\placement,example note] {\coord};
+            }
+            
+            \begin{scope}[<->,every node/.style={example note,midway}]
+                \draw (\tipendx,\hullpointy) -- (\tipendx,\tipy) node[right]{$ a $};
+                \draw (\tipendx+5mm,4mm) -- (\tipendx+5mm,\tipendy) node[right]{$ b $};
+                \draw (tip) ++(-1,0) arc (180:180-\barbangle:1) node[left]{$ \phi $};
+            \end{scope}
+            
+            \begin{scope}[help lines]
+                \draw (hullpoint) -- (\tipendx+1mm,\hullpointy);
+                \draw (tip) -- (\tipendx+1mm,\tipy);
+                \draw (tipend) -- (\tipendx+6mm,\tipendy);
+                \draw (0,4mm) -- (\tipendx+6mm,4mm);
+            \end{scope}
+        \end{tikzpicture}
+    \end{docArrowTip}
+    
+    \begin{docArrowTip}{Multi Bond Barb}{}
+        The \refArr{Multi Bond Barb} is slightly complexer, because the macro \cs{pgflinewidth} now does not hold single bond width and the origin of this arrow definition is located at the center of the endpoint of the line. Otherwise the idea is the same, see \cref{imp:arrowtips} for the implementation.
+        
+        \pgfmathsetlengthmacro{\startx}{0pt}
+        \pgfmathsetlengthmacro{\starty}{-0.5*\multibondwidth+0.5*\singlebondwidth}
+        \pgfmathsetlengthmacro{\tipx}{(\multibondwidth-\singlebondwidth)/tan(\barbangle)}
+        \pgfmathsetlengthmacro{\tipy}{-0.5*\multibondwidth + 0.5*\singlebondwidth}
+        \pgfmathsetlengthmacro{\backy}{1.5*\multibondwidth - 0.5*\singlebondwidth*cos(\barbangle)}
+        \pgfmathsetlengthmacro{\backx}{-(\backy+\tipy)/tan(\barbangle)}
+        \pgfmathsetlengthmacro{\hullpointx}{\backx + 0.5*\singlebondwidth*sin(\barbangle)}
+        \pgfmathsetlengthmacro{\hullpointy}{1.5*\multibondwidth}
+        \pgfmathsetlengthmacro{\tipendx}{0.5*\singlebondwidth/tan(\barbangle/2) + \tipx}
+        \pgfmathsetlengthmacro{\tipendy}{-0.5*\multibondwidth}
+        \begin{tikzpicture}
+            
+            \coordinate (start) at (\startx,\starty);
+            \coordinate (tip) at (\tipx,\tipy);
+            \coordinate (back) at (\backx,\backy);
+            \coordinate (tipend) at (\tipendx,\tipendy);
+            \coordinate (hullpoint) at (\hullpointx,\hullpointy);
+            
+            \draw[line width=\multibondwidth-2*\singlebondwidth,green,opacity=.5] (0,0) -- (-5,0);
+            
+            \fill[orange,opacity=.5] (start) -- (tip) -- (\startx,-\starty) -- cycle;
+            
+            \begin{scope}[line width = \singlebondwidth,opacity=.5]
+                \draw[blue] (0,\starty) -- (-5,\starty); 
+                \draw[blue] (0,-\starty) -- (-5,-\starty); 
+                
+                \draw[red] (start) -- (tip) -- (back);
+            \end{scope}
+            
+            \draw[blue] (0,\starty) -- (-5,\starty); 
+            \draw[blue] (0,-\starty) -- (-5,-\starty); 
+            \draw[red] (start) -- (tip) -- (back);
+            
+            \foreach \coord/\placement in {{(0,0)}/below,start/below,tip/below,tipend/below,back/above left,hullpoint/above}{
+                \draw[shift={(\coord)}] plot[mark=x] coordinates{(0,0)}
+                    node[\placement,example note] {\coord};
+            }
+            
+            \begin{scope}[help lines]
+                \draw (hullpoint) -- (\tipendx-10mm,\hullpointy);
+                \draw (tipend) -- (\tipendx+3mm,\tipendy);
+                \draw (0,0) -- (\tipendx-10mm,0);
+                \draw (0,\starty+0.5*\singlebondwidth) -- (\tipendx+3mm,\starty+0.5*\singlebondwidth);
+                \draw (-5,0.5*\multibondwidth) -- ++(-6mm,0);
+                \draw (-5,-0.5*\multibondwidth) -- ++(-6mm,0);
+            \end{scope}
+            
+            \begin{scope}[<->,every node/.style={example note,midway}]
+                \draw (\tipendx-11mm,\hullpointy) -- ++(0,-1.5*\multibondwidth) node[right]{$ 1.5a $};
+                \draw (\tipendx+2mm,\starty + 4mm) -- (\tipendx+2mm,\tipendy) node[right]{$ b $};
+                \draw (tip) ++(-1.75,0) arc (180:180-\barbangle:1.75) node[left]{$ \phi $};
+                \draw (-5,0.5*\multibondwidth) ++(-5mm,0) -- ++(0,-\multibondwidth) node[left]{$ a $};
+            \end{scope}
+        \end{tikzpicture}
+        
+        The green area is the second line drawn by \Tikz to simulate the effect of two parallel lines. The orange area (which over-(under)-laps the arrow tip lines) is drawn by the arrow tip with the same color as the green area to maintain a concise tip, even if that color is not the same as the background.
+    \end{docArrowTip}
+    
+    
+\section{Examples}
+    
+\begin{dispExample*}{tikzdocexample}
+\node (V)  [bge={\mathbb{MS}e}{},pin={west:$ V_{abc} $}];
+\node (i)  [right=of V,bge={1}{},label={300:$ i_{abc} $}];
+\node (Rs) [above=of i,bge={R}{},pin={north:$ R_s $}];
+\node (Ls) [below=of i,bge={L}{},pin={south:$ L_s $}];
+\node (Kl) [right=of i,bge={MGY}{},pin={south:$ K\Lambda(\theta_e) $}];
+\node (mx) [right=of Kl,mux={mux outputs=3}];
+\node (we) [right=of mx,bge={1}{},label={300:$ \omega_e $}];
+\node (1p) [right=of we,bge={TF}{},pin={south:$ \frac{1}{p} $}];
+\node (wm) [right=of 1p,bge={1}{},label={300:$ \omega_m $}];
+\node (Dr) [above=of wm,bge={R}{},pin={north:$ D_r $}];
+\node (Jr) [below=of wm,bge={I}{},pin={south:$ J_r $}];
+
+\begin{scope}[bond={multi}]
+    \draw[bond={effort out}] (V) -- (i);
+    \draw[bond={effort in}] (i) -- (Rs);
+    \draw[bond={effort out}] (i) -- (Ls);
+    \draw[bond={effort in}] (i) -- (Kl);
+    \draw[bond={effort out}] (Kl) -- (mx.input 1);
+\end{scope}
+
+\foreach \i in {1,2,3}{
+    \draw[bond={effort out}] (mx.output \i) -- ++ (0.8,0) -- (we);
+}
+\draw[bond={effort out}] (we) -- (1p);
+\draw[bond={effort out}] (1p) -- (wm);
+\draw[bond={effort out}] (wm) -- (Jr);
+\draw[bond={effort in}] (wm) -- (Dr);
+\end{dispExample*}
+
+\begin{dispExample*}{tikzdocexample}
+\tikzset{
+    io label/.style={text=white,font=\tiny,inner sep=0.5pt},
+    output label/.style={io label,fill=blue,pos=0,right},
+    input label/.style={io label,fill=red,pos=1,left},
+}
+\foreach \outs [count=\i from 0,count=\j from 1,remember=\outs as \ins (initially 1)] in {4,3,8,5,1}{
+    \node at (\j,0) (mux\j) [mux={mux inputs=\ins,mux outputs=\outs}];
+    \foreach \k in {1,...,\ins}{
+        \ifnum\i=0\relax
+            \draw (0,0) -- (mux\j.input \k) node[input label]{I\k};
+        \else
+            \draw (mux\i.output \k) -- (mux\j.input \k) node[output label]{O\k} node[input label]{I\k};
+        \fi
+    }
+}
+\draw (mux5.output 1) -- ++(1,0) node[output label]{O1};
+\end{dispExample*}
+
+\begin{dispExample*}{tikzdocexample}
+\draw[line width=0.8pt] (-1,-1) 
+    -- ++(0,0.5)
+    -- node[voltage source,label={above:$ u $}]{} ++(0,1)
+    -- node[current,label={above:$ i $}]{} ++(0,0.5)
+    -- node[inductor,label={above:$ L $}]{} ++(2,0) 
+    -- node[resistor,label={above:$ R $}]{} ++(0,-2) 
+    -- node[capacitor,label={above:$ C $}]{} cycle;
+\begin{scope}[shift={(5,0)}]
+    \node (u) at (-1.5, 0.0) [bge={Se}{},pin={left:$ u $}];
+    \node (i) at ( 0.0, 0.0) [bge={1}{},label={300:$ i $}];
+    \node (c) at ( 0.0, 1.5) [bge={C}{},pin={above:$ C $}];
+    \node (r) at ( 1.5, 0.0) [bge={R}{},pin={right:$ R $}];
+    \node (l) at ( 0.0,-1.5) [bge={L}{},pin={below:$ L $}];
+    \draw[bond={effort out}] (u) -- (i);
+    \draw[bond={effort in}] (i) -- (c);
+    \draw[bond={effort in}] (i) -- (r);
+    \draw[bond={effort out}] (i) -- (l);
+\end{scope}
+\end{dispExample*}
+
+\begin{dispExample*}{tikzdocexample}
+\tikzset{block/.append style={rounded corners=2pt,minimum size=8mm,fill=black!10!}}
+\node[block={inputs=2,outputs=2,flip,io spacing=7.5mm},minimum size=14mm] (G) {$ G $};
+\node[block,below=0.5 of G] (K) {$ K $};
+\node[signalname,left=of G.output 1] (z) {$ z $};
+\coordinate[left=0.5 of G.output 2] (left);
+\node[signalname,right=of G.input 1] (w) {$ w $};
+\coordinate[right=0.5 of G.input 2] (right);
+\begin{scope}[->]
+    \draw (w) -- (G.input 1);
+    \draw (G.output 1) -- (z);
+    \draw (K) -- (K-|right) -- node[right]{$ u $} (right) -- (G.input 2);
+    \draw (G.output 2) -- (left) -- node[left]{$ y $} (K-|left) -- (K);
+\end{scope}
+\end{dispExample*}
+
+\section{Change history}
+    
+    \begin{itemize}
+        \item v0.0.1 (2018/05/02)
+        \begin{itemize}
+            \item Initial version
+        \end{itemize}
+        \item v0.0.2 (2018/05/16)
+        \begin{itemize}
+            \item Changed to \textsf{tcolorbox} documentation style
+            \item Added documentation for various keys
+        \end{itemize}
+        \item v0.1.0 (2018/05/18)
+        \begin{itemize}
+            \item Added \textsf{iconicdiagrams} library
+        \end{itemize}
+        \item v0.1.2 (2018/06/05)
+        \begin{itemize}
+            \item Added initial \textsf{blockdiagrams} library
+            \item Removed \textsf{xparse} package dependancy from \textsf{iconicdiagrams} library
+            \item Added \texttt{flip} option for blocks in \textsf{blockdiagram} library
+            \item Made sign placement around \texttt{sum} block dependent of number of signs
+        \end{itemize}
+    \end{itemize}
+%</xbg-doc-main>
+%<*xbg-doc-settings>
+\usepackage[utf8]{inputenc}
+\usepackage{filecontents}
+\usepackage{xbondgraphs}
+\usepackage{xspace}
+\usepackage{mathpazo}
+\usepackage{booktabs}
+\usepackage{tabu}
+\usepackage{longtable}
+\usepackage{subcaption}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{tcolorbox}
+\usepackage[noabbrev]{cleveref}
+
+\geometry{margin=1in}
+
+\pgfmathsetlengthmacro{\multibondwidth}{32mm}
+\pgfmathsetlengthmacro{\singlebondwidth}{8mm}
+\pgfmathsetmacro{\barbangle}{40}
+
+\hyphenation{bond-graphs x-bond-graphs}
+\newcommand\textvtt[1]{{\normalfont\fontfamily{cmvtt}\selectfont #1}}
+\renewcommand{\MacroFont}{\color{black!70!blue}\small\ttfamily}
+
+\newcounter{todos}\setcounter{todos}{0}
+\newcommand{\todolabel}{\textcolor{black}{\textbf{To do}}\xspace}
+\newcommand{\todo}[1]{\stepcounter{todos}\marginpar{\raggedleft\hyperref[sec:todolist]{\todolabel (\thetodos)}}\phantomsection\addcontentsline{tdo}{subsection}{\thetodos. #1}}
+\makeatletter
+\newcommand{\listoftodos}{\phantomsection\section*{To-do list}\addcontentsline{toc}{section}{To-do list}\label{sec:todolist}\@starttoc{tdo}}
+\makeatother
+
+\usetikzlibrary{positioning,spy,graphs}
+\tcbuselibrary{documentation,breakable}
+\usexbglibrary{all}
+
+\iffalse
+% Tikz externalizing
+\usetikzlibrary{external}
+\tikzexternalize[
+    prefix={figures/},
+    only named,
+]
+% FOR EXTERNALIZING
+\pgfkeys{/pgf/images/include external/.code=\includegraphics{#1}}
+
+% FOR EXPORTING BITMAP IMAGES
+\tikzset{
+	export as png/.style={
+		external/system call/.add={}{
+			; convert -density 300 -transparent white "\image.pdf" "\image.png"
+		}
+	}
+}
+\fi
+
+\newcommand\Tikz{{\normalfont Ti\textit{k}Z}\xspace}
+\newcommand\pgfpkg{PGF\xspace}
+\newcommand\xbondgraphs{\textsf{xbondgraphs}\xspace}
+\newcommand\bondgraphs{\textsf{bondgraphs}\xspace}
+\newcommand\pgfkeyspkg{\textsf{pgfkeys}\xspace}
+\newcommand\amsfonts{\textsf{amsfonts}\xspace}
+\let\origLaTeX\LaTeX
+\def\LaTeX{\origLaTeX\xspace}
+\def\cmark{\ding{51}}
+\def\xmark{\ding{55}}
+\newcommand{\colorpreview}[1]{\tikz{\fill[#1] (0,0) rectangle (0.55em,0.55em);}}
+
+\captionsetup{labelfont=bf,font=small,labelsep=endash}
+\captionsetup[subfigure]{font=footnotesize}
+
+\hypersetup{
+    pageanchor,
+    colorlinks,
+}
+
+\tikzset{
+    > = stealth,
+    arrow tip demonstration/.style={red,opacity=.75},
+    causal stroke demonstration/.style={blue,opacity=.75},
+    arrow tip line/.style={green!40!black,line width = 0.5pt},
+    mux example/.style={name=m,minimum width=20mm,fill=red,opacity=.75},
+    example note/.style={font=\scriptsize\ttfamily},
+}
+
+\makeatletter
+\pgfkeys{/tcb/.cd,
+    doc head decoration/.style={doc@head@decoration/.style={#1}},
+    doc head arrow tip/.style={doc@head@arrowtip/.style={#1}},
+    doc head shape/.style={doc@head@shape/.style={#1}},
+    color decoration/.store in=\kvtcb@col@decoration,
+    color arrow tip/.store in=\kvtcb@col@arrowtip,
+    color shape/.store in=\kvtcb@col@shape,
+    before doc body decoration/.store in=\kvtcb@doc@body@decoration@before,
+    after doc body decoration/.store in=\kvtcb@doc@body@decoration@after,
+    before doc body arrow tip/.store in=\kvtcb@doc@body@arrowtip@before,
+    after doc body arrow tip/.store in=\kvtcb@doc@body@arrowtip@after,
+    before doc body shape/.store in=\kvtcb@doc@body@shape@before,
+    after doc body shape/.store in=\kvtcb@doc@body@shape@after,
+    /tcb/doclang/.cd,
+        decoration/.store in=\kvtcb@text@decoration,
+        decorations/.store in=\kvtcb@text@decorations,
+        arrow tip/.store in=\kvtcb@text@arrowtip,
+        arrow tips/.store in=\kvtcb@text@arrowtips,
+        shape/.store in=\kvtcb@text@shape,
+        shapes/.store in=\kvtcb@text@shapes,
+}
+\def\tcb@Print@Dec#1{\textcolor{\kvtcb@col@decoration}{\tcb@doc@bfseries\tcb@scantokens{#1}}}
+\def\tcb@Print@Arr#1{\textcolor{\kvtcb@col@arrowtip}{\tcb@doc@bfseries\tcb@scantokens{#1}}}
+\def\tcb@Print@Shp#1{\textcolor{\kvtcb@col@shape}{\tcb@doc@bfseries\tcb@scantokens{#1}}}
+\newrobustcmd{\tcbIndexPrintDecCA}[1]{\tcb@Index@Print@CA{#1}{\kvtcb@col@decoration}{\kvtcb@text@decoration}}
+\newrobustcmd{\tcbIndexPrintDecC}[1]{\tcb@Index@Print@C{#1}{\kvtcb@col@decoration}}
+\newrobustcmd{\tcbIndexPrintArrCA}[1]{\tcb@Index@Print@CA{#1}{\kvtcb@col@arrowtip}{\kvtcb@text@arrowtip}}
+\newrobustcmd{\tcbIndexPrintArrC}[1]{\tcb@Index@Print@C{#1}{\kvtcb@col@arrowtip}}
+\newrobustcmd{\tcbIndexPrintShpCA}[1]{\tcb@Index@Print@CA{#1}{\kvtcb@col@shape}{\kvtcb@text@shape}}
+\newrobustcmd{\tcbIndexPrintShpC}[1]{\tcb@Index@Print@C{#1}{\kvtcb@col@shape}}
+\def\tcb@index@Dec#1{\iftcb@doc@toindex\kvtcb@index@command{#1\idx@actual\tcbIndexPrintDecCA{#1}}\kvtcb@index@command{\kvtcb@text@decorations\idx@level#1\idx@actual\tcbIndexPrintDecC{#1}}\fi}
+\def\tcb@index@Arr#1{\iftcb@doc@toindex\kvtcb@index@command{#1\idx@actual\tcbIndexPrintArrCA{#1}}\kvtcb@index@command{\kvtcb@text@arrowtips\idx@level#1\idx@actual\tcbIndexPrintArrC{#1}}\fi}
+\def\tcb@index@Shp#1{\iftcb@doc@toindex\kvtcb@index@command{#1\idx@actual\tcbIndexPrintShpCA{#1}}\kvtcb@index@command{\kvtcb@text@shapes\idx@level#1\idx@actual\tcbIndexPrintShpC{#1}}\fi}
+\newenvironment{docDecoration}[3][]{\tcbset{#1}
+    \begin{tcb@manual@entry}%
+    \begin{tcb@doc@head}{doc@head@decoration,doc description={decoration}}%
+    \tcb@Print@Dec{#2}\tcb@index@Dec{#2}\protected@edef\@currentlabel{#2}\label{dec:#2}{\ttfamily #3}%
+    \tcb@doc@do@description%
+    \end{tcb@doc@head}\nobreak\tcbset{before upper=}\kvtcb@doc@body@decoration@before\ignorespaces}%
+    {\ifvmode\else\unskip\fi\kvtcb@doc@body@decoration@after\end{tcb@manual@entry}}
+\newenvironment{docArrowTip}[3][]{\tcbset{#1}
+    \begin{tcb@manual@entry}%
+    \begin{tcb@doc@head}{doc@head@arrowtip,doc description={arrow tip}}%
+    \tcb@Print@Arr{#2}\tcb@index@Arr{#2}\protected@edef\@currentlabel{#2}\label{arr:#2}{\ttfamily #3}%
+    \tcb@doc@do@description%
+    \end{tcb@doc@head}\nobreak\tcbset{before upper=}\kvtcb@doc@body@arrowtip@before\ignorespaces}%
+    {\ifvmode\else\unskip\fi\kvtcb@doc@body@arrowtip@after\end{tcb@manual@entry}}
+\newenvironment{docShape}[3][]{\tcbset{#1}
+    \begin{tcb@manual@entry}%
+    \begin{tcb@doc@head}{doc@head@shape,doc description={shape}}%
+    \tcb@Print@Shp{#2}\tcb@index@Shp{#2}\protected@edef\@currentlabel{#2}\label{shp:#2}{\ttfamily #3}%
+    \tcb@doc@do@description%
+    \end{tcb@doc@head}\nobreak\tcbset{before upper=}\kvtcb@doc@body@shape@before\ignorespaces}%
+    {\ifvmode\else\unskip\fi\kvtcb@doc@body@shape@after\end{tcb@manual@entry}}
+\newcommand{\refLib}[1]{\tikz[baseline=(node.base)]{\node[draw=orange,fill=orange!20!,name=node,inner sep=1.5pt]{#1};}}
+
+
+\definecolor{Decoration}{RGB}{23 55 83}
+\definecolor{Arrow Tip}{RGB}{158 0 89}
+\definecolor{Shape}{RGB}{219 80 74}
+\definecolor{Key}{RGB}{56 134 151}
+\definecolor{Color}{RGB}{37 19 81}
+
+\pgfkeys{/tcb/.cd,
+    doc head/.append style={doc head decoration={#1},doc head arrow tip={#1},doc head shape={#1}},
+    doc head decoration={},
+    doc head arrow tip={},
+    doc head shape={},
+    before doc body decoration={},
+    after doc body decoration={},
+    before doc body arrow tip={},
+    after doc body arrow tip={},
+    before doc body shape={},
+    after doc body shape={},
+    color decoration=Decoration,
+    color key=Key,
+    color color=Color,
+    color arrow tip=Arrow Tip,
+    color shape=Shape,
+}
+\pgfkeys{/tcb/doclang/.cd,
+    decoration=decoration,
+    decorations=Decorations,
+    arrow tip=arrow tip,
+    arrow tips=Arrow tips,
+    shape=shape,
+    shapes=Shapes,
+}
+\def\refDec{\tcb@ref@doc{dec}}
+\def\refArr{\tcb@ref@doc{arr}}
+\def\refShp{\tcb@ref@doc{shp}}
+
+\makeatother
+
+\tcbset{
+    doc head template/.style={boxsep=2pt,interior style={fill,left color=#1!5!white, right color = #1!25!white}},
+    doc head key={doc head template={Key}},
+    doc head decoration={doc head template={Decoration}},
+    doc head arrow tip={doc head template={Arrow Tip}},
+    doc head shape={doc head template={Shape}},
+    doc head command={doc head template={Definition}},
+    index colorize,
+    verbatim ignore percent,
+    docexample/.style={
+        colback/.forward to=/xbg/background color,
+        colframe=blue!80!,
+        colback=blue!10!,
+        sharp corners,
+        rounded corners=northeast,
+        breakable,
+        pad at break=0.5mm,
+        enhanced jigsaw,
+    },
+    tikzdocexample/.style={
+        before lower={\begin{tikzpicture}},
+        after lower={\end{tikzpicture}},
+    },
+    keyimplementation/.style={
+        doc left = 0em,
+        doc head={},
+    },
+}
+
+\tcbmakedocSubKey{XBGkey}{XBG}
+\tcbmakedocSubKey{bondkey}{xbondgraphs/bond}
+\tcbmakedocSubKey{elementkey}{xbondgraphs/element}
+\tcbmakedocSubKey{muxkey}{mux}
+\tcbmakedocSubKey{xbgkey}{xbg}
+%</xbg-doc-settings>
 %       \fi
 % \Finale
 \endinput

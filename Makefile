@@ -23,20 +23,19 @@ sty:
 	@ printf ".sty files finished \n"
 
 archive:
-	@ printf "Generating archive of installation files ...\n"
-	tar -czf $(ARCHIVE_NAME) $(ARCHIVE_CONTENTS)
-	@ printf "Installation files archived \n"
+	@printf "Creating archive ... \n"
+	@printf "DONE, actually done nothing..."
 
 cleanaux:
 	@ printf "Cleaning auxilliary files ... \n"
 	rm -f $(NAME).{blg,bbl,fdb_latexmk,synctex.gz,fls,hd,log,aux,tdo,toc,ind,gls,ilg,idx,out,tcbtemp,glo}
-	rm -f xbg.*.tmp.*
+	rm -f xbg.*
 	rm -f *.{log,aux}
 	@ printf "Cleaning auxilliary files finshed \n"
 
 clean: cleanaux
 	@ printf "Cleaning remaining files ... \n"
 	# rm -f $(NAME).pdf
-	rm -f $(NAME)*.sty
+	rm -f $(NAME).sty
 	rm -f xbg*code*
 	@ printf "Cleaning finished \n"

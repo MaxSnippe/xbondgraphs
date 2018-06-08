@@ -1,7 +1,8 @@
 ## Package specific files
-xbg.*.tmp.tex
-xbg.*.code.tex
+xbg.tmp.*.tex
+xbg.code.*.tex
 *.bat
+Makefile
 
 ## Core latex/pdflatex auxiliary files:
 *.aux
