@@ -10,8 +10,6 @@ The latest version of this license is in
 and version 1.3 or later is part of all distributions of LaTeX
 version 2005/12/01 or later.
 
-This work has the LPPL maintenance status 'maintained'.
-
-The Current Maintainer of this work is M.J.W. Snippe
+This work has the LPPL maintenance status 'author-maintained'.
 
 This work consists of the files found at https://github.com/MaxSnippe/xbondgraphs.
