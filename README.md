@@ -47,17 +47,17 @@ This package is based on the [bondgraphs] package and attempts to cover all its 
 ### Functionality comparison
 The following table shows a function comparison between the three packages.
 
-Function                                 | [bondgraph]       | [bondgraphs]        | [xbondgraphs]
------------------------------------------|:------------------:|:------------------:|:------------------:
-Automatic arrow barb direction           | :x:                | :heavy_check_mark: | :heavy_check_mark:
-Single bond drawings                     | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark:
-In-line bonds and elements               | :x:                | :heavy_check_mark: | :heavy_check_mark:
-Multi bond drawings                      | :x:                | :white_check_mark: | :heavy_check_mark:
-Power (de-)mux element                   | :x:                | :x:                | :heavy_check_mark:
-Multi-segment bonds                      | :question:         | :x:                | :heavy_check_mark:
-Straight bond barb                       | :x:                | :heavy_check_mark: | :heavy_check_mark:
-Curly bond barb                          | :heavy_check_mark: | :heavy_check_mark: | :x:
-Optional colon between element and label | :x:                | :x:                | :heavy_check_mark:
+Function                                 | [bondgraph]       | [bondgraphs]              | [xbondgraphs]
+-----------------------------------------|:------------------:|:------------------------:|:------------------:
+Automatic arrow barb direction           | :x:                | :heavy_check_mark:       | :heavy_check_mark:
+Single bond drawings                     | :heavy_check_mark: | :heavy_check_mark:       | :heavy_check_mark:
+In-line bonds and elements               | :x:                | :heavy_check_mark:       | :heavy_check_mark:
+Multi bond drawings                      | :x:                | :heavy_multiplication_x: | :heavy_check_mark:
+Power (de-)mux element                   | :x:                | :x:                      | :heavy_check_mark:
+Multi-segment bonds                      | :question:         | :x:                      | :heavy_check_mark:
+Straight bond barb                       | :x:                | :heavy_check_mark:       | :heavy_check_mark:
+Curly bond barb                          | :heavy_check_mark: | :heavy_check_mark:       | :x:
+Optional colon between element and label | :x:                | :x:                      | :heavy_check_mark:
 
 
 
