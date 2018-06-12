@@ -18,7 +18,7 @@ The `xbondgraphs` package
 <!-- /MDTOC -->
 
 ## Installing
-The package can be installed by downloading it as `.zip` archive from [the Github page][xbondgraphs], extracting it, and using the following commands on the command line from the extracting location<sup>[1](footnote1)</sup>:
+The package can be installed by downloading it as `.zip` archive from [the Github page][xbondgraphs], extracting it, and using the following commands on the command line from the extracting location<sup>[1](#footnote1)</sup>:
 
 ``` bash
 tex xbondgraphs.ins > xbondgraphs.log
@@ -77,7 +77,7 @@ Optional colon between element and label | :x:                | :x:             
 
 ## To-do list
 1. Both libraries are not very consistent with the main part of the package, this must be adjusted.
-2. Documentation must be written for both libraries<sup>[2](footnote2)</sup>.
+2. Documentation must be written for both libraries<sup>[2](#footnote2)</sup>.
 
 ## License
 Copyright &copy; 2018 M.J.W. Snippe
