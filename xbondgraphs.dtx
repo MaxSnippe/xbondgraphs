@@ -986,30 +986,24 @@
 			\draw (0,0.125) -- (0,-0.125);
 		},
 	},
-	friction/.style 2 args={
-		line component,
-		minimum height = 1cm,
-		minimum width = 1.5cm,
-		label={[label distance = 0cm]#2:#1},
-		path picture={%
-			\fill[pattern = north east lines] (-.5,1/3) rectangle (.5,1/2);
-			\fill[pattern = north east lines] (-.5,-1/3) rectangle (.5,-1/2);
-			\draw (-.5,1/3) -- (.5,1/3);
-			\draw (-.5,-1/3) -- (.5,-1/3);
-			\draw (-1/3+.1,1/6+.1) -- (-1/3-.1,1/6-.1)
-			(-1/3-.1,1/6+.1) -- (-1/3+.1,1/6-.1);
-			\draw (.1,1/6+.1) -- (-.1,1/6-.1)
-			(-.1,1/6+.1) -- (.1,1/6-.1);
-			\draw (1/3+.1,1/6+.1) -- (1/3-.1,1/6-.1)
-			(1/3-.1,1/6+.1) -- (1/3+.1,1/6-.1);
-			\draw (-1/3+.1,-1/6+.1) -- (-1/3-.1,-1/6-.1)
-			(-1/3-.1,-1/6+.1) -- (-1/3+.1,-1/6-.1);
-			\draw (.1,-1/6+.1) -- (-.1,-1/6-.1)
-			(-.1,-1/6+.1) -- (.1,-1/6-.1);
-			\draw (1/3+.1,-1/6+.1) -- (1/3-.1,-1/6-.1)
-			(1/3-.1,-1/6+.1) -- (1/3+.1,-1/6-.1);
-		}
-	},
+    friction/.style={
+        line component,
+        minimum height = 1cm,
+        minimum width = 1cm,
+        path picture={%
+            \foreach \i in {-0.6,-0.5,...,0.5}{
+                \draw[line width=0.5*\pgflinewidth] (\i,1/3) -- ++(45:0.5);
+                \draw[line width=0.5*\pgflinewidth] (-\i,-1/3) -- ++(45:-0.5);
+            }
+            \foreach \y in {1/6,-1/6}{
+                \draw (-0.5,2*\y) -- (0.5,2*\y);
+                \foreach \x in {-1/3,0,1/3}{
+                    \draw (\x + 0.1, \y + 0.1) -- (\x - 0.1, \y - 0.1)
+                        (\x - 0.1, \y + 0.1) -- (\x + 0.1, \y - 0.1);
+                }
+            }
+        }
+    },
 	mass/.style args={#1}{
 		node component,
 		minimum height = 1.1cm,
