@@ -7,18 +7,18 @@ The `xbondgraphs` package
 ## Table of contents
 <!-- MDTOC maxdepth:2 firsth1:2 numbering:0 flatten:0 bullets:1 updateOnSave:1 -->
 
-- [Table of contents](#Table-of-contents)   
-- [Installing](#Installing)   
-- [Functionality](#Functionality)   
-- [Alternatives](#Alternatives)   
-   - [Functionality comparison](#Functionality-comparison)   
-- [To-do list](#To-do-list)   
-- [License](#License)   
+- [Table of contents](#table-of-contents)   
+- [Installing](#installing)   
+- [Functionality](#functionality)   
+- [Alternatives](#alternatives)   
+   - [Functionality comparison](#functionality-comparison)   
+- [To-do list](#to-do-list)   
+- [License](#license)   
 
 <!-- /MDTOC -->
 
 ## Installing
-The package can be installed by downloading it as `.zip` archive from [the Github page][xbondgraphs], extracting it, and using the following commands on the command line from the extracting location<sup>[1](footnote1)</sup>:
+The package can be installed by downloading it as `.zip` archive from [the Github page][xbondgraphs], extracting it, and using the following commands on the command line from the extracting location<sup>[1](#footnote1)</sup>:
 
 ``` bash
 tex xbondgraphs.ins > xbondgraphs.log
@@ -77,7 +77,7 @@ Optional colon between element and label | :x:                | :x:             
 
 ## To-do list
 1. Both libraries are not very consistent with the main part of the package, this must be adjusted.
-2. Documentation must be written for both libraries<sup>[2](footnote2)</sup>.
+2. Documentation must be written for both libraries<sup>[2](#footnote2)</sup>.
 
 ## License
 Copyright &copy; 2018 M.J.W. Snippe
@@ -97,9 +97,9 @@ This work has the LPPL maintenance status 'author-maintained'.
 This work consists of the files found at https://github.com/MaxSnippe/xbondgraphs.
 
 ##### Footnotes
-<a id="footnote1"></a><sup>1</sup> The first `pdflatex` command uses the `--shell-escape` option to create an additional temporary pdf that contains a bond graph produced with the [bondgraphs] package, this package does not cooperate with the [xbondgraphs] package so it has to be compiled in a separate document. Generally it is good practice to *not* use this option, unless you know what you are doing.
+<a name="footnote1"></a><sup>1</sup> The first `pdflatex` command uses the `--shell-escape` option to create an additional temporary pdf that contains a bond graph produced with the [bondgraphs] package, this package does not cooperate with the [xbondgraphs] package so it has to be compiled in a separate document. Generally it is good practice to *not* use this option, unless you know what you are doing.
 
-<a id="footnote2"></a><sup>2</sup> The libraries might be replaced by separate packages later, but that is yet to be decided.
+<a name="footnote2"></a><sup>2</sup> The libraries might be replaced by separate packages later, but that is yet to be decided.
 
 [bondgraph]: https://ctan.org/pkg/bondgraph
 [bondgraphs]: https://ctan.org/pkg/bondgraphs
