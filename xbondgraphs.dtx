@@ -1532,16 +1532,32 @@
 \section{Basic usage}
     
     \subsection{Installation}
-        This package has not yet been included in popular \LaTeX distributions, and therefore can be installed only by downloading it as \texttt{.zip} archive from \href{https://github.com/MaxSnippe/xbondgraphs}{the Github page} and extracting it in the root of your TeXmf tree. The documentation files should be automatically placed in \texttt{\$TEXMF/doc/latex/xbondgraphs}, and the package code in \texttt{\$TEXMF/tex/latex/xbondgraphs}. The documentation files are:
-        * `xbondgraphs.pdf`
-        * `xbondgraphs.tex`
+        This package has not yet been included in popular \LaTeX distributions, and therefore can be installed only by downloading it as \texttt{.zip} archive from \href{https://github.com/MaxSnippe/xbondgraphs}{the Github page}, extracting it, and using the following commands on the command line from the extracting location\footnote{The first \texttt{pdflatex} command uses the \texttt{--shell-escape} option to create an additional temporary pdf that contains a bond graph produced with the \bondgraphs package, this package does not cooperate with the \xbondgraphs package so it has to be compiled in a separate document. Generally it is good practice to \emph{not} use this option, unless you know what you are doing.}:
         
+        \begin{dispListing}
+tex xbondgraphs.ins > xbondgraphs.log
+pdflatex -synctex=1 -interaction=nonstopmode --shell-escape xbondgraphs.dtx >> xbondgraphs.log
+pdflatex -synctex=1 -interaction=nonstopmode xbondgraphs.dtx >> xbondgraphs.log
+makeindex -q -s gglo.ist -o xbondgraphs.gls xbondgraphs.glo >> xbondgraphs.log
+makeindex -q xbondgraphs.idx >> xbondgraphs.log
+pdflatex -synctex=1 -interaction=nonstopmode xbondgraphs.dtx >> xbondgraphs.log
+pdflatex -synctex=1 -interaction=nonstopmode xbondgraphs.dtx >> xbondgraphs.log
+        \end{dispListing}
+        
+        The resulting files must be placed relative to the root of your \TeX tree. The documentation files should be placed in \verb|$TEXMF/doc/latex/xbondgraphs|, and the package code in \verb|$TEXMF/tex/latex/xbondgraphs|. The documentation files are:
+        \begin{itemize}
+            \item \texttt{xbondgraphs.pdf}
+        \end{itemize}
         The package code files are:
-        * `xbondgraphs.sty`
-        * `xbg.iconicdiagrams.code.tex`
-        * `xbg.blockdiagrams.code.tex`
+        \begin{itemize}
+            \item \texttt{xbondgraphs.sty}
+            \item \texttt{xbg.iconicdiagrams.code.tex}
+            \item \texttt{xbg.blockdiagrams.code.tex}
+        \end{itemize}
         
-        `\$TEXMF` is the root folder of your main TeX-tree. For MiKTeX users that is probably `C:/texmf/`, and for TeXLive users that is probably `/usr/local/texlive/<year>/texmf-dist/`.
+        \verb|$TEXMF| is the root folder of your main \TeX-tree. For MiK\TeX users that is probably \verb|C:/texmf/|, and for \TeX Live users that is probably \verb|/usr/local/texlive/<year>/texmf-dist/|.
+        
+        All the remaining files can be removed, but if you would like to install again later, the \texttt{xbondgraphs.ins} and \texttt{xbondgraphs.dtx} should be kept.
         
     \subsection{Libraries}
         Currently the \xbondgraphs package has two (still undocumented) libraries.
@@ -2197,26 +2213,6 @@ This text could use an in-line \bond{(0,0)--(1,0)} just for clarification. If th
 \tcbuselibrary{documentation,breakable}
 \usexbglibrary{all}
 
-\iffalse
-% Tikz externalizing
-\usetikzlibrary{external}
-\tikzexternalize[
-    prefix={figures/},
-    only named,
-]
-% FOR EXTERNALIZING
-\pgfkeys{/pgf/images/include external/.code=\includegraphics{#1}}
-
-% FOR EXPORTING BITMAP IMAGES
-\tikzset{
-	export as png/.style={
-		external/system call/.add={}{
-			; convert -density 300 -transparent white "\image.pdf" "\image.png"
-		}
-	}
-}
-\fi
-
 \newcommand\Tikz{{\normalfont Ti\textit{k}Z}\xspace}
 \newcommand\pgfpkg{PGF\xspace}
 \newcommand\xbondgraphs{\textsf{xbondgraphs}\xspace}
@@ -2224,7 +2220,9 @@ This text could use an in-line \bond{(0,0)--(1,0)} just for clarification. If th
 \newcommand\pgfkeyspkg{\textsf{pgfkeys}\xspace}
 \newcommand\amsfonts{\textsf{amsfonts}\xspace}
 \let\origLaTeX\LaTeX
+\let\origTeX\TeX
 \def\LaTeX{\origLaTeX\xspace}
+\def\TeX{\origTeX\xspace}
 \def\cmark{\ding{51}}
 \def\xmark{\ding{55}}
 \newcommand{\colorpreview}[1]{\tikz{\fill[#1] (0,0) rectangle (0.55em,0.55em);}}
@@ -2302,7 +2300,6 @@ This text could use an in-line \bond{(0,0)--(1,0)} just for clarification. If th
     \end{tcb@doc@head}\nobreak\tcbset{before upper=}\kvtcb@doc@body@shape@before\ignorespaces}%
     {\ifvmode\else\unskip\fi\kvtcb@doc@body@shape@after\end{tcb@manual@entry}}
 \newcommand{\refLib}[1]{\tikz[baseline=(node.base)]{\node[draw=orange,fill=orange!20!,name=node,inner sep=1.5pt]{#1};}}
-
 
 \definecolor{Decoration}{RGB}{23 55 83}
 \definecolor{Arrow Tip}{RGB}{158 0 89}

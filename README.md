@@ -97,7 +97,7 @@ This work has the LPPL maintenance status 'author-maintained'.
 This work consists of the files found at https://github.com/MaxSnippe/xbondgraphs.
 
 ##### Footnotes
-<a id="footnote1"></a><sup>1</sup> The first `pdflatex` command uses the `--shell-escape` option to create an additional temporary pdf that contains a bond graph produced with the [bondgraphs] package, this package does not cooperate with the [xbondgraphs] package so it has to be compiled in a separate document. Generally it is good practice to *not* use this option. 
+<a id="footnote1"></a><sup>1</sup> The first `pdflatex` command uses the `--shell-escape` option to create an additional temporary pdf that contains a bond graph produced with the [bondgraphs] package, this package does not cooperate with the [xbondgraphs] package so it has to be compiled in a separate document. Generally it is good practice to *not* use this option, unless you know what you are doing.
 
 <a id="footnote2"></a><sup>2</sup> The libraries might be replaced by separate packages later, but that is yet to be decided.
 
