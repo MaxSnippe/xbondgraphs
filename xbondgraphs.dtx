@@ -1180,47 +1180,6 @@
 		}
 	},
 }
-%    \end{macrocode}
-%               \subsection{Additional macros}
-%    \begin{macrocode}
-\tikzset{
-    numbered grid label/.code={
-        \tikzset{
-            gray,
-            font=\tiny,
-            inner ysep=0.5pt,
-            inner xsep=2.5pt,
-        }
-        \pgfkeys{
-            /pgf/number format/.cd,
-                fixed,
-                fixed zerofill=true,
-                precision=3,
-        }
-    },
-}
-
-\def\numgrid{\@ifnextchar[%
-    {\numgrid@i}{\numgrid@i[1]}%
-}
-\def\numgrid@i[#1]{\@ifnextchar[%
-    {\numgrid@ii{#1}}{\numgrid@ii{#1}[0]}%
-}
-\def\numgrid@ii#1[#2]{\@ifnextchar[%
-    {\numgrid@iii{#1}{#2}}{\numgrid@iii{#1}{#2}[0]}
-}
-\def\numgrid@iii#1#2[#3]#4#5{
-    \pgfmathsetmacro\xstep{#1+#2}%
-    \pgfmathsetmacro\ystep{#1+#3}%
-    \foreach \x in {#2,\xstep,...,#4}{
-        \draw[help lines] (\x,#3) -- (\x,#5) foreach \pos/\place in {0/left,1/right}{
-            node[numbered grid label,pos=\pos, \place,rotate=90]{\pgfmathprintnumber{\x}}};
-    }
-    \foreach \y in {#3,\ystep,...,#5}{
-        \draw[help lines] (#2,\y) -- (#4,\y) foreach \pos/\place in {0/left,1/right}{
-            node[numbered grid label,pos=\pos, \place]{\pgfmathprintnumber{\y}}};
-    }
-}
 \makeatother
 %</xbg-code-iconicdiagrams>
 %<*xbg-code-blockdiagrams>
