@@ -208,7 +208,6 @@
 %    \begin{macrocode}
     multi/.code={
         \xbgset{
-            causality stroke scale=3,
             barb arrow head=Multi Bond Barb,
             bond template/.append style={
                 double=Background,
@@ -620,6 +619,8 @@
     iconic contents color/.code=\colorlet{Iconic Contents}{#1},
     iconic contents color=blue,
 }
+\newif\ifxbg@switch@open
+\newif\ifxbg@switch@swap
 %    \end{macrocode}
 %           \subsection{Signals}
 %    \begin{macrocode}
@@ -643,17 +644,16 @@
 %           \subsection{Block diagrams}
 %    \begin{macrocode}
 \tikzset{
-	iconic block/.style args ={
+	iconic block/.style={
 		draw,
 		thick,
 		minimum height = 1cm,
 		minimum width = 1cm,
 	},
-	iconic block/.default = {},
 }
 
 \tikzset{
-	sinewavegen/.style args = {#1}{
+	sinewavegen/.style={
 		iconic block,
 		path picture = {
 			\begin{scope}[x=1mm,y=2.5mm]
@@ -663,7 +663,7 @@
 			\end{scope}
 		}
 	},
-	motionprofilegen/.style args = {#1}{
+	motionprofilegen/.style={
 		iconic block,
 		path picture = {
 			\draw (-4mm,3.5mm) -- (-4mm,-3.5mm);
@@ -679,29 +679,28 @@
 				\draw[domain=\ts+\tm:\ts+\tm+0.1] plot ({\t},{\ofs+\hm});
 			\end{scope}
 		}
-	}
-}
-
-\tikzset{
-	integrator/.style args = {#1}{
-		iconic block,
-		path picture = {
-			\node[Iconic Contents]{\ensuremath{\int}};
-		}
-	}
+	},
+    integrator/.style={
+        iconic block,
+        node contents={\ensuremath{\int}},
+        text=Iconic Contents,
+    }
 }
 %    \end{macrocode}
 %           \subsection{Iconic diagrams}
 %    \begin{macrocode}
 \tikzset{
+    component label/.style={
+        label distance=0pt,
+        text=Iconic Label,
+    },
 	component/.style={
 		inner sep = 0pt,
 		prefix after command= {
 			\pgfextra{
 				\tikzset{
 					every label/.style={
-						text=Iconic Label,
-						label distance = 0pt,
+                        component label
 					}
 				}
 			}
@@ -714,7 +713,7 @@
 		component,
 		sloped,
 		allow upside down,
-		pos = .5,
+        midway,
 	},
 	hydrline/.style={
 		draw,
@@ -921,18 +920,49 @@
 			\draw (\halfwidth,-0.3) -- ++(0,0.6);
 		},
 	},
-	switch/.style args={#1}{
-		line component,
-		minimum height = 7mm,
-		minimum width = 15mm,
-		path picture={%
-			\draw[Background,line width=3pt] (-.4,0) -- (.4,0);
-			\fill (-.4,0) circle (.5mm);
-			\fill (.4,0) circle (.5mm);
-			\draw (-.4,0) -- ++(25:.8);
-		},
-		#1
-	},
+}
+\pgfkeys{
+    /switch/.cd,
+        open/.is if=xbg@switch@open,
+        open=true,
+        closed/.code=\pgfkeysalso{open=false},
+        swap/.is if=xbg@switch@swap,
+}
+\tikzset{
+    switch/.style={
+        line component,
+        minimum height = 7mm+0.5\pgflinewidth,
+        minimum width = 8mm+2\pgflinewidth+2pt,
+        node contents={},
+        append after command= {
+            \pgfextra{
+                \tikzset{
+                    every label/.style={
+                        component label,
+                        shift={(switch@label@coor)},
+                        label distance=2pt,
+                    }
+                }
+            }
+        },
+        path picture={
+            \ifxbg@switch@open
+                \draw[white,line width=2\pgflinewidth] (-0.4,0) -- (0.4,0);
+                \ifxbg@switch@swap
+                    \path (-0.4,0) -- ++(-12.5:0.4) coordinate (switch@label@coor);
+                    \draw (-0.4,0) -- ++(-25:0.8);
+                \else
+                    \path (-0.4,0) -- ++(12.5:0.4) coordinate (switch@label@coor);
+                    \draw (-0.4,0) -- ++(25:0.8);
+                \fi
+            \else
+                \coordinate (switch@label@coor) at (0,0);
+            \fi
+            \fill (-0.4,0) circle (1pt+\pgflinewidth);
+            \fill ( 0.4,0) circle (1pt+\pgflinewidth);
+        },
+    },
+    switch/.prefix code={\pgfkeys{/switch/.cd,#1}},
 	electric earth/.style={
 		component,
 		minimum height = 1cm,
