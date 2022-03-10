@@ -4,6 +4,7 @@ xbg.code.*.tex
 xbg.doc.*.tex
 *.bat
 Makefile
+.vscode/*
 
 ## Core latex/pdflatex auxiliary files:
 *.aux
@@ -126,7 +127,6 @@ acs-*.bib
 
 # knitr
 *-concordance.tex
-# TODO Comment the next line if you want to keep your tikz graphics files
 *.tikz
 *-tikzDictionary
 
