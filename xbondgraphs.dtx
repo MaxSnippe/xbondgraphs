@@ -71,10 +71,9 @@
     [2018/06/05 v0.1.2 Bond graph drawing using TikZ]
 %    \end{macrocode}
 %   \subsection{Dependencies}
-%       This package uses \Tikz to do the actual drawing. \Tikz itself loads the \pgfpkg package that is used for the key management system. The \textsf{amsfonts} package is used for the |\mathbb| font.
+%       This package uses \Tikz to do the actual drawing. \Tikz itself loads the \pgfpkg package that is used for the key management system.
 %    \begin{macrocode}
 \RequirePackage{tikz}
-\RequirePackage{amsfonts}
 %    \end{macrocode}
 %       The |arrows.meta| library is needed to scale the causal stroke arrow tip. The |decorations| library is needed for the |bond| decoration. The |shapes| library is needed for the ellipse shape of word bond graph elements.
 %    \begin{macrocode}
@@ -235,7 +234,7 @@
         shorten >=3pt,
         line width=\xbg@singlebondwidth,
     },
-    bond label/.code=\tikzset{
+    bond label/.style={
         text=BondLabelColor,
         font=\small,
         sloped,
@@ -789,6 +788,39 @@
 			}] at (-.4,.4){};
 		},
 	},
+    current source/.style={
+        line component,
+        minimum height=1cm,
+        minimum width=1cm,
+        path picture={
+            \fill[Background] (-0.4,-0.6*\pgflinewidth) rectangle (0.4,0.6*\pgflinewidth);
+            \draw (0,0) circle (0.4);
+            \draw (0,-0.4) -- (0,0.4);
+            \node[path picture={
+                \draw(0,-0.75mm) -- (0,0.75mm);
+                \draw(-0.75mm,0) -- (0.75mm,0);
+            }] at (0.4,0.4){};
+            \node[path picture={
+                \draw(-0.75mm,0) -- (0.75mm,0);
+            }] at (-0.4,0.4){};
+        },
+    },
+    electrical source/.style={
+        line component,
+        minimum height=8mm+\pgflinewidth,
+        minimum width=8mm+\pgflinewidth,
+        path picture={
+            %^^A \fill[Background] (-0.4,-1.0*\pgflinewidth) rectangle (0.4,1.0*\pgflinewidth);
+            \draw[line width=\pgflinewidth] (0,0) circle (0.4);
+            \node[path picture={
+                \draw(0,-0.75mm) -- (0,0.75mm);
+                \draw(-0.75mm,0) -- (0.75mm,0);
+            }] at (0.4,0.4){};
+            \node[path picture={
+                \draw(-0.75mm,0) -- (0.75mm,0);
+            }] at (-0.4,0.4){};
+        },
+    },
 	currentsensor/.style args={#1}{
 		line component,
 		minimum height = 1cm, 
@@ -1512,7 +1544,7 @@
         
     \subsection{Known issues}
         
-        Besides the to-dos listed in \hyperlink{sec:todolist}{the to-do list}, the following issues are known and not (yet) fixed.
+        Besides the to-dos listed in \hyperref[sec:todolist]{the to-do list}, the following issues are known and not (yet) fixed.
         \begin{itemize}
             \item \dots
         \end{itemize}
