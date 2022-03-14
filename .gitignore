@@ -2,6 +2,7 @@
 xbg.tmp.*.tex
 xbg.code.*.tex
 xbg.doc.*.tex
+xbg.doc.*.bib
 *.bat
 .vscode/*
 

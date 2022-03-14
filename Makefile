@@ -5,7 +5,7 @@ CLEAN_EXTS = *.log *.aux *.nav *.fls *.fdb_latexmk *.snm *.toc *.vrb *.out *.syn
 
 all: sty
 	$(PDFLATEX) $(FILENAME).dtx
-	REM biber $(FILENAME)
+	biber $(FILENAME)
 	$(PDFLATEX) $(FILENAME).dtx
 	makeindex -q -s gind.ist -o $(FILENAME).ind $(FILENAME).idx
 	makeindex -q -s gglo.ist -o $(FILENAME).gls $(FILENAME).glo
