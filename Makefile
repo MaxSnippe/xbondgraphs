@@ -1,10 +1,10 @@
 FILENAME=xbondgraphs
 FILENAMESHORT=xbg
-PDFLATEX=pdflatex -interaction=nonstopmode --shell-escape
+PDFLATEX=pdflatex -interaction=nonstopmode
 CLEAN_EXTS = *.log *.aux *.nav *.fls *.fdb_latexmk *.snm *.toc *.vrb *.out *.synctex.gz *.pyg *.glo *.gls *.idx *.ind *.ilg *.bbl *.bcf *.blg *.hd *.tcbtemp *.run.xml *.dvi *.tdo
 
 all: sty
-	$(PDFLATEX) $(FILENAME).dtx
+	$(PDFLATEX) --shell-escape $(FILENAME).dtx
 	biber $(FILENAME)
 	$(PDFLATEX) $(FILENAME).dtx
 	makeindex -q -s gind.ist -o $(FILENAME).ind $(FILENAME).idx
