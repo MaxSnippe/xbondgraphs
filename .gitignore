@@ -21,6 +21,7 @@ xbg.doc.*.bib
 
 ## Package file
 *.sty
+!xbg.tcb.extension.sty
 
 ## Intermediate documents:
 *.dvi
