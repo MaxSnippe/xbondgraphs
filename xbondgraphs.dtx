@@ -434,14 +434,15 @@ The following example shows an ideal physical dynamic model of a DC motor, shown
   \end{itemize}
   See the following example for how the arrow barb behaves.
   \begin{dispExample}
-    \foreach [count=\i from 0] \opt in {left below,always below}{
-      \begin{scope}[x=1.25cm,y=1.25cm]
-        \xbgset{barb direction rule=\opt}
-        \foreach \a in {0,15,...,359}{
-          \draw[bond] (2*\i,0) -- ++(\a:1);
-        }
-        \node at (2*\i,-1.5) [anchor=base,font=\ttfamily]{\opt};
-      \end{scope}
+    \xbgset{barb direction rule=left below}
+    \node at (  0,-1.5) [anchor=base,font=\ttfamily]{left below};
+    \foreach \a in {0,15,...,359}{
+      \draw[bond] (0,0) -- ++(\a:1.25);
+    }
+    \xbgset{barb direction rule=always below}
+    \node at (2.5,-1.5) [anchor=base,font=\ttfamily]{left below};
+    \foreach \a in {0,15,...,359}{
+      \draw[bond] (2.5,0) -- ++(\a:1.25);
     }
   \end{dispExample}
 \end{xbgkey}
@@ -450,9 +451,7 @@ The following example shows an ideal physical dynamic model of a DC motor, shown
   This key sets the barb angle of the bond's barb arrow tip. It can be set in any desired (pgf-)scope, including globally. The accepted values are limited between 15 and 85 degrees, to prevent distorted arrow tips.
   \begin{dispExample}
     \foreach [count=\i] \ang in {15,25,35,40,45,65,85}{
-      \begin{scope}[shift={(\i*1.2,0)}]
-        \draw[bond={barb angle=\ang}](0,0) --node[above]{\ang} ++(1,0);
-      \end{scope}
+      \draw[bond={barb angle=\ang}] (\i*1.2,0,0) --node[above]{\ang} ++(1,0);
     }
   \end{dispExample}
 \end{xbgkey}
