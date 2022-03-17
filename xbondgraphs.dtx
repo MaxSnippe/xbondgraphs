@@ -380,28 +380,6 @@
                 (i) ->[bond={effort in}] (r);
                 (w) ->[bond={effort out}] (j)};
         \end{dispExample*}
-        \todo{Look at PGF manual page 270 for automatic graphs}
-        \begin{tikzpicture}
-            \tikzgraphsset{
-                bond graph/.style={
-                    grow right,
-                    grow right sep=1cm,
-                    branch up,
-                    effort out/.forward to=/xbg/effort out,
-                    effort in/.forward to=/xbg/flow out,
-                    flow out/.forward to=/xbg/flow out,
-                    flow in/.forward to=/xbg/effort out,
-                    multi/.forward to=/xbg/multi,
-                    typeset=\bge{\tikzgraphnodetext},
-                    edge={bond},
-                }
-            }
-            \graph[bond graph]{
-                u/Se[/xbg/n=4] ->[effort out] i/1 ->[effort in,multi] k/GY ->[effort out] w/1 ->[effort in] d/R;
-                i ->[effort in] r/R;
-                i ->[effort out] l/I;
-                w ->[effort out] j/I};
-        \end{tikzpicture}
 \section{Keys}
     \label{sec:keys}
     
