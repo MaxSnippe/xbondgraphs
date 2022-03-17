@@ -241,17 +241,17 @@
     
     \subsection{Installation}
         This package has not yet been included in popular \LaTeX distributions, and therefore can be installed only by downloading it as \texttt{.zip} archive from \href{https://github.com/max-sn/xbondgraphs}{the Github page}, extracting it, and using the following commands on the command line from the extracting location\footnote{The first \texttt{pdflatex} command uses the \texttt{--shell-escape} option to create an additional temporary pdf that contains a bond graph produced with the \bondgraphs package, this package does not cooperate with the \xbondgraphs package so it has to be compiled in a separate document. Generally it is good practice to \emph{not} use this option, unless you know what you are doing.}:
-        
-        \begin{dispListing}
-tex xbondgraphs.ins > xbondgraphs.log
-pdflatex -synctex=1 -interaction=nonstopmode --shell-escape xbondgraphs.dtx >> xbondgraphs.log
-pdflatex -synctex=1 -interaction=nonstopmode xbondgraphs.dtx >> xbondgraphs.log
-makeindex -q -s gglo.ist -o xbondgraphs.gls xbondgraphs.glo >> xbondgraphs.log
-makeindex -q xbondgraphs.idx >> xbondgraphs.log
-pdflatex -synctex=1 -interaction=nonstopmode xbondgraphs.dtx >> xbondgraphs.log
-pdflatex -synctex=1 -interaction=nonstopmode xbondgraphs.dtx >> xbondgraphs.log
-        \end{dispListing}
-        
+
+        \begin{dispListing*}{minted options={autogobble}}
+            tex xbondgraphs.ins
+            pdflatex -synctex=1 -interaction=nonstopmode --shell-escape xbondgraphs.dtx
+            pdflatex -synctex=1 -interaction=nonstopmode xbondgraphs.dtx
+            makeindex -q -s gglo.ist -o xbondgraphs.gls xbondgraphs.glo
+            makeindex -q xbondgraphs.idx
+            pdflatex -synctex=1 -interaction=nonstopmode xbondgraphs.dtx
+            pdflatex -synctex=1 -interaction=nonstopmode xbondgraphs.dtx
+        \end{dispListing*}
+
         The resulting files must be placed relative to the root of your \TeX tree. The documentation files should be placed in \verb|$TEXMF/doc/latex/xbondgraphs|, and the package code in \verb|$TEXMF/tex/latex/xbondgraphs|. The documentation files are:
         \begin{itemize}
             \item \texttt{xbondgraphs.pdf}
