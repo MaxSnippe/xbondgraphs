@@ -57,7 +57,6 @@
 
 \usetikzlibrary{positioning,spy,graphs}
 \tcbuselibrary{documentation,breakable,minted}
-\usexbglibrary{all}
 
 \newcommand\Tikz{{\normalfont Ti\textit{k}Z}\xspace}
 \newcommand\pgfpkg{PGF\xspace}
@@ -101,7 +100,7 @@
   doc head command={doc head template={Definition}},
   index colorize,
   index german settings,
-  docexample/.style={
+  docexample/.append style={
     before lower={\begin{tikzpicture}},
     after lower={\end{tikzpicture}},
     colback/.forward to=/xbg/background color,
@@ -109,6 +108,8 @@
     breakable,
   },
 }
+
+\xbgset{background color=ExampleBack}
 
 \makeindex
 
@@ -155,7 +156,7 @@ This package is a by-product of a project in which I was in need of a convenient
 \end{tikzpicture}
 \end{document}
 \end{filecontents*}
-\immediate\write18{pdflatex xbg.tmp.example_bondgraphs.tex}
+\immediate\write18{pdflatex -interaction=batchmode xbg.tmp.example_bondgraphs.tex}
 \begin{figure}[htpb]
   \centering
   \begin{subfigure}[t]{0.48\linewidth}
@@ -174,6 +175,7 @@ This package is a by-product of a project in which I was in need of a convenient
   \begin{subfigure}[t]{0.48\linewidth}
     \centering
     \begin{tikzpicture}
+      \xbgset{background color=white}
       \begin{scope}[spy using outlines={gray,magnification=7,minimum width=30mm,minimum height=28mm, connect spies,every spy on node/.append style={line width=.4pt}}]
         \begin{scope}[x=15mm,y=15mm]
           \node at (-1, 0) (Se) [bge={Se}{},pin=left:$ V $];
@@ -198,7 +200,7 @@ This package is a by-product of a project in which I was in need of a convenient
   \label{fig:comparisonmultibonds}
 \end{figure}
 
-\Cref{fig:comparisonmultibonds} shows an example of a simple bond graph with multi bonds, using both the \bondgraphs package and the \xbondgraphs package. The points that motivated me to rewrite the package are emphasized. Although of course subjective, most of the differences between the \bondgraphs- and the \xbondgraphs package can be argued to be improvements.
+\Cref{fig:comparisonmultibonds} shows an example of a simple bond graph with multi bonds, using both the \bondgraphs package and the \xbondgraphs package. The points that motivated me to write a new package are emphasized. Although of course subjective, most of the differences between the \bondgraphs- and the \xbondgraphs package can be argued to be improvements.
 
 Additionally, the \bondgraphs package only permits \texttt{edge}s to be bonds, making multi-segment bonds impossible. With the \refDec{bond} decoration, the \xbondgraphs package makes these multi-segment bonds possible.
 
@@ -234,48 +236,7 @@ Besides the to-dos listed in \hyperref[sec:todolist]{the to-do list}, the follow
 \end{itemize}
 Please submit issues (and function requests) to \url{https://github.com/max-sn/xbondgraphs/issues}.
 
-\section{Basic usage}
-
-\subsection{Installation}
-
-This package has not yet been included in popular \LaTeX distributions, and therefore can be installed only by downloading it as \texttt{.zip} archive from \href{https://github.com/max-sn/xbondgraphs}{the Github page}, extracting it, and using the following commands on the command line from the extracting location\footnote{The first \texttt{pdflatex} command uses the \texttt{--shell-escape} option to create an additional temporary pdf that contains a bond graph produced with the \bondgraphs package, this package does not cooperate with the \xbondgraphs package so it has to be compiled in a separate document. Generally it is good practice to \emph{not} use this option, unless you know what you are doing.}:
-
-\begin{dispListing*}{minted options={autogobble}}
-  tex xbondgraphs.ins
-  pdflatex -synctex=1 -interaction=nonstopmode --shell-escape xbondgraphs.dtx
-  pdflatex -synctex=1 -interaction=nonstopmode xbondgraphs.dtx
-  makeindex -q -s gglo.ist -o xbondgraphs.gls xbondgraphs.glo
-  makeindex -q xbondgraphs.idx
-  pdflatex -synctex=1 -interaction=nonstopmode xbondgraphs.dtx
-  pdflatex -synctex=1 -interaction=nonstopmode xbondgraphs.dtx
-\end{dispListing*}
-
-The resulting files must be placed relative to the root of your \TeX tree. The documentation files should be placed in \verb|$TEXMF/doc/latex/xbondgraphs|, and the package code in \verb|$TEXMF/tex/latex/xbondgraphs|. The documentation files are:
-\begin{itemize}
-  \item \texttt{xbondgraphs.pdf}
-\end{itemize}
-The package code files are:
-\begin{itemize}
-  \item \texttt{xbondgraphs.sty}
-  \item \texttt{xbg.iconicdiagrams.code.tex}
-  \item \texttt{xbg.blockdiagrams.code.tex}
-\end{itemize}
-
-\verb|$TEXMF| is the root folder of your main \TeX-tree. For MiK\TeX users that is probably \verb|C:/texmf/|, and for \TeX Live users that is probably \verb|/usr/local/texlive/<year>/texmf-dist/|.
-
-All the remaining files can be removed, but if you would like to install again later, the \texttt{xbondgraphs.ins} and \texttt{xbondgraphs.dtx} should be kept.
-
-\subsection{Libraries}
-
-Currently the \xbondgraphs package has two (still undocumented) libraries.
-\begin{docCommand}{usexbglibrary}{\marg{comma separated list of libraries}}
-  This command can be used to include one of the following libraries:
-  \begin{itemize}
-    \item \refLib{iconicdiagrams}
-    \item \refLib{blockdiagrams}
-  \end{itemize}
-  Alternatively, one can use \docAuxCommand*{usexbglibrary}\brackets{\texttt{all}} to include all libraries.
-\end{docCommand}
+\section{Usage}
 
 \subsection{Macros}
 
@@ -360,19 +321,7 @@ Currently the \xbondgraphs package has two (still undocumented) libraries.
 
 \subsection{Simple example}
 
-The following examples shows an ideal physical dynamic model of a DC motor, shown as an iconic diagram, and its domain independent equivalent model shown as a bond graph. The iconic diagram icons are taken from the (undocumented) \refLib{iconicdiagrams} library.
-\begin{dispExample*}{title={Ideal physical model of a DC motor}}
-  \draw[line width = .8pt] (0,0) 
-    -- node[voltage source,label={above:$ u $}]{}
-    ++(0,2) node[current,pos=0.9,label={above:$ i $}]{}
-    -- node[resistor,label={above:$ R $}]{} ++(2,0)
-    -- node[inductor,label={above:$ L $}]{} ++(2,0)
-    -- node(gyr)[gyrator,label={left:$ K_m $}]{} ++(0,-2)
-    -- node[electric earth]{} cycle;
-  \draw[line width = .8pt] (gyr.center) -- (gyr.east)
-    -- node[friction,label={above:$ D $}]{} ++(2,0)
-    -- node[inertia,pos=1,label={above:$ J $}]{} ++(1,0);
-\end{dispExample*}
+The following example shows an ideal physical dynamic model of a DC motor, shown as domain independent bond graph.
 \begin{dispExample*}{title={Bond graph model of a DC motor}}
   \tikzset{x=12.5mm,y=12.5mm}
   \node (u) at (-1, 0) [bge={Se}{},pin={left:$ u $}];
@@ -459,14 +408,15 @@ The following examples shows an ideal physical dynamic model of a DC motor, show
   \end{itemize}
   See the following example for how the arrow barb behaves.
   \begin{dispExample}
-    \foreach [count=\i from 0] \opt in {left below,always below}{
-      \begin{scope}[x=1.25cm,y=1.25cm]
-        \xbgset{barb direction rule=\opt}
-        \foreach \a in {0,15,...,359}{
-          \draw[bond] (2*\i,0) -- ++(\a:1);
-        }
-        \node at (2*\i,-1.5) [anchor=base,font=\ttfamily]{\opt};
-      \end{scope}
+    \xbgset{barb direction rule=left below}
+    \node at (  0,-1.5) [anchor=base,font=\ttfamily]{left below};
+    \foreach \a in {0,15,...,359}{
+      \draw[bond] (0,0) -- ++(\a:1.25);
+    }
+    \xbgset{barb direction rule=always below}
+    \node at (2.5,-1.5) [anchor=base,font=\ttfamily]{left below};
+    \foreach \a in {0,15,...,359}{
+      \draw[bond] (2.5,0) -- ++(\a:1.25);
     }
   \end{dispExample}
 \end{xbgkey}
@@ -475,9 +425,7 @@ The following examples shows an ideal physical dynamic model of a DC motor, show
   This key sets the barb angle of the bond's barb arrow tip. It can be set in any desired (pgf-)scope, including globally. The accepted values are limited between 15 and 85 degrees, to prevent distorted arrow tips.
   \begin{dispExample}
     \foreach [count=\i] \ang in {15,25,35,40,45,65,85}{
-      \begin{scope}[shift={(\i*1.2,0)}]
-        \draw[bond={barb angle=\ang}](0,0) --node[above]{\ang} ++(1,0);
-      \end{scope}
+      \draw[bond={barb angle=\ang}] (\i*1.2,0,0) --node[above]{\ang} ++(1,0);
     }
   \end{dispExample}
 \end{xbgkey}
@@ -521,7 +469,7 @@ The following examples shows an ideal physical dynamic model of a DC motor, show
 \end{xbgkey}
 
 \begin{xbgkey}{background color}{\meta{color}}{no default, initially \texttt{white}}
-  With the \docAuxKey*[tikz]{double} style, \Tikz draws two lines on top of each other to simulate the effect of two parallel lines. The downside of this is that the thinner line must be the same color as its background, otherwise the parallel effect is gone. With this key the \docColor{Background} color is set, which is used when defining a multi bond. Additionally it is used in many of the icons in the \refLib{iconicdiagrams} library, for the same reason.
+  With the \docAuxKey*[tikz]{double} style, \Tikz draws two lines on top of each other to simulate the effect of two parallel lines. The downside of this is that the thinner line must be the same color as its background, otherwise the parallel effect is gone. With this key the \docColor{Background} color is set, which is used when defining a multi bond.
   \begin{dispExample}
     \xbgset{multi bond width=3.2mm,single bond width=0.8mm}
     \draw[bond={multi,background color=red}] (0,0) -- ++(2,0);
@@ -626,7 +574,7 @@ The following keys are used when drawing the \refShp{mux} shape. They can be giv
 \end{docDecoration}
 
 \begin{docShape}{mux}{}
-  The \refShp{mux} is basically the same as the \texttt{rectangle} shape, with some additional anchors. For every in- and output an anchor is defined, placed based on the \refKey{/xbg/mux io spacing} key. See the following example for the placement of the anchors. The grid is drawn to see that the length between two consecutive in- or outputs is exactly the given spacing (\texttt{15mm}). \texttt{m.50} and \texttt{m.230} are examples of border anchors.\todo{The \texttt{mux} shape is actually just a special case of the \texttt{block} shape and does not need a separate shape.}
+  The \refShp{mux} is basically the same as the \texttt{rectangle} shape, with some additional anchors. For every in- and output an anchor is defined, placed based on the \refKey{/xbg/mux io spacing} key. See the following example for the placement of the anchors. The grid is drawn to see that the length between two consecutive in- or outputs is exactly the given spacing (\texttt{15mm}). \texttt{m.50} and \texttt{m.230} are examples of border anchors.
   \begin{dispExample}
     \node[mux={mux inputs=2,mux outputs=4,mux io spacing=15mm},mux example];
     \draw[help lines,step=2.5mm] (-1cm,-3cm) grid (1cm,3cm);
@@ -640,33 +588,6 @@ The following keys are used when drawing the \refShp{mux} shape. They can be giv
     }
   \end{dispExample}
   The default dimensions of the \refShp{mux} shape are \texttt{2.5pt} width and its height is \texttt{max(mux inputs,mux outputs)*mux io spacing}.
-\end{docShape}
-
-\begin{docShape}{block}{}
-  The \refShp{block} shape is only slightly different from the \texttt{rectangle} shape. It also creates additional anchors for in- and outputs, just like the \refShp{mux} shape.
-  \tikzset{shape example/.style={
-      line width = 5mm,
-      draw=black!40!,
-      text=black!40!,
-      inner ysep=10mm,
-      inner xsep=27.5mm,
-      fill=yellow!40!,
-    }}
-  \begin{dispExample}
-    \Huge
-    \node[name=b,shape=block,shape example,/xbg/block/inputs=2,
-      /xbg/block/outputs=4,/xbg/block/io spacing=10mm] {
-        Block\vrule width 1pt height 2cm};
-    \foreach \anchor/\placement in {north west/above left, north/above,
-        north east/above right, west/left, center/above, east/right,
-        mid west/right, mid/above, mid east/left, base west/left,
-        base/below, base east/right, south west/below left, south/below,
-        south east/below right, text/left, 10/right, 130/above,
-        input 1/left, input 2/left, output 1/right, output 2/right,
-        output 3/right, output 4/right}
-      \draw[shift=(b.\anchor)] plot[mark=x] coordinates{(0,0)}
-        node[\placement] {\scriptsize\texttt{(b.\anchor)}};
-  \end{dispExample}
 \end{docShape}
 
 \begin{docArrowTip}{Single Bond Barb}{}
@@ -828,68 +749,16 @@ The following keys are used when drawing the \refShp{mux} shape. They can be giv
 \end{dispExample}
 
 \begin{dispExample}
-  \draw[line width=0.8pt] (-1,-1) 
-    -- ++(0,0.5)
-    -- node[voltage source,label={above:$ u $}]{} ++(0,1)
-    -- node[current,label={above:$ i $}]{} ++(0,0.5)
-    -- node[inductor,label={above:$ L $}]{} ++(2,0) 
-    -- node[resistor,label={above:$ R $}]{} ++(0,-2) 
-    -- node[capacitor,label={above:$ C $}]{} cycle;
-  \begin{scope}[shift={(5,0)}]
-    \node (u) at (-1.5, 0.0) [bge={Se}{},pin={left:$ u $}];
-    \node (i) at ( 0.0, 0.0) [bge={1}{},label={300:$ i $}];
-    \node (c) at ( 0.0, 1.5) [bge={C}{},pin={above:$ C $}];
-    \node (r) at ( 1.5, 0.0) [bge={R}{},pin={right:$ R $}];
-    \node (l) at ( 0.0,-1.5) [bge={L}{},pin={below:$ L $}];
-    \draw[bond={effort out}] (u) -- (i);
-    \draw[bond={effort in}] (i) -- (c);
-    \draw[bond={effort in}] (i) -- (r);
-    \draw[bond={effort out}] (i) -- (l);
-  \end{scope}
+  \node (u) at (-1.5, 0.0) [bge={Se}{},pin={left:$ u $}];
+  \node (i) at ( 0.0, 0.0) [bge={1}{},label={300:$ i $}];
+  \node (c) at ( 0.0, 1.5) [bge={C}{},pin={above:$ C $}];
+  \node (r) at ( 1.5, 0.0) [bge={R}{},pin={right:$ R $}];
+  \node (l) at ( 0.0,-1.5) [bge={L}{},pin={below:$ L $}];
+  \draw[bond={effort out}] (u) -- (i);
+  \draw[bond={effort in}] (i) -- (c);
+  \draw[bond={effort in}] (i) -- (r);
+  \draw[bond={effort out}] (i) -- (l);
 \end{dispExample}
-
-\begin{dispExample}
-  \tikzset{block/.append style={rounded corners=2pt,minimum size=8mm,
-    fill=black!10!}}
-  \node[block={inputs=2,outputs=2,flip,io spacing=7.5mm},minimum size=14mm]
-    (G) {$ G $};
-  \node[block,below=0.5 of G] (K) {$ K $};
-  \node[signalname,left=of G.output 1] (z) {$ z $};
-  \coordinate[left=0.5 of G.output 2] (left);
-  \node[signalname,right=of G.input 1] (w) {$ w $};
-  \coordinate[right=0.5 of G.input 2] (right);
-  \begin{scope}[->]
-    \draw (w) -- (G.input 1);
-    \draw (G.output 1) -- (z);
-    \draw (K) -- (K-|right) -- node[right]{$ u $} (right) -- (G.input 2);
-    \draw (G.output 2) -- (left) -- node[left]{$ y $} (K-|left) -- (K);
-  \end{scope}
-\end{dispExample}
-
-\section{Change history}
-
-\begin{itemize}
-  \item v0.0.1 (2018/05/02)
-  \begin{itemize}
-    \item Initial version
-  \end{itemize}
-  \item v0.0.2 (2018/05/16)
-  \begin{itemize}
-    \item Changed to \textsf{tcolorbox} documentation style
-    \item Added documentation for various keys
-  \end{itemize}
-  \item v0.1.0 (2018/05/18)
-  \begin{itemize}
-    \item Added \textsf{iconicdiagrams} library
-  \end{itemize}
-  \item v0.1.2 (2018/06/05)
-  \begin{itemize}
-    \item Added initial \textsf{blockdiagrams} library
-    \item Removed \textsf{xparse} package dependancy from \textsf{iconicdiagrams} library
-    \item Added \texttt{flip} option for blocks in \textsf{blockdiagram} library
-    \item Made sign placement around \texttt{sum} block dependent of number of signs
-  \end{itemize}
-\end{itemize}
 %</xbg-doc-main>
 %
 %<*xbg-doc-bib>
@@ -940,6 +809,7 @@ The following keys are used when drawing the \refShp{mux} shape. They can be giv
 % \changes{v0.0.1}{2018/05/02}{Initial version}
 % \changes{v0.0.2}{2018/05/16}{Changed to \textsf{tcolorbox} documentation style}
 % \changes{v0.0.2}{2018/05/16}{Added documentation for various keys}
+% \changes{v0.0.3}{2022/03/17}{Improved documentation overall}
 %
 % \GetFileInfo{xbondgraphs.sty}
 %
@@ -950,7 +820,7 @@ The following keys are used when drawing the \refShp{mux} shape. They can be giv
 %
 % \input{xbg.doc.main.tex}
 %
-% \StopEventually{\printbibliography[heading=xbgbibheading]\printindex\PrintChanges\listoftodos}
+% \StopEventually{\printbibliography[heading=xbgbibheading]\printindex\phantomsection\addcontentsline{toc}{section}{Change History}\PrintChanges\listoftodos}
 %
 % \section{Implementation: \xbondgraphs}
 %
@@ -958,9 +828,11 @@ The following keys are used when drawing the \refShp{mux} shape. They can be giv
 %
 %    \begin{macrocode}
 %<*xbondgraphs-package>
+%    \end{macrocode}
+%    \begin{macrocode}
 \NeedsTeXFormat{LaTeX2e}[2017/04/15]
 \ProvidesPackage{xbondgraphs}
-  [2018/06/05 v0.1.2 Bond graph drawing using TikZ]
+  [2022/03/17 v0.0.3 Bond graph drawing using TikZ]
 %    \end{macrocode}
 %
 % \subsection{Dependencies}
@@ -997,10 +869,6 @@ The following keys are used when drawing the \refShp{mux} shape. They can be giv
 \def\xbgset{\pgfqkeys{/xbg}}
 \long\def\xbgset@late@options#1{\appto%
   \xbg@lateoptions@hook{\xbgset{#1}}}
-%    \end{macrocode}
-% Package libraries can be loaded using the \refCom{usexbglibrary} command.
-%    \begin{macrocode}
-\def\usexbglibrary#1{\xbgset{load libraries/.list={#1}}}
 %    \end{macrocode}
 % For in-line bond graph elements and bonds the following macros can be used.
 %    \begin{macrocode}
@@ -1236,14 +1104,6 @@ The following keys are used when drawing the \refShp{mux} shape. They can be giv
     fill=black,
     shape=mux,
   },
-  load libraries/.code={
-    \xbgset{library/#1}
-  },
-  library/iconicdiagrams/.code={\input{xbg.code.iconicdiagrams.tex}},
-  library/blockdiagrams/.code={\input{xbg.code.blockdiagrams.tex}},
-  library/all/.code=\xbgset{load libraries/.list={iconicdiagrams,blockdiagrams}},
-  library/.unknown/.code={%
-    \xbg@error{No library named "\pgfkeyscurrentname" exists}{}},
 }
 %    \end{macrocode}
 %
@@ -1508,854 +1368,9 @@ The following keys are used when drawing the \refShp{mux} shape. They can be giv
       \pgfpointdecoratedinputsegmentlast}};
   }
 }
+%    \end{macrocode}
+%    \begin{macrocode}
 %</xbondgraphs-package>
-%    \end{macrocode}
-%
-% \section{Implementation: \xbondgraphs-iconic library}
-%
-%    \begin{macrocode}
-%<*xbg-code-iconicdiagrams>
-\makeatletter
-\usetikzlibrary{decorations.pathreplacing,decorations.pathmorphing,patterns}
-
-\xbgset{,
-    iconic label color/.code=\colorlet{Iconic Label}{#1},
-    iconic label color=blue,
-    iconic contents color/.code=\colorlet{Iconic Contents}{#1},
-    iconic contents color=blue,
-}
-\newif\ifxbg@switch@open
-\newif\ifxbg@switch@swap
-%    \end{macrocode}
-%           \subsection{Signals}
-%    \begin{macrocode}
-\tikzset{
-    signal/.style args = {#1}{
-        -{Latex[length=6pt,width=6pt]},
-        thick,
-        #1,
-    },
-    signal/.default = {},
-    msignal/.style args = {#1}{
-        double,
-        double distance = 2.5pt,
-        -{Latex[length=7pt,width=7pt]},
-        thick,
-        #1,
-    },
-    msignal/.default = {},
-}
-%    \end{macrocode}
-%           \subsection{Block diagrams}
-%    \begin{macrocode}
-\tikzset{
-    iconic block/.style={
-        draw,
-        thick,
-        minimum height = 1cm,
-        minimum width = 1cm,
-    },
-}
-
-\tikzset{
-    sinewavegen/.style={
-        iconic block,
-        path picture = {
-            \begin{scope}[x=1mm,y=2.5mm]
-                \draw (-4mm,3.5mm) -- (-4mm,-3.5mm);
-                \draw (-4.5mm,0mm) -- (4.5mm,0mm);
-                \draw[Iconic Contents,thick] (-4mm,0) sin ++(1,1) cos ++(1,-1)
-                                                      sin ++(1,-1) cos ++(1,1)
-                                                      sin ++(1,1) cos ++(1,-1)
-                                                      sin ++(1,-1) cos ++(1,1);
-            \end{scope}
-        }
-    },
-    motionprofilegen/.style={
-        iconic block,
-        path picture = {
-            \draw (-4mm,3.5mm) -- (-4mm,-3.5mm);
-            \draw (-4.5mm,-3mm) -- (4.5mm,-3mm);
-            \begin{scope}[Iconic Contents,thick,smooth,variable=\t,x=1cm,y=1cm]
-                \pgfmathsetmacro{\hm}{0.5}
-                \pgfmathsetmacro{\tm}{0.7}
-                \pgfmathsetmacro{\ts}{-0.4}
-                \pgfmathsetmacro{\ofs}{-0.3}
-                \draw[domain=\ts:\ts+\tm/4] plot ({\t},
-                    {\ofs + 16/3*\hm*((\t-\ts)/\tm)^3});
-                \draw[domain=\ts+\tm/4:\ts+3*\tm/4] plot ({\t},
-                    {\ofs + 32*\hm/(\tm)^3*(\tm*(\t-\ts)^2/4 - (\t-\ts)^3/6 -
-                    (\tm)^2*(\t-\ts)/16 + (\tm)^3/192)});
-                \draw[domain= \ts+3*\tm/4:\ts+\tm]  plot ({\t},{\ofs + 32*\hm/(\tm)^3*
-                    (-\tm*(\t-\ts)^2/2+(\t-\ts)^3/6+(\tm)^2*(\t-\ts)/2-13*(\tm)^3/96)});
-                \draw[domain=\ts+\tm:\ts+\tm+0.1] plot ({\t},{\ofs+\hm});
-            \end{scope}
-        }
-    },
-    integrator/.style={
-        iconic block,
-        node contents={\ensuremath{\int}},
-        text=Iconic Contents,
-    }
-}
-%    \end{macrocode}
-%           \subsection{Iconic diagrams}
-%    \begin{macrocode}
-\tikzset{
-    component label/.style={
-        label distance=0pt,
-        text=Iconic Label,
-    },
-    component/.style={
-        inner sep = 0pt,
-        prefix after command= {
-            \pgfextra{
-                \tikzset{
-                    every label/.style={
-                        component label
-                    }
-                }
-            }
-        },
-    },
-    node component/.style={
-        component
-    },
-    line component/.style={
-        component,
-        sloped,
-        allow upside down,
-        midway,
-    },
-    hydrline/.style={
-        draw,
-        line width = 1pt,
-        double,
-        double distance between line centers=3mm,
-    },
-    flowsource/.style 2 args={
-        component,
-        minimum height = 1cm,
-        minimum width = 1.5cm,
-        label={#2:#1},
-        path picture={%
-            \draw[hydrline] (-.5,0)--(.5,0);
-            \draw[fill=Background] (0,.15) circle (.15);
-            \draw[fill=Background] (0,-.15) circle (.15);
-        }
-    },
-    flowresistance/.style 2 args={
-        component,
-        minimum height = 1cm,
-        minimum width = 1.5cm,
-        label={#2:#1},
-        path picture={%
-            \draw[hydrline] (-.5,0)--(.5,0);
-            \draw (1/3+.1,.1) -- (1/3-.1,-.1)
-            (1/3-.1,+.1) -- (1/3+.1,-.1);
-            \draw (-1/3+.1,.1) -- (-1/3-.1,-.1)
-            (-1/3-.1,+.1) -- (-1/3+.1,-.1);
-            \draw (.1,.1) -- (-.1,-.1)
-            (-.1,+.1) -- (.1,-.1);
-        }
-    },
-    hydrinertia/.style 2 args={
-        component,
-        minimum height = 1cm,
-        minimum width = 1.5cm,
-        label={#2:#1},
-        path picture={%
-            \draw[hydrline] (-.5,0)--(.5,0);
-            \fill[Background!80!black] (-.4,-.1) rectangle (.4,.1);
-        }
-    },
-    battery/.style={
-        line component,
-        minimum height = 1cm, 
-        minimum width = 6mm+4\pgflinewidth,
-        path picture={%
-            \fill[Background] (-3mm,-0.6*\pgflinewidth) rectangle
-                (3mm,0.6*\pgflinewidth);
-            \draw (3mm,-5mm) -- ++(0,10mm);
-            \draw (-3mm/3,-5mm) -- ++(0,10mm);
-            \pgfmathparse{min(2.5*\pgflinewidth,5pt)}
-            \begin{scope}[line width = \pgfmathresult pt]
-                \draw (3mm/3,-2.5mm) -- ++(0,5mm);
-                \draw (-3mm,-2.5mm) -- ++(0,5mm);
-            \end{scope}
-        },
-    },
-    voltage source/.style={
-        line component,
-        minimum height = 1cm, 
-        minimum width=1cm,
-        path picture={%
-            \fill[Background] (-0.4,-0.6*\pgflinewidth) rectangle
-                (0.4,0.6*\pgflinewidth);
-            \draw (0,0) circle (.4);
-            \draw (-.4,0) -- (.4,0);
-            \node[path picture={
-                \draw(0,-.75mm) -- (0,.75mm);
-                \draw(-.75mm,0) -- (.75mm,0);
-            }] at (.4,.4){};
-            \node[path picture={
-                \draw(-.75mm,0) -- (.75mm,0);
-            }] at (-.4,.4){};
-        },
-    },
-    current source/.style={
-        line component,
-        minimum height=1cm,
-        minimum width=1cm,
-        path picture={
-            \fill[Background] (-0.4,-0.6*\pgflinewidth) rectangle
-                (0.4,0.6*\pgflinewidth);
-            \draw (0,0) circle (0.4);
-            \draw (0,-0.4) -- (0,0.4);
-            \node[path picture={
-                \draw(0,-0.75mm) -- (0,0.75mm);
-                \draw(-0.75mm,0) -- (0.75mm,0);
-            }] at (0.4,0.4){};
-            \node[path picture={
-                \draw(-0.75mm,0) -- (0.75mm,0);
-            }] at (-0.4,0.4){};
-        },
-    },
-    electrical source/.style={
-        line component,
-        minimum height=8mm+\pgflinewidth,
-        minimum width=8mm+\pgflinewidth,
-        path picture={
-            \draw[line width=\pgflinewidth] (0,0) circle (0.4);
-            \node[path picture={
-                \draw(0,-0.75mm) -- (0,0.75mm);
-                \draw(-0.75mm,0) -- (0.75mm,0);
-            }] at (0.4,0.4){};
-            \node[path picture={
-                \draw(-0.75mm,0) -- (0.75mm,0);
-            }] at (-0.4,0.4){};
-        },
-    },
-    currentsensor/.style args={#1}{
-        line component,
-        minimum height = 1cm, 
-        minimum width=1cm,
-        path picture={%
-            \draw[fill=Background] (0,0) circle (.4);
-            \node {A};
-        },
-        #1,
-    },
-    current/.style args={#1}{
-        line component,
-        minimum height = 2mm,
-        minimum width = 2mm,
-        path picture = {
-            \fill (-1mm,1mm) -- (1mm,0) -- (-1mm,-1mm) -- cycle;
-        },
-        #1,
-    },
-    voltagesensor/.style args={#1}{
-        line component,
-        minimum height = 1cm, 
-        minimum width=1cm,
-        path picture={%
-            \draw[fill=Background] (0,0) circle (.4);
-            \node {V};
-        },
-        #1,
-    },
-    oscilloscope/.style args={#1}{
-        node component,
-        minimum height = 1cm, 
-        minimum width=1cm,
-        path picture={%
-            \draw[fill=Background] (0,0) circle (.4);
-            \draw (-.25,-.1) -- (0,.1) -- (0,-.1) -- (.25,.1) -- (.25,-.1);
-        },
-        #1,
-    },
-    functiongenerator/.style args={#1}{
-        node component,
-        minimum height = 1cm, 
-        minimum width=1cm,
-        path picture={%
-            \draw[fill=Background] (0,0) circle (.4);
-            \draw[line width = 1pt] (-0.3,0) arc (180:0:.15) arc (-180:0:.15);
-        },
-        #1,
-    },
-    gyrator/.style={
-        component,
-        minimum height=10mm+\pgflinewidth, 
-        minimum width=8mm+\pgflinewidth,
-        path picture={%
-            \draw[fill=Background] (-.2,-.5) rectangle (.2,.5);
-            \draw[fill=Background] (0,0) circle (.4);
-        }
-    },
-    resistor/.style={
-        line component,
-        minimum height=4mm+\pgflinewidth,
-        minimum width=1cm+\pgflinewidth,
-        path picture={%
-            \fill[Background] (-0.5,-0.6*\pgflinewidth) rectangle
-                (0.5,0.6*\pgflinewidth);
-            \draw (-.5,-.2) rectangle (.5,.2);
-        },
-    },
-    resistor2/.style={
-        line component,
-        minimum height = 4mm,
-        minimum width = 1.5cm,
-        path picture = {
-            \fill[Background] (-0.5,-0.6*\pgflinewidth) rectangle
-                (0.5,0.6*\pgflinewidth);
-            \draw[decoration={
-                aspect=.4,
-                segment length=2mm,
-                amplitude=1.5mm,
-                zigzag,
-                pre length=1mm,
-                post length=1mm,
-            },decorate] (-.5,0) -- (.5,0);
-        },
-    },
-    inductor/.style={
-        line component,
-        minimum height=4mm,
-        minimum width=10mm,
-        path picture={%
-            \fill[Background] (-0.5,-0.6*\pgflinewidth) rectangle
-                (0.5,0.6*\pgflinewidth);
-            \draw (-5mm,0) -- (-4mm,0) arc (180:0:1mm) -- ++(0,-0.5*\pgflinewidth)
-                (-2mm,0) arc (180:0:1mm) -- ++(0,-0.5*\pgflinewidth)
-                (0,0) arc (180:0:1mm) -- ++(0,-0.5*\pgflinewidth)
-                ( 2mm,0) arc (180:0:1mm) -- (5mm,0);
-        },
-    },
-    inductor2/.style args={#1}{
-        line width = 0.4pt,
-        sloped,
-        allow upside down,
-        pos = .5,
-        minimum height=1cm,
-        minimum width=1.5cm,
-        path picture={%
-            \pgfmathsetmacro{\extraangle}{40}
-            \pgfmathsetmacro{\radius}{.8/(2+6*cos(\extraangle))}
-            \fill[Background] (-5mm+.5pt,-.1) rectangle (5mm-.5pt,.1);
-            \draw (-5mm,0)-- (-4mm,0)
-            arc (180:-\extraangle:\radius)
-            arc (180+\extraangle:-\extraangle:\radius)
-            arc (180+\extraangle:-\extraangle:\radius)
-            arc (180+\extraangle:0:\radius)
-            -- (5mm,0);
-        },
-        #1
-    },
-    capacitor/.style={
-        line component,
-        minimum height = 0.8cm,
-        minimum width = 0.5cm,
-        path picture={%
-            \pgfmathparse{max(1.5*\pgflinewidth,2pt)}
-            \pgfmathsetlengthmacro{\halfwidth}{\pgfmathresult pt}
-            \fill[Background] (-\halfwidth,-0.6*\pgflinewidth) rectangle
-                (\halfwidth,0.6*\pgflinewidth);
-            \draw (-\halfwidth,-0.3) -- ++(0,0.6);
-            \draw (\halfwidth,-0.3) -- ++(0,0.6);
-        },
-    },
-}
-\pgfkeys{
-    /switch/.cd,
-        open/.is if=xbg@switch@open,
-        open=true,
-        closed/.code=\pgfkeysalso{open=false},
-        swap/.is if=xbg@switch@swap,
-}
-\tikzset{
-    switch/.style={
-        line component,
-        minimum height = 7mm+0.5\pgflinewidth,
-        minimum width = 8mm+2\pgflinewidth+2pt,
-        node contents={},
-        append after command= {
-            \pgfextra{
-                \tikzset{
-                    every label/.style={
-                        component label,
-                        shift={(switch@label@coor)},
-                        label distance=2pt,
-                    }
-                }
-            }
-        },
-        path picture={
-            \ifxbg@switch@open
-                \draw[white,line width=2\pgflinewidth] (-0.4,0) -- (0.4,0);
-                \ifxbg@switch@swap
-                    \path (-0.4,0) -- ++(-12.5:0.4) coordinate (switch@label@coor);
-                    \draw (-0.4,0) -- ++(-25:0.8);
-                \else
-                    \path (-0.4,0) -- ++(12.5:0.4) coordinate (switch@label@coor);
-                    \draw (-0.4,0) -- ++(25:0.8);
-                \fi
-            \else
-                \coordinate (switch@label@coor) at (0,0);
-            \fi
-            \fill (-0.4,0) circle (1pt+\pgflinewidth);
-            \fill ( 0.4,0) circle (1pt+\pgflinewidth);
-        },
-    },
-    switch/.prefix code={\pgfkeys{/switch/.cd,#1}},
-    electric earth/.style={
-        component,
-        minimum height = 1cm,
-        minimum width=1.5cm,
-        path picture={%
-            \draw (0,0) --++(0,-.1)
-            (-.3,-.1) -- (.3,-.1)
-            (-.2,-.2) -- (.2,-.2)
-            (-.1,-.3) -- (.1,-.3);
-        }
-    },
-    mechanical earth/.style args={#1}{
-        node component,
-        minimum width = .5cm,
-        path picture={%
-            \fill[pattern = north east lines] (path picture bounding box.north west)
-                rectangle (path picture bounding box.south);
-            \draw(path picture bounding box.north) -- (path picture bounding box.south);
-        },
-        #1
-    },
-    spring/.style args={#1}{
-        line component,
-        minimum height = 0.5cm,
-        minimum width=1.5cm,
-        path picture={%
-            \fill[Background] (-0.5,-0.6*\pgflinewidth) rectangle
-                (0.5,0.6*\pgflinewidth);
-            \draw(-0.5,0) -- (-0.4,0) decorate[decoration={
-                aspect=.5,segment length=1mm,amplitude=1mm,coil}]{
-                    -- (0.4,0)} -- (0.5,0);
-        },
-        #1
-    },
-    spring2/.style args={#1}{
-        resistor2={#1},
-    },
-    damper/.style={
-        line component,
-        minimum height = 0.5cm,
-        minimum width=4mm,
-        path picture={%
-            \pgfmathparse{max(4pt,2.5*\pgflinewidth)}
-            \pgfmathsetlengthmacro{\iconix@damper@width}{\pgfmathresult pt}
-            \fill[Background] (-0.5*\iconix@damper@width,-0.6*\pgflinewidth) rectangle
-                (0,0.6*\pgflinewidth);
-            \draw (0.5*\iconix@damper@width,-0.2) -- (-0.5*\iconix@damper@width,-0.2) --
-                (-0.5*\iconix@damper@width,0.2) -- (0.5*\iconix@damper@width,0.2);
-            \draw (0,0.125) -- (0,-0.125);
-        },
-    },
-    friction/.style={
-        line component,
-        minimum height = 1cm,
-        minimum width = 1cm,
-        path picture={%
-            \foreach \i in {-0.6,-0.5,...,0.5}{
-                \draw[line width=0.5*\pgflinewidth] (\i,1/3) -- ++(45:0.5);
-                \draw[line width=0.5*\pgflinewidth] (-\i,-1/3) -- ++(45:-0.5);
-            }
-            \foreach \y in {1/6,-1/6}{
-                \draw (-0.5,2*\y) -- (0.5,2*\y);
-                \foreach \x in {-1/3,0,1/3}{
-                    \draw (\x + 0.1, \y + 0.1) -- (\x - 0.1, \y - 0.1)
-                        (\x - 0.1, \y + 0.1) -- (\x + 0.1, \y - 0.1);
-                }
-            }
-        }
-    },
-    mass/.style args={#1}{
-        node component,
-        minimum height = 1.1cm,
-        minimum width = 1.5cm,
-        path picture={%
-            \draw[fill=Background,#1] (-.5,-.5) rectangle (.5,.5);
-        },
-    },
-    mass2/.style args={#1}{
-        node component,
-        minimum height = 1.1cm,
-        minimum width = 1.5cm,
-        draw,
-        path picture={%
-            \node{$ m $};
-        }
-    },
-    inertia/.style={
-        component,
-        minimum height = 14mm+\pgflinewidth,
-        minimum width = 4mm+\pgflinewidth,
-        path picture={%
-            \draw[fill=white!80!black] (-.2,-.7) rectangle (.2,.7);
-        }
-    },
-    inertia2/.style 2 args={
-        mass={#1}{#2},
-        path picture={%
-            \draw[fill=Background] (-.5,-.5) rectangle (.5,.5);
-            \node{$ J $};
-        }
-    },
-    rpossource/.style 2 args={
-        component,
-        minimum height = 1cm,
-        minimum width = 1.5cm,
-        label={#2:#1},
-        path picture={%
-            \draw[line width = 1mm,Background, shorten > = .5pt, shorten < = .5pt]
-                (-.75,0) -- (.75,0);
-            \draw[<<->>,>=stealth, shorten > = .5pt, shorten < = .5pt] (-.75,0) --
-                (.75,0);
-            \node[fill=Background,minimum width = .4cm]{$ \varphi $};
-        }
-    },
-    tpossource/.style 2 args={
-        component,
-        minimum height = 1cm,
-        minimum width = 1.5cm,
-        label={#2:#1},
-        path picture={%
-            \draw[line width = 1mm,Background, shorten > = .5pt, shorten < = .5pt]
-                (-.75,0) -- (.75,0);
-            \draw[<->,>=stealth, shorten > = .5pt, shorten < = .5pt] (-.75,0) --
-                (.75,0);
-            \node[fill=Background,minimum width = .4cm]{$ x $};
-        }
-    },
-    transmissionl1/.style 2 args={
-        component,
-        yshift=-1cm,
-        minimum height = 2.5cm,
-        minimum width = 1cm,
-        label={#2:#1},pos=1,
-        path picture={%
-            \draw[fill=Background] (0,.1) arc (90:-90:.1);
-            \draw (0,1) -- ++ (0,-2);
-            \draw (0,-1) -- ++ (-.25,.125) -- ++ (0, -.25) -- cycle;
-            \draw (-.25,-.8) -- ++(0,-.4);
-            \fill[pattern=north east lines] (-.25,-.8) rectangle ++(-.15,-.4);
-            \draw[fill=Background] (0,1) circle (.1);
-            \draw[fill=Background] (0,-1) circle (.1);
-        }
-    },
-    transmissiong1/.style 2 args={
-        component,
-        yshift=-1cm,
-        minimum height = 2.5cm,
-        minimum width = 1cm,
-        label={#2:#1},
-        pos=0,
-        path picture={%
-            \draw[fill=Background] (0,.1) arc (-270:-90:.1);
-            \draw (0,1) -- ++ (0,-2);
-            \draw (0,-1) -- ++ (-.25,.125) -- ++ (0, -.25) -- cycle;
-            \draw (-.25,-.8) -- ++(0,-.4);
-            \fill[pattern=north east lines] (-.25,-.8) rectangle ++(-.15,-.4);
-            \draw[fill=Background] (0,1) circle (.1);
-            \draw[fill=Background] (0,-1) circle (.1);
-        }
-    },
-    cabledrumr/.style 2 args={
-        component,
-        yshift=-.5cm,
-        minimum height = 2cm,
-        minimum width = 1.5cm,
-        label={#2:#1},
-        pos = 1,
-        path picture={%
-            \draw[fill=Background] (-.3,.6) rectangle (.3,-.5);
-            \draw (-.3,.5) --++ (.6,-.05)
-            ++(-.6,-.05) --++ (.6,-.05)
-            ++(-.6,-.05) --++ (.6,-.05)
-            ++(-.6,-.05) --++ (.6,-.05);
-        }
-    },
-    cabledruml/.style 2 args={
-        component,
-        yshift=-.5cm,
-        minimum height = 2cm,
-        minimum width = 1.5cm,
-        label={#2:#1},
-        pos = 1,
-        path picture={%
-            \draw[fill=Background] (-.3,.6) rectangle (.3,-.5);
-            \draw (.3,.5) --++ (-.6,-.05)
-            ++(.6,-.05) --++ (-.6,-.05)
-            ++(.6,-.05) --++ (-.6,-.05)
-            ++(.6,-.05) --++ (-.6,-.05);
-        }
-    },
-    forcesource/.style 2 args={
-        line component,
-        minimum height = 1cm,
-        minimum width = 1.5cm,
-        label={#2:#1},
-        path picture={%
-            \draw (-0.2,.15) -- (0.2,0) -- (-0.2,-.15);
-        }
-    },
-    torquesource/.style 2 args={
-        component,
-        minimum height = 1cm,
-        minimum width = 1.5cm,
-        label={#2:#1},
-        path picture={%
-            \draw (-0.35,.15) -- (0.05,0) -- (-0.35,-.15);
-            \draw (-0.05,.15) -- (0.35,0) -- (-0.05,-.15);
-        }
-    },
-    forcesource2/.style args={#1}{
-        line component,
-        minimum height = 0.35cm,
-        minimum width = 1.5cm,
-        path picture={%
-            \fill[Background] (-7.5mm+0.5\pgflinewidth,-0.6*\pgflinewidth) rectangle
-                (7.5mm-0.5*\pgflinewidth,0.6*\pgflinewidth);
-            \node[minimum width = .4cm,minimum height = .3cm](F){$ F $};
-            \begin{scope}[-stealth, shorten > = 0.5\pgflinewidth]
-                \draw (F) -- (path picture bounding box.west);
-                \draw (F) -- (path picture bounding box.east);
-            \end{scope}
-        },
-        #1
-    },
-    torquesource2/.style 2 args={
-        component,
-        minimum height = 1cm,
-        minimum width = 1.5cm,
-        label={#2:#1},
-        path picture={%
-            \draw[line width = 1mm,Background, shorten > = .5pt, shorten < = .5pt]
-                (-.75,0) -- (.75,0);
-            \draw[<<->>,>=stealth, shorten > = .5pt, shorten < = .5pt] (-.75,0) --
-                (.75,0);
-            \node[fill=Background,minimum width = .4cm]{$ T $};
-        }
-    },
-    centerofmass/.style={
-        line width = 1pt,
-        minimum size = #1+1pt,
-        circle,
-        draw,
-        path picture={%
-            \draw[black,line width=1pt] (0,0) circle (.5*#1-.5pt);
-            \fill[Background] (#1,#1) rectangle (-#1,-#1);
-            \fill[] (0,0) rectangle (-#1,-#1);
-            \fill[] (0,0) rectangle (#1,#1);
-        }
-    },
-}
-\makeatother
-%</xbg-code-iconicdiagrams>
-%<*xbg-code-blockdiagrams>
-\makeatletter
-\newdimen\xbg@bd@block@iospacing
-\newdimen\xbg@bd@block@height
-
-\newif\ifxbg@bd@block@flip
-\newcounter{xbg@sum@elements}
-
-\tikzset{
-    sum/.style={
-        append after command={
-            \pgfextra{
-                \setcounter{xbg@sum@elements}{0}%
-                \foreach \j in {#1}{\stepcounter{xbg@sum@elements}}
-                \pgfmathsetmacro\@noelem{max(4,\thexbg@sum@elements)}
-                \def\@plus{+}%
-                \def\@min{-}%
-                \foreach[count=\i from 0] \@el in {#1}{
-                    \edef\ex@el{\@el}
-                    \pgfmathsetmacro\@ang{360/\@noelem*\i + 180}%
-                    \draw (\tikzlastnode) ++(\@ang:0.25) ++(\@ang+90:0.15)%
-                        \ifx\ex@el\@plus%
-                                +(-0.5mm,0mm) -- +(0.5mm,0mm)
-                                +(0mm,-0.5mm) -- +(0mm,0.5mm)
-                        \else
-                            \ifx\ex@el\@min%
-                                +(-0.5mm,0mm) -- +(0.5mm,0mm)
-                            \fi
-                        \fi;
-                }
-            }
-        },
-        node contents={},
-        circle,
-        draw,
-        minimum size=4mm,
-    },
-    sum/.default = {+,-},
-    signalname/.style={},
-}
-
-\tikzset{
-    block/.code={
-        \xbgset{
-            block/.cd,
-            #1
-        }
-        \pgfmathsetlengthmacro{\xbg@bd@block@height}{%
-            max(10mm, int(max(\xbg@bd@block@inputs,\xbg@bd@block@outputs) *%
-                \xbg@bd@block@iospacing))}
-        \xbgset{block/block template}
-    },
-    signalname/.code={
-        \tikzset{
-            align=center,
-        }
-    },
-    splitter/.style args ={
-        fill,
-        inner sep = 0pt,
-        minimum size = 1.5mm,
-        circle,
-    },
-}
-\xbgset{
-    block/.is family,
-    block/.cd,
-        inputs/.code={
-            \pgfmathparse{int(#1)}
-            \let\xbg@bd@block@inputs=\pgfmathresult
-        },
-        inputs=1,
-        outputs/.code={
-            \pgfmathparse{int(#1)}
-            \let\xbg@bd@block@outputs=\pgfmathresult
-        },
-        outputs=1,
-        io spacing/.code=\setlength\xbg@bd@block@iospacing{#1},
-        io spacing=5mm,
-        flip/.is choice,
-        flip/true/.code={\xbg@bd@block@fliptrue\def\xbg@bd@block@flipbool{1}},
-        flip/false/.code={\xbg@bd@block@flipfalse\def\xbg@bd@block@flipbool{0}},
-        flip/.default=true,
-        flip=false,
-        block template/.code=\tikzset{
-            draw,
-            align=center,
-            minimum width = 15mm,
-            minimum height = \xbg@bd@block@height,
-            shape=block,
-            text = Iconic Contents,
-            prefix after command= {
-                \pgfextra{
-                    \tikzset{
-                        every label/.style={
-                            Iconic Label,
-                        }
-                    }
-                }
-            },
-        },
-}
-\pgfdeclareshape{block}{
-    \inheritsavedanchors[from={rectangle}]
-    \savedanchor\centerpoint{%
-        \pgf@x=.5\wd\pgfnodeparttextbox%
-        \pgf@y=.5\ht\pgfnodeparttextbox%
-        \advance\pgf@y by-.5\dp\pgfnodeparttextbox%
-    }
-    \inheritsavedanchors[from=rectangle]
-    \inheritanchorborder[from=rectangle]
-    \inheritanchor[from=rectangle]{north}
-    \inheritanchor[from=rectangle]{north west}
-    \inheritanchor[from=rectangle]{north east}
-    \inheritanchor[from=rectangle]{center}
-    \inheritanchor[from=rectangle]{text}
-    \inheritanchor[from=rectangle]{west}
-    \inheritanchor[from=rectangle]{east}
-    \inheritanchor[from=rectangle]{mid}
-    \inheritanchor[from=rectangle]{mid west}
-    \inheritanchor[from=rectangle]{mid east}
-    \inheritanchor[from=rectangle]{base}
-    \inheritanchor[from=rectangle]{base west}
-    \inheritanchor[from=rectangle]{base east}
-    \inheritanchor[from=rectangle]{south}
-    \inheritanchor[from=rectangle]{south west}
-    \inheritanchor[from=rectangle]{south east}
-    \savedmacro\blockinputs{%
-        \pgfmathparse{int(\xbg@bd@block@inputs)}%
-        \let\blockinputs=\pgfmathresult}%
-    \savedmacro\blockoutputs{%
-        \pgfmathparse{int(\xbg@bd@block@outputs)}%
-        \let\blockoutputs=\pgfmathresult}%
-    \savedmacro\blockmaxio{%
-        \pgfmathparse{int(max(\xbg@bd@block@inputs,\xbg@bd@block@outputs))}%
-        \let\blockmaxio=\pgfmathresult}%
-    \savedmacro\blockflip{%
-        \pgfmathparse{\xbg@bd@block@flipbool}%
-        \let\blockflip=\pgfmathresult}%
-    \saveddimen\halfwidth{\pgfmathsetlength\pgf@x{%
-        \pgfkeysvalueof{/pgf/minimum width}/2}\pgfmathresult}
-    \saveddimen\halfheight{\pgfmathsetlength\pgf@x{%
-        \pgfkeysvalueof{/pgf/minimum height}/2}\pgfmathresult}
-    \saveddimen\iospacing{\pgfmathsetlength\pgf@x{%
-        \xbg@bd@block@iospacing}\pgfmathresult}
-    \inheritbackgroundpath[from={rectangle}]
-    \pgfutil@g@addto@macro\pgf@sh@s@block{%
-        \pgfmathloop%
-        \ifnum\pgfmathcounter>\blockinputs\relax%
-        \else%
-            \pgfutil@ifundefined{pgf@anchor@block@input \pgfmathcounter}{%
-                \expandafter\xdef\csname pgf@anchor@block@input %
-                    \pgfmathcounter\endcsname{\noexpand%
-                    \pgf@sh@lib@block@in@anchor{\pgfmathcounter}%
-                }%
-            }{}
-        \repeatpgfmathloop%
-        \pgfmathloop%
-        \ifnum\pgfmathcounter>\blockoutputs\relax%
-        \else%
-            \pgfutil@ifundefined{pgf@anchor@block@output \pgfmathcounter}{%
-                \expandafter\xdef\csname pgf@anchor@block@output %
-                \pgfmathcounter\endcsname{\noexpand%
-                    \pgf@sh@lib@block@out@anchor{\pgfmathcounter}%
-                }%
-            }{}
-        \repeatpgfmathloop%
-    }%
-}
-
-\def\pgf@sh@lib@block@in@anchor#1{%
-    \pgf@process{\centerpoint}%
-    \pgf@ya=\pgf@y%
-    \ifnum\blockflip=0\relax%
-        \pgf@process{\southwest}%
-    \else%
-        \pgf@process{\northeast}%
-    \fi%
-    \pgfmathsetlength\pgf@y{\pgf@ya + (0.5*(\blockinputs+1)-#1)*\iospacing}
-}
-\def\pgf@sh@lib@block@out@anchor#1{%
-    \pgf@process{\centerpoint}%
-    \pgf@ya=\pgf@y%
-    \ifnum\blockflip=0\relax%
-        \pgf@process{\northeast}%
-    \else%
-        \pgf@process{\southwest}%
-    \fi%
-    \pgfmathsetlength\pgf@y{\pgf@ya + (0.5*(\blockoutputs+1)-#1)*\iospacing}
-}
-\makeatother
-%    \end{macrocode}
-%    \begin{macrocode}
-%</xbg-code-blockdiagrams>
 %    \end{macrocode}
 % \Finale
 \endinput
