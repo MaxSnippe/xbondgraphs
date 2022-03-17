@@ -156,7 +156,7 @@ This package is a by-product of a project in which I was in need of a convenient
 \end{tikzpicture}
 \end{document}
 \end{filecontents*}
-\immediate\write18{pdflatex xbg.tmp.example_bondgraphs.tex}
+\immediate\write18{pdflatex -interaction=batchmode xbg.tmp.example_bondgraphs.tex}
 \begin{figure}[htpb]
   \centering
   \begin{subfigure}[t]{0.48\linewidth}
@@ -200,7 +200,7 @@ This package is a by-product of a project in which I was in need of a convenient
   \label{fig:comparisonmultibonds}
 \end{figure}
 
-\Cref{fig:comparisonmultibonds} shows an example of a simple bond graph with multi bonds, using both the \bondgraphs package and the \xbondgraphs package. The points that motivated me to rewrite the package are emphasized. Although of course subjective, most of the differences between the \bondgraphs- and the \xbondgraphs package can be argued to be improvements.
+\Cref{fig:comparisonmultibonds} shows an example of a simple bond graph with multi bonds, using both the \bondgraphs package and the \xbondgraphs package. The points that motivated me to write a new package are emphasized. Although of course subjective, most of the differences between the \bondgraphs- and the \xbondgraphs package can be argued to be improvements.
 
 Additionally, the \bondgraphs package only permits \texttt{edge}s to be bonds, making multi-segment bonds impossible. With the \refDec{bond} decoration, the \xbondgraphs package makes these multi-segment bonds possible.
 
@@ -236,36 +236,7 @@ Besides the to-dos listed in \hyperref[sec:todolist]{the to-do list}, the follow
 \end{itemize}
 Please submit issues (and function requests) to \url{https://github.com/max-sn/xbondgraphs/issues}.
 
-\section{Basic usage}
-
-\subsection{Installation}
-
-This package has not yet been included in popular \LaTeX distributions, and therefore can be installed only by downloading it as \texttt{.zip} archive from \href{https://github.com/max-sn/xbondgraphs}{the Github page}, extracting it, and using the following commands on the command line from the extracting location\footnote{The first \texttt{pdflatex} command uses the \texttt{--shell-escape} option to create an additional temporary pdf that contains a bond graph produced with the \bondgraphs package, this package does not cooperate with the \xbondgraphs package so it has to be compiled in a separate document. Generally it is good practice to \emph{not} use this option, unless you know what you are doing.}:
-
-\begin{dispListing*}{minted options={autogobble}}
-  tex xbondgraphs.ins
-  pdflatex -synctex=1 -interaction=nonstopmode --shell-escape xbondgraphs.dtx
-  pdflatex -synctex=1 -interaction=nonstopmode xbondgraphs.dtx
-  makeindex -q -s gglo.ist -o xbondgraphs.gls xbondgraphs.glo
-  makeindex -q xbondgraphs.idx
-  pdflatex -synctex=1 -interaction=nonstopmode xbondgraphs.dtx
-  pdflatex -synctex=1 -interaction=nonstopmode xbondgraphs.dtx
-\end{dispListing*}
-
-The resulting files must be placed relative to the root of your \TeX tree. The documentation files should be placed in \verb|$TEXMF/doc/latex/xbondgraphs|, and the package code in \verb|$TEXMF/tex/latex/xbondgraphs|. The documentation files are:
-\begin{itemize}
-  \item \texttt{xbondgraphs.pdf}
-\end{itemize}
-The package code files are:
-\begin{itemize}
-  \item \texttt{xbondgraphs.sty}
-  \item \texttt{xbg.iconicdiagrams.code.tex}
-  \item \texttt{xbg.blockdiagrams.code.tex}
-\end{itemize}
-
-\verb|$TEXMF| is the root folder of your main \TeX-tree. For MiK\TeX users that is probably \verb|C:/texmf/|, and for \TeX Live users that is probably \verb|/usr/local/texlive/<year>/texmf-dist/|.
-
-All the remaining files can be removed, but if you would like to install again later, the \texttt{xbondgraphs.ins} and \texttt{xbondgraphs.dtx} should be kept.
+\section{Usage}
 
 \subsection{Macros}
 
