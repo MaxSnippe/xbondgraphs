@@ -38,7 +38,7 @@
 \defbibheading{xbgbibheading}[\bibname]{%
   \clearpage\section*{#1}\addcontentsline{toc}{section}{#1}}
 
-\geometry{margin=1in, showframe}
+\geometry{margin=25mm,left=40mm}
 
 \pgfmathsetlengthmacro{\multibondwidth}{32mm}
 \pgfmathsetlengthmacro{\singlebondwidth}{8mm}
@@ -101,7 +101,6 @@
     doc head command={doc head template={Definition}},
     index colorize,
     index german settings,
-    verbatim ignore percent,
     docexample/.style={
         before lower={\begin{tikzpicture}},
         after lower={\end{tikzpicture}},
@@ -161,7 +160,7 @@
             \begin{subfigure}[t]{0.48\linewidth}
                 \centering
                 \begin{tikzpicture}
-                    \begin{scope}[spy using outlines={gray,magnification=8,minimum width=32mm,minimum height=30mm, connect spies,every spy on node/.append style={line width=.4pt}}]
+                    \begin{scope}[spy using outlines={gray,magnification=7,minimum width=30mm,minimum height=28mm, connect spies,every spy on node/.append style={line width=.4pt}}]
                         \node{\includegraphics{{xbg.tmp.example_bondgraphs}.pdf}};
                         \spy on (0, 1.15) in node[above left]  (tipf) at (-0.5, 0.5);
                         \spy on (0, 0.35) in node[above right] (tail) at ( 0.5, 0.5);
@@ -174,7 +173,7 @@
             \begin{subfigure}[t]{0.48\linewidth}
                 \centering
                 \begin{tikzpicture}
-                    \begin{scope}[spy using outlines={gray,magnification=8,minimum width=32mm,minimum height=30mm, connect spies,every spy on node/.append style={line width=.4pt}}]
+                    \begin{scope}[spy using outlines={gray,magnification=7,minimum width=30mm,minimum height=28mm, connect spies,every spy on node/.append style={line width=.4pt}}]
                         \begin{scope}[x=15mm,y=15mm]
                             \node at (-1, 0) (Se) [bge={Se}{},pin=left:$ V $];
                             \node at ( 0, 0) (1j) [bge={1}{},label=below right:$ i $];
@@ -314,8 +313,10 @@
             This style can be used for \Tikz nodes. It takes two arguments, the first being the node contents, and the second a list of \meta{key}\texttt{=}\meta{value} options. The \meta{contents} will be printed in \cs{mathbf} for a normal element, and in \cs{mathbb} for a multiport element. Note that most fonts do not have glyphs for lowercase blackboard bold.
             \begin{dispExample}
                 \node at (0,0) [bond graph element={I}{label colon},label=above:$ J $];
-                \node at (1,0) [bond graph element={C}{multiport,n=3},pin=above:$ \mathcal{C} $];
-                \node at (2.5,0) [bond graph element={Motor}{word}, label=below:Electromotor];
+                \node at (1,0) [bond graph element={C}{multiport,n=3},
+                                pin=above:$ \mathcal{C} $];
+                \node at (2.5,0) [bond graph element={Motor}{word},
+                                  label=below:Electromotor];
                 \node at (5,0) [bond graph element={BODY}{word,multiport,n=6}];
             \end{dispExample}
         \end{docKey}
@@ -352,7 +353,8 @@
         The following examples shows an ideal physical dynamic model of a DC motor, shown as an iconic diagram, and its domain independent equivalent model shown as a bond graph. The iconic diagram icons are taken from the (undocumented) \refLib{iconicdiagrams} library.
         \begin{dispExample*}{title={Ideal physical model of a DC motor}}
             \draw[line width = .8pt] (0,0) 
-                -- node[voltage source,label={above:$ u $}]{} ++(0,2) node[current,pos=0.9,label={above:$ i $}]{}
+                -- node[voltage source,label={above:$ u $}]{}
+                ++(0,2) node[current,pos=0.9,label={above:$ i $}]{}
                 -- node[resistor,label={above:$ R $}]{} ++(2,0)
                 -- node[inductor,label={above:$ L $}]{} ++(2,0)
                 -- node(gyr)[gyrator,label={left:$ K_m $}]{} ++(0,-2)
@@ -523,7 +525,8 @@
             \begin{dispExample}
                 \draw[bond={multi,effort out={Differential}}] (0,0) -- ++(1,0);
                 \draw[bond={multi},red] (1.5,0) -- ++(1,0);
-                \draw[bond={multi,flow in}] (3,0) to[effort={$ \mathbf{V}_{abc} $}] ++(1,0);
+                \draw[bond={multi,flow in}] (3,0) to[effort={$ \mathbf{V}_{abc} $}]
+                    ++(1,0);
             \end{dispExample}
         \end{xbgkey}
         
@@ -637,12 +640,16 @@
         \begin{dispExample}
             \node[mux={mux inputs=2,mux outputs=4,mux io spacing=15mm},mux example];
             \draw[help lines,step=2.5mm] (-1cm,-3cm) grid (1cm,3cm);
-            \foreach \anchor/\placement in {input 1/left,input 2/left,output 1/right,output 2/right, output 3/right,output 4/right,north west/above left, north/above, north east/above right,west/left, center/above, east/right,south west/below left, south/below, south east/below right,50/right, 230/left}{
+            \foreach \anchor/\placement in {input 1/left,input 2/left,output 1/right,
+                    output 2/right, output 3/right,output 4/right,
+                    north west/above left, north/above, north east/above right,
+                    west/left, center/above, east/right, south west/below left,
+                    south/below, south east/below right,50/right, 230/left}{
                 \draw[shift=(m.\anchor)] plot[mark=x] coordinates{(0,0)}
                     node[\placement] {\scriptsize\texttt{(m.\anchor)}};
             }
         \end{dispExample}
-         The default dimensions of the \refShp{mux} shape are \texttt{2.5pt} width and \texttt{max(mux inputs,mux outputs)*mux io spacing} height.
+        The default dimensions of the \refShp{mux} shape are \texttt{2.5pt} width and its height is \texttt{max(mux inputs,mux outputs)*mux io spacing}.
     \end{docShape}
     
     \begin{docShape}{block}{}
@@ -653,13 +660,21 @@
                 draw=black!40!,
                 text=black!40!,
                 inner ysep=10mm,
-                inner xsep=30mm,
+                inner xsep=27.5mm,
                 fill=yellow!40!,
             }}
         \begin{dispExample}
             \Huge
-            \node[name=b,shape=block,shape example,/xbg/block/inputs=2,/xbg/block/outputs=4,/xbg/block/io spacing=10mm] {Block\vrule width 1pt height 2cm};
-            \foreach \anchor/\placement in {north west/above left, north/above, north east/above right, west/left, center/above, east/right, mid west/right, mid/above, mid east/left, base west/left, base/below, base east/right, south west/below left, south/below, south east/below right, text/left, 10/right, 130/above, input 1/left, input 2/left, output 1/right, output 2/right, output 3/right, output 4/right}
+            \node[name=b,shape=block,shape example,/xbg/block/inputs=2,
+                /xbg/block/outputs=4,/xbg/block/io spacing=10mm] {
+                    Block\vrule width 1pt height 2cm};
+            \foreach \anchor/\placement in {north west/above left, north/above,
+                    north east/above right, west/left, center/above, east/right,
+                    mid west/right, mid/above, mid east/left, base west/left,
+                    base/below, base east/right, south west/below left, south/below,
+                    south east/below right, text/left, 10/right, 130/above,
+                    input 1/left, input 2/left, output 1/right, output 2/right,
+                    output 3/right, output 4/right}
                 \draw[shift=(b.\anchor)] plot[mark=x] coordinates{(0,0)}
                     node[\placement] {\scriptsize\texttt{(b.\anchor)}};
         \end{dispExample}
@@ -810,13 +825,15 @@
             output label/.style={io label,fill=blue,pos=0,right},
             input label/.style={io label,fill=red,pos=1,left},
         }
-        \foreach \outs [count=\i from 0,count=\j from 1,remember=\outs as \ins (initially 1)] in {4,3,8,5,1}{
+        \foreach \outs [count=\i from 0,count=\j from 1,
+                remember=\outs as \ins (initially 1)] in {4,3,8,5,1}{
             \node at (\j,0) (mux\j) [mux={mux inputs=\ins,mux outputs=\outs}];
             \foreach \k in {1,...,\ins}{
                 \ifnum\i=0\relax
                     \draw (0,0) -- (mux\j.input \k) node[input label]{I\k};
                 \else
-                    \draw (mux\i.output \k) -- (mux\j.input \k) node[output label]{O\k} node[input label]{I\k};
+                    \draw (mux\i.output \k) -- (mux\j.input \k)
+                        node[output label]{O\k} node[input label]{I\k};
                 \fi
             }
         }
@@ -845,8 +862,10 @@
     \end{dispExample}
 
     \begin{dispExample}
-        \tikzset{block/.append style={rounded corners=2pt,minimum size=8mm,fill=black!10!}}
-        \node[block={inputs=2,outputs=2,flip,io spacing=7.5mm},minimum size=14mm] (G) {$ G $};
+        \tikzset{block/.append style={rounded corners=2pt,minimum size=8mm,
+            fill=black!10!}}
+        \node[block={inputs=2,outputs=2,flip,io spacing=7.5mm},minimum size=14mm]
+            (G) {$ G $};
         \node[block,below=0.5 of G] (K) {$ K $};
         \node[signalname,left=of G.output 1] (z) {$ z $};
         \coordinate[left=0.5 of G.output 2] (left);
@@ -1150,7 +1169,7 @@
         },
     },
 %    \end{macrocode}
-%           The \docAuxKey[xbg]{bge template} key is used in nodes which are given the \refKey{/tikz/bond graph element} key. Because it uses the \docAuxKey*{/tikz/node contents} key, there are some shortcomings on nodes using the \refKey{/tikz/bond graph element} style. The \docAuxKey*{/tikz/node contents} key is described on page 215 of the \href{http://ctan.cs.uu.nl/graphics/pgf/base/doc/pgfmanual.pdf}{\pgfpkg manual} (version 3.0.1a).
+%           The \docAuxKey[xbg]{bge template} key is used in nodes that are given the \refKey{/tikz/bond graph element} key. Because it uses the \docAuxKey*{/tikz/node contents} key, there are some shortcomings on nodes using the \refKey{/tikz/bond graph element} style. The \docAuxKey*{/tikz/node contents} key is described on page 215 of the \href{http://ctan.cs.uu.nl/graphics/pgf/base/doc/pgfmanual.pdf}{\pgfpkg manual} (version 3.0.1a).
 %    \begin{macrocode}
     bge template/.code={
         \tikzset{
@@ -1229,7 +1248,8 @@
     library/iconicdiagrams/.code={\input{xbg.code.iconicdiagrams.tex}},
     library/blockdiagrams/.code={\input{xbg.code.blockdiagrams.tex}},
     library/all/.code=\xbgset{load libraries/.list={iconicdiagrams,blockdiagrams}},
-    library/.unknown/.code={\xbg@error{No library named "\pgfkeyscurrentname" exists}{}},
+    library/.unknown/.code={%
+        \xbg@error{No library named "\pgfkeyscurrentname" exists}{}},
 }
 %    \end{macrocode}
 %       \subsection{\Tikz styles}
