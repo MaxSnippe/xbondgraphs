@@ -264,18 +264,6 @@ The package code files are:
 
 All the remaining files can be removed, but if you would like to install again later, the \texttt{xbondgraphs.ins} and \texttt{xbondgraphs.dtx} should be kept.
 
-\subsection{Libraries}
-
-Currently the \xbondgraphs package has two (still undocumented) libraries.
-\begin{docCommand}{usexbglibrary}{\marg{comma separated list of libraries}}
-  This command can be used to include one of the following libraries:
-  \begin{itemize}
-    \item \refLib{iconicdiagrams}
-    \item \refLib{blockdiagrams}
-  \end{itemize}
-  Alternatively, one can use \docAuxCommand*{usexbglibrary}\brackets{\texttt{all}} to include all libraries.
-\end{docCommand}
-
 \subsection{Macros}
 
 \begin{docCommand}{bge}{\oarg{xbg keys}\oarg{tikz/pgf keys}\marg{contents}}
@@ -508,7 +496,7 @@ The following example shows an ideal physical dynamic model of a DC motor, shown
 \end{xbgkey}
 
 \begin{xbgkey}{background color}{\meta{color}}{no default, initially \texttt{white}}
-  With the \docAuxKey*[tikz]{double} style, \Tikz draws two lines on top of each other to simulate the effect of two parallel lines. The downside of this is that the thinner line must be the same color as its background, otherwise the parallel effect is gone. With this key the \docColor{Background} color is set, which is used when defining a multi bond. Additionally it is used in many of the icons in the \refLib{iconicdiagrams} library, for the same reason.
+  With the \docAuxKey*[tikz]{double} style, \Tikz draws two lines on top of each other to simulate the effect of two parallel lines. The downside of this is that the thinner line must be the same color as its background, otherwise the parallel effect is gone. With this key the \docColor{Background} color is set, which is used when defining a multi bond.
   \begin{dispExample}
     \xbgset{multi bond width=3.2mm,single bond width=0.8mm}
     \draw[bond={multi,background color=red}] (0,0) -- ++(2,0);
@@ -613,7 +601,7 @@ The following keys are used when drawing the \refShp{mux} shape. They can be giv
 \end{docDecoration}
 
 \begin{docShape}{mux}{}
-  The \refShp{mux} is basically the same as the \texttt{rectangle} shape, with some additional anchors. For every in- and output an anchor is defined, placed based on the \refKey{/xbg/mux io spacing} key. See the following example for the placement of the anchors. The grid is drawn to see that the length between two consecutive in- or outputs is exactly the given spacing (\texttt{15mm}). \texttt{m.50} and \texttt{m.230} are examples of border anchors.\todo{The \texttt{mux} shape is actually just a special case of the \texttt{block} shape and does not need a separate shape.}
+  The \refShp{mux} is basically the same as the \texttt{rectangle} shape, with some additional anchors. For every in- and output an anchor is defined, placed based on the \refKey{/xbg/mux io spacing} key. See the following example for the placement of the anchors. The grid is drawn to see that the length between two consecutive in- or outputs is exactly the given spacing (\texttt{15mm}). \texttt{m.50} and \texttt{m.230} are examples of border anchors.
   \begin{dispExample}
     \node[mux={mux inputs=2,mux outputs=4,mux io spacing=15mm},mux example];
     \draw[help lines,step=2.5mm] (-1cm,-3cm) grid (1cm,3cm);
