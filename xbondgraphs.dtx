@@ -642,33 +642,6 @@ The following keys are used when drawing the \refShp{mux} shape. They can be giv
   The default dimensions of the \refShp{mux} shape are \texttt{2.5pt} width and its height is \texttt{max(mux inputs,mux outputs)*mux io spacing}.
 \end{docShape}
 
-\begin{docShape}{block}{}
-  The \refShp{block} shape is only slightly different from the \texttt{rectangle} shape. It also creates additional anchors for in- and outputs, just like the \refShp{mux} shape.
-  \tikzset{shape example/.style={
-      line width = 5mm,
-      draw=black!40!,
-      text=black!40!,
-      inner ysep=10mm,
-      inner xsep=27.5mm,
-      fill=yellow!40!,
-    }}
-  \begin{dispExample}
-    \Huge
-    \node[name=b,shape=block,shape example,/xbg/block/inputs=2,
-      /xbg/block/outputs=4,/xbg/block/io spacing=10mm] {
-        Block\vrule width 1pt height 2cm};
-    \foreach \anchor/\placement in {north west/above left, north/above,
-        north east/above right, west/left, center/above, east/right,
-        mid west/right, mid/above, mid east/left, base west/left,
-        base/below, base east/right, south west/below left, south/below,
-        south east/below right, text/left, 10/right, 130/above,
-        input 1/left, input 2/left, output 1/right, output 2/right,
-        output 3/right, output 4/right}
-      \draw[shift=(b.\anchor)] plot[mark=x] coordinates{(0,0)}
-        node[\placement] {\scriptsize\texttt{(b.\anchor)}};
-  \end{dispExample}
-\end{docShape}
-
 \begin{docArrowTip}{Single Bond Barb}{}
   The \refArr{Single Bond Barb} arrow tip is the default arrow tip for a bond. It is very similar to the \texttt{Straight Barb} arrow tip that is included in the \Tikz library \texttt{arrows.meta}, except that the outer hull points are described more accurately, and its size is based on some of the keys of this package. Also the default is directed left, and there is no double barb version. 
 
@@ -828,42 +801,15 @@ The following keys are used when drawing the \refShp{mux} shape. They can be giv
 \end{dispExample}
 
 \begin{dispExample}
-  \draw[line width=0.8pt] (-1,-1) 
-    -- ++(0,0.5)
-    -- node[voltage source,label={above:$ u $}]{} ++(0,1)
-    -- node[current,label={above:$ i $}]{} ++(0,0.5)
-    -- node[inductor,label={above:$ L $}]{} ++(2,0) 
-    -- node[resistor,label={above:$ R $}]{} ++(0,-2) 
-    -- node[capacitor,label={above:$ C $}]{} cycle;
-  \begin{scope}[shift={(5,0)}]
-    \node (u) at (-1.5, 0.0) [bge={Se}{},pin={left:$ u $}];
-    \node (i) at ( 0.0, 0.0) [bge={1}{},label={300:$ i $}];
-    \node (c) at ( 0.0, 1.5) [bge={C}{},pin={above:$ C $}];
-    \node (r) at ( 1.5, 0.0) [bge={R}{},pin={right:$ R $}];
-    \node (l) at ( 0.0,-1.5) [bge={L}{},pin={below:$ L $}];
-    \draw[bond={effort out}] (u) -- (i);
-    \draw[bond={effort in}] (i) -- (c);
-    \draw[bond={effort in}] (i) -- (r);
-    \draw[bond={effort out}] (i) -- (l);
-  \end{scope}
-\end{dispExample}
-
-\begin{dispExample}
-  \tikzset{block/.append style={rounded corners=2pt,minimum size=8mm,
-    fill=black!10!}}
-  \node[block={inputs=2,outputs=2,flip,io spacing=7.5mm},minimum size=14mm]
-    (G) {$ G $};
-  \node[block,below=0.5 of G] (K) {$ K $};
-  \node[signalname,left=of G.output 1] (z) {$ z $};
-  \coordinate[left=0.5 of G.output 2] (left);
-  \node[signalname,right=of G.input 1] (w) {$ w $};
-  \coordinate[right=0.5 of G.input 2] (right);
-  \begin{scope}[->]
-    \draw (w) -- (G.input 1);
-    \draw (G.output 1) -- (z);
-    \draw (K) -- (K-|right) -- node[right]{$ u $} (right) -- (G.input 2);
-    \draw (G.output 2) -- (left) -- node[left]{$ y $} (K-|left) -- (K);
-  \end{scope}
+  \node (u) at (-1.5, 0.0) [bge={Se}{},pin={left:$ u $}];
+  \node (i) at ( 0.0, 0.0) [bge={1}{},label={300:$ i $}];
+  \node (c) at ( 0.0, 1.5) [bge={C}{},pin={above:$ C $}];
+  \node (r) at ( 1.5, 0.0) [bge={R}{},pin={right:$ R $}];
+  \node (l) at ( 0.0,-1.5) [bge={L}{},pin={below:$ L $}];
+  \draw[bond={effort out}] (u) -- (i);
+  \draw[bond={effort in}] (i) -- (c);
+  \draw[bond={effort in}] (i) -- (r);
+  \draw[bond={effort out}] (i) -- (l);
 \end{dispExample}
 
 \section{Change history}
