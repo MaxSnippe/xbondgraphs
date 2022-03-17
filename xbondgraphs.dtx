@@ -57,7 +57,6 @@
 
 \usetikzlibrary{positioning,spy,graphs}
 \tcbuselibrary{documentation,breakable,minted}
-\usexbglibrary{all}
 
 \newcommand\Tikz{{\normalfont Ti\textit{k}Z}\xspace}
 \newcommand\pgfpkg{PGF\xspace}
@@ -360,19 +359,7 @@ Currently the \xbondgraphs package has two (still undocumented) libraries.
 
 \subsection{Simple example}
 
-The following examples shows an ideal physical dynamic model of a DC motor, shown as an iconic diagram, and its domain independent equivalent model shown as a bond graph. The iconic diagram icons are taken from the (undocumented) \refLib{iconicdiagrams} library.
-\begin{dispExample*}{title={Ideal physical model of a DC motor}}
-  \draw[line width = .8pt] (0,0) 
-    -- node[voltage source,label={above:$ u $}]{}
-    ++(0,2) node[current,pos=0.9,label={above:$ i $}]{}
-    -- node[resistor,label={above:$ R $}]{} ++(2,0)
-    -- node[inductor,label={above:$ L $}]{} ++(2,0)
-    -- node(gyr)[gyrator,label={left:$ K_m $}]{} ++(0,-2)
-    -- node[electric earth]{} cycle;
-  \draw[line width = .8pt] (gyr.center) -- (gyr.east)
-    -- node[friction,label={above:$ D $}]{} ++(2,0)
-    -- node[inertia,pos=1,label={above:$ J $}]{} ++(1,0);
-\end{dispExample*}
+The following example shows an ideal physical dynamic model of a DC motor, shown as domain independent bond graph.
 \begin{dispExample*}{title={Bond graph model of a DC motor}}
   \tikzset{x=12.5mm,y=12.5mm}
   \node (u) at (-1, 0) [bge={Se}{},pin={left:$ u $}];
@@ -946,10 +933,6 @@ The following keys are used when drawing the \refShp{mux} shape. They can be giv
 \long\def\xbgset@late@options#1{\appto%
   \xbg@lateoptions@hook{\xbgset{#1}}}
 %    \end{macrocode}
-% Package libraries can be loaded using the \refCom{usexbglibrary} command.
-%    \begin{macrocode}
-\def\usexbglibrary#1{\xbgset{load libraries/.list={#1}}}
-%    \end{macrocode}
 % For in-line bond graph elements and bonds the following macros can be used.
 %    \begin{macrocode}
 \def\bge{\@ifnextchar[%
@@ -1184,14 +1167,6 @@ The following keys are used when drawing the \refShp{mux} shape. They can be giv
     fill=black,
     shape=mux,
   },
-  load libraries/.code={
-    \xbgset{library/#1}
-  },
-  library/iconicdiagrams/.code={\input{xbg.code.iconicdiagrams.tex}},
-  library/blockdiagrams/.code={\input{xbg.code.blockdiagrams.tex}},
-  library/all/.code=\xbgset{load libraries/.list={iconicdiagrams,blockdiagrams}},
-  library/.unknown/.code={%
-    \xbg@error{No library named "\pgfkeyscurrentname" exists}{}},
 }
 %    \end{macrocode}
 %
