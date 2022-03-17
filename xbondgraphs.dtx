@@ -100,7 +100,7 @@
   doc head command={doc head template={Definition}},
   index colorize,
   index german settings,
-  docexample/.style={
+  docexample/.append style={
     before lower={\begin{tikzpicture}},
     after lower={\end{tikzpicture}},
     colback/.forward to=/xbg/background color,
@@ -108,6 +108,8 @@
     breakable,
   },
 }
+
+\xbgset{background color=ExampleBack}
 
 \makeindex
 
@@ -173,6 +175,7 @@ This package is a by-product of a project in which I was in need of a convenient
   \begin{subfigure}[t]{0.48\linewidth}
     \centering
     \begin{tikzpicture}
+      \xbgset{background color=white}
       \begin{scope}[spy using outlines={gray,magnification=7,minimum width=30mm,minimum height=28mm, connect spies,every spy on node/.append style={line width=.4pt}}]
         \begin{scope}[x=15mm,y=15mm]
           \node at (-1, 0) (Se) [bge={Se}{},pin=left:$ V $];
