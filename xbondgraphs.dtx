@@ -27,6 +27,7 @@
 \usepackage{xbondgraphs}
 \usepackage{xspace}
 \usepackage{mathpazo}
+\usepackage{pifont}
 \usepackage{booktabs}
 \usepackage{subcaption}
 \usepackage{geometry}
@@ -135,7 +136,7 @@
 
 \subsection{Motivation}
 
-This package is a by-product of a project in which I was in need of a convenient way to draw bond graphs. At first, the \bondgraphs package was sufficient, but as the delivery date of the final report approached, I became less and less satisfied by the aesthetic end result of my bond graphs, especially when using multi-bonds.
+This package is a by-product of a project during which I was in need of a convenient way to draw bond graphs. At first, the \bondgraphs package was sufficient, but as the delivery date of the final report approached, I became less and less satisfied by the aesthetic end result of my bond graphs, especially when using multi-bonds.
 
 \begin{filecontents*}{xbg.tmp.example_bondgraphs.tex}
 \documentclass[tikz]{standalone}
@@ -636,7 +637,7 @@ The following keys are used when drawing the \refShp{mux} shape. They can be giv
 \end{docArrowTip}
 
 \begin{docArrowTip}{Multi Bond Barb}{}
-  The \refArr{Multi Bond Barb} is slightly complexer, because the macro \cs{pgflinewidth} now does not hold single bond width and the origin of this arrow definition is located at the center of the endpoint of the line. Otherwise the idea is the same, see \cref{imp:arrowtips} for the implementation.
+  The \refArr{Multi Bond Barb} is slightly more complex, because the macro \cs{pgflinewidth} now does not hold single bond width and the origin of this arrow definition is located at the center of the endpoint of the line. Otherwise the idea is the same, see \cref{imp:arrowtips} for the implementation.
 
   \pgfmathsetlengthmacro{\startx}{0pt}
   \pgfmathsetlengthmacro{\starty}{-0.5*\multibondwidth+0.5*\singlebondwidth}
